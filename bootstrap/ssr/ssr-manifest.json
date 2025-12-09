@@ -1,0 +1,10 @@
+{
+  "\u0000plugin-vue:export-helper": [],
+  "resources/js/Layouts/AuthLayout.vue": [],
+  "resources/js/Layouts/DashboardLayout.vue": [],
+  "resources/js/Pages/Auth/ForgotPassword.vue": [],
+  "resources/js/Pages/Auth/Login.vue": [],
+  "resources/js/Pages/Dashboard.vue": [],
+  "resources/js/ssr.js": [],
+  "vendor/tightenco/ziggy/dist/index.js": []
+}
