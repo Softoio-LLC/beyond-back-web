@@ -1,10 +1,146 @@
 {
-  "\u0000plugin-vue:export-helper": [],
-  "resources/js/Layouts/AuthLayout.vue": [],
-  "resources/js/Layouts/DashboardLayout.vue": [],
-  "resources/js/Pages/Auth/ForgotPassword.vue": [],
-  "resources/js/Pages/Auth/Login.vue": [],
-  "resources/js/Pages/Dashboard.vue": [],
-  "resources/js/ssr.js": [],
-  "vendor/tightenco/ziggy/dist/index.js": []
+  "\u0000plugin-vue:export-helper": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/assets/sa-flag.svg": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/assets/us-flag.svg": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/js/Components/Sections/CTASection.vue": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/js/Components/Sections/ConceptSection.vue": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/js/Components/Sections/ContactSection.vue": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/js/Components/Sections/FAQSection.vue": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/js/Components/Sections/FooterSection.vue": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/js/Components/Sections/GallerySection.vue": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/js/Components/Sections/HeaderSection.vue": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/js/Components/Sections/HeroSection.vue": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/js/Components/Sections/InquirySection.vue": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/js/Components/Sections/PartnersSection.vue": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/js/Components/Sections/ServicesSection.vue": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/js/Components/Sections/TeamSection.vue": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/js/Components/Sections/WorkSection.vue": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/js/Layouts/AuthLayout.vue": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/js/Layouts/DashboardLayout.vue": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/js/Layouts/DashboardLayout.vue?vue&type=style&index=0&scoped=764f45ce&lang.css": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/js/Layouts/WebsiteLayout.vue": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/js/Pages/Auth/ForgotPassword.vue": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/js/Pages/Auth/Login.vue": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/js/Pages/Auth/ResetPassword.vue": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/js/Pages/Auth/ResetPassword.vue?vue&type=style&index=0&scoped=db7ff772&lang.css": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/js/Pages/Dashboard.vue": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/js/Pages/Pages/Create.vue": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/js/Pages/Pages/Create.vue?vue&type=style&index=0&scoped=9ec1ea87&lang.css": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/js/Pages/Pages/Edit.vue": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/js/Pages/Pages/Edit.vue?vue&type=style&index=0&scoped=7109a24a&lang.css": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/js/Pages/Pages/Index.vue": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/js/Pages/Pages/Index.vue?vue&type=style&index=0&scoped=d3756702&lang.css": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/js/Pages/Profile/Edit.vue": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/js/Pages/Profile/Edit.vue?vue&type=style&index=0&scoped=388636fb&lang.css": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/js/Pages/Website/Index.vue": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "resources/js/ssr.js": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ],
+  "vendor/tightenco/ziggy/dist/index.js": [
+    "/build/assets/sa-flag-D4E_9N_f.svg",
+    "/build/assets/us-flag-yPINlvk7.svg"
+  ]
 }

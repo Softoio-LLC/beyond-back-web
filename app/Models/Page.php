@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Page extends Model
 {
@@ -48,5 +49,75 @@ class Page extends Model
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Get all sections for this page.
+     */
+    public function sections(): HasMany
+    {
+        return $this->hasMany(PageSection::class)->ordered();
+    }
+
+    /**
+     * Get only active sections for this page.
+     */
+    public function activeSections(): HasMany
+    {
+        return $this->hasMany(PageSection::class)->active()->ordered();
+    }
+
+    /**
+     * Get header section for this page.
+     */
+    public function getHeaderSection(): ?PageSection
+    {
+        return $this->sections()
+            ->whereHas('sectionType', fn($q) => $q->where('key', 'header'))
+            ->first();
+    }
+
+    /**
+     * Get footer section for this page.
+     */
+    public function getFooterSection(): ?PageSection
+    {
+        return $this->sections()
+            ->whereHas('sectionType', fn($q) => $q->where('key', 'footer'))
+            ->first();
+    }
+
+    /**
+     * Get content sections (excluding header/footer).
+     */
+    public function getContentSections()
+    {
+        return $this->sections()
+            ->whereHas('sectionType', fn($q) => $q->where('is_fixed', false))
+            ->get();
+    }
+
+    /**
+     * Initialize default sections for a new page.
+     */
+    public function initializeDefaultSections(): void
+    {
+        $sectionTypes = SectionType::active()->ordered()->get();
+        
+        foreach ($sectionTypes as $index => $type) {
+            $type->createDefaultSection($this->id, $index);
+        }
+    }
+
+    /**
+     * Duplicate all sections to a new page.
+     */
+    public function duplicateSectionsTo(Page $newPage): void
+    {
+        foreach ($this->sections as $section) {
+            $newSection = $section->replicate();
+            $newSection->page_id = $newPage->id;
+            $newSection->save();
+        }
     }
 }

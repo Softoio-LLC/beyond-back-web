@@ -216,8 +216,35 @@ class PageSeeder extends Seeder
             ],
         ];
 
-        foreach ($pages as $page) {
-            Page::create($page);
+        foreach ($pages as $pageData) {
+            Page::create($pageData);
+        }
+
+        // Attach all sections to the homepage
+        $this->attachSectionsToHomepage();
+    }
+
+    /**
+     * Attach all section types to the homepage with their default content.
+     */
+    private function attachSectionsToHomepage(): void
+    {
+        $homepage = Page::where('url_slug_en', 'home')->first();
+        
+        if (!$homepage) {
+            return;
+        }
+
+        $sectionTypes = \App\Models\SectionType::active()->ordered()->get();
+
+        foreach ($sectionTypes as $sectionType) {
+            \App\Models\PageSection::create([
+                'page_id' => $homepage->id,
+                'section_type_id' => $sectionType->id,
+                'order' => $sectionType->default_order,
+                'content' => $sectionType->default_content,
+                'is_active' => true,
+            ]);
         }
     }
 }

@@ -22,8 +22,9 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ]);
 
-        // Seed pages
+        // Seed section types with complete content (needed for pages)
         $this->call([
+            SectionContentSeeder::class,
             PageSeeder::class,
         ]);
     }
