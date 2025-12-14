@@ -5,9 +5,16 @@ use App\Http\Controllers\MediaController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PageSectionController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\WebsiteController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
+// ============================================
+// SEO ROUTES (sitemap, robots)
+// ============================================
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('/robots.txt', [SitemapController::class, 'robots'])->name('robots');
 
 // ============================================
 // PUBLIC WEBSITE ROUTES
@@ -54,6 +61,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/pages/{page}', [PageController::class, 'update'])->name('pages.update');
     Route::delete('/pages/{page}', [PageController::class, 'destroy'])->name('pages.destroy');
     Route::post('/pages/{page}/duplicate', [PageController::class, 'duplicate'])->name('pages.duplicate');
+    Route::post('/pages/{page}/toggle-homepage', [PageController::class, 'toggleHomepage'])->name('pages.toggle-homepage');
+    Route::post('/pages/{page}/toggle-published', [PageController::class, 'togglePublished'])->name('pages.toggle-published');
 
     // Page Builder / Section Management routes
     Route::prefix('pages/{page}/builder')->name('pages.builder.')->group(function () {
@@ -75,3 +84,9 @@ Route::middleware('auth')->group(function () {
         Route::delete('/delete', [MediaController::class, 'destroy'])->name('delete');
     });
 });
+
+// ============================================
+// DYNAMIC PAGE ROUTES (must be last - catch-all)
+// ============================================
+Route::get('/ar/{slug}', [WebsiteController::class, 'showBySlug'])->name('website.page.ar')->where('slug', '[a-zA-Z0-9\-\_\u0600-\u06FF]+');
+Route::get('/{slug}', [WebsiteController::class, 'showBySlug'])->name('website.page')->where('slug', '[a-zA-Z0-9\-\_]+');

@@ -36,6 +36,9 @@ class Page extends Model
         'meta_description_ar',
         'og_description_ar',
         'og_image_ar',
+        // Status fields
+        'is_homepage',
+        'is_published',
     ];
 
     /**
@@ -48,7 +51,47 @@ class Page extends Model
         return [
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
+            'is_homepage' => 'boolean',
+            'is_published' => 'boolean',
         ];
+    }
+
+    /**
+     * Scope to get only published pages.
+     */
+    public function scopePublished($query)
+    {
+        return $query->where('is_published', true);
+    }
+
+    /**
+     * Get the homepage.
+     */
+    public static function getHomepage(): ?self
+    {
+        return static::where('is_homepage', true)->published()->first();
+    }
+
+    /**
+     * Find a page by its slug based on language.
+     */
+    public static function findBySlug(string $slug, string $lang = 'en'): ?self
+    {
+        $field = $lang === 'ar' ? 'url_slug_ar' : 'url_slug_en';
+        return static::where($field, $slug)->published()->first();
+    }
+
+    /**
+     * Get the URL for this page based on language.
+     */
+    public function getUrl(string $lang = 'en'): string
+    {
+        if ($this->is_homepage) {
+            return $lang === 'ar' ? '/ar' : '/';
+        }
+        
+        $slug = $lang === 'ar' ? $this->url_slug_ar : $this->url_slug_en;
+        return $lang === 'ar' ? "/ar/{$slug}" : "/{$slug}";
     }
 
     /**

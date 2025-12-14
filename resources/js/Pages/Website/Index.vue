@@ -27,6 +27,14 @@ const props = defineProps({
     lang: {
         type: String,
         default: 'ar'
+    },
+    seo: {
+        type: Object,
+        default: () => ({})
+    },
+    jsonLdSchema: {
+        type: Array,
+        default: () => []
     }
 });
 
@@ -62,7 +70,7 @@ const mainSections = computed(() => props.sections.filter(s =>
 </script>
 
 <template>
-    <WebsiteLayout :lang="lang" :page="page">
+    <WebsiteLayout :lang="lang" :page="page" :seo="seo" :jsonLdSchema="jsonLdSchema">
         <!-- Header -->
         <component 
             v-if="headerSection"

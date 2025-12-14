@@ -33,6 +33,8 @@ class PageSeeder extends Seeder
                 'meta_description_ar' => 'مرحباً بك في موقعنا. اكتشف خدماتنا ومنتجاتنا.',
                 'og_description_ar' => 'مرحباً بك في موقعنا. اكتشف خدماتنا ومنتجاتنا.',
                 'og_image_ar' => null,
+                'is_homepage' => true,  // Set as homepage
+                'is_published' => true,
             ],
             [
                 'name_en' => 'About Us',

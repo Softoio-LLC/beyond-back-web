@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Page;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class PageController extends Controller
@@ -21,6 +23,10 @@ class PageController extends Controller
                 'lastEditDate' => $page->updated_at->format('d.m.Y'),
                 'hasArabic' => !empty($page->name_ar),
                 'hasEnglish' => !empty($page->name_en),
+                'is_homepage' => $page->is_homepage,
+                'is_published' => $page->is_published,
+                'url_slug_en' => $page->url_slug_en,
+                'url_slug_ar' => $page->url_slug_ar,
             ];
         });
 
@@ -45,7 +51,13 @@ class PageController extends Controller
         $validated = $request->validate([
             // English fields
             'name_en' => 'nullable|string|max:255',
-            'url_slug_en' => 'nullable|string|max:255',
+            'url_slug_en' => [
+                'nullable',
+                'string',
+                'max:255',
+                'regex:/^[a-z0-9\-]+$/',
+                Rule::unique('pages', 'url_slug_en'),
+            ],
             'meta_title_en' => 'nullable|string|max:255',
             'h1_title_en' => 'nullable|string|max:255',
             'og_title_en' => 'nullable|string|max:255',
@@ -55,7 +67,12 @@ class PageController extends Controller
             'og_image_en' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             // Arabic fields
             'name_ar' => 'nullable|string|max:255',
-            'url_slug_ar' => 'nullable|string|max:255',
+            'url_slug_ar' => [
+                'nullable',
+                'string',
+                'max:255',
+                Rule::unique('pages', 'url_slug_ar'),
+            ],
             'meta_title_ar' => 'nullable|string|max:255',
             'h1_title_ar' => 'nullable|string|max:255',
             'og_title_ar' => 'nullable|string|max:255',
@@ -63,7 +80,22 @@ class PageController extends Controller
             'meta_description_ar' => 'nullable|string',
             'og_description_ar' => 'nullable|string',
             'og_image_ar' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            // Status fields
+            'is_homepage' => 'nullable|boolean',
+            'is_published' => 'nullable|boolean',
+        ], [
+            'url_slug_en.regex' => 'The English URL slug can only contain lowercase letters, numbers, and hyphens.',
+            'url_slug_en.unique' => 'This English URL slug is already in use.',
+            'url_slug_ar.unique' => 'This Arabic URL slug is already in use.',
         ]);
+
+        // Auto-generate slugs from names if not provided
+        if (empty($validated['url_slug_en']) && !empty($validated['name_en'])) {
+            $validated['url_slug_en'] = $this->generateUniqueSlug($validated['name_en'], 'url_slug_en');
+        }
+        if (empty($validated['url_slug_ar']) && !empty($validated['name_ar'])) {
+            $validated['url_slug_ar'] = $this->generateUniqueSlug($validated['name_ar'], 'url_slug_ar');
+        }
 
         // Handle file uploads
         if ($request->hasFile('og_image_en')) {
@@ -74,7 +106,18 @@ class PageController extends Controller
             $validated['og_image_ar'] = $request->file('og_image_ar')->store('pages/og-images', 'public');
         }
 
-        Page::create($validated);
+        // If this page is set as homepage, unset other homepages
+        if (!empty($validated['is_homepage']) && $validated['is_homepage']) {
+            Page::where('is_homepage', true)->update(['is_homepage' => false]);
+        }
+
+        // Default is_published to true if not set
+        $validated['is_published'] = $validated['is_published'] ?? true;
+
+        $page = Page::create($validated);
+
+        // Initialize default sections for the new page
+        $page->initializeDefaultSections();
 
         return redirect()->route('pages.index')->with('success', 'Page created successfully.');
     }
@@ -107,6 +150,9 @@ class PageController extends Controller
                 'meta_description_ar' => $page->meta_description_ar,
                 'og_description_ar' => $page->og_description_ar,
                 'og_image_ar' => $page->og_image_ar ? Storage::url($page->og_image_ar) : null,
+                // Status fields
+                'is_homepage' => $page->is_homepage,
+                'is_published' => $page->is_published,
             ],
         ]);
     }
@@ -119,7 +165,13 @@ class PageController extends Controller
         $validated = $request->validate([
             // English fields
             'name_en' => 'nullable|string|max:255',
-            'url_slug_en' => 'nullable|string|max:255',
+            'url_slug_en' => [
+                'nullable',
+                'string',
+                'max:255',
+                'regex:/^[a-z0-9\-]+$/',
+                Rule::unique('pages', 'url_slug_en')->ignore($page->id),
+            ],
             'meta_title_en' => 'nullable|string|max:255',
             'h1_title_en' => 'nullable|string|max:255',
             'og_title_en' => 'nullable|string|max:255',
@@ -129,7 +181,12 @@ class PageController extends Controller
             'og_image_en' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             // Arabic fields
             'name_ar' => 'nullable|string|max:255',
-            'url_slug_ar' => 'nullable|string|max:255',
+            'url_slug_ar' => [
+                'nullable',
+                'string',
+                'max:255',
+                Rule::unique('pages', 'url_slug_ar')->ignore($page->id),
+            ],
             'meta_title_ar' => 'nullable|string|max:255',
             'h1_title_ar' => 'nullable|string|max:255',
             'og_title_ar' => 'nullable|string|max:255',
@@ -137,6 +194,13 @@ class PageController extends Controller
             'meta_description_ar' => 'nullable|string',
             'og_description_ar' => 'nullable|string',
             'og_image_ar' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            // Status fields
+            'is_homepage' => 'nullable|boolean',
+            'is_published' => 'nullable|boolean',
+        ], [
+            'url_slug_en.regex' => 'The English URL slug can only contain lowercase letters, numbers, and hyphens.',
+            'url_slug_en.unique' => 'This English URL slug is already in use.',
+            'url_slug_ar.unique' => 'This Arabic URL slug is already in use.',
         ]);
 
         // Handle file uploads
@@ -154,6 +218,11 @@ class PageController extends Controller
                 Storage::disk('public')->delete($page->og_image_ar);
             }
             $validated['og_image_ar'] = $request->file('og_image_ar')->store('pages/og-images', 'public');
+        }
+
+        // If this page is set as homepage, unset other homepages
+        if (!empty($validated['is_homepage']) && $validated['is_homepage'] && !$page->is_homepage) {
+            Page::where('is_homepage', true)->update(['is_homepage' => false]);
         }
 
         $page->update($validated);
@@ -187,8 +256,17 @@ class PageController extends Controller
         $newPage = $page->replicate();
         $newPage->name_en = $page->name_en ? $page->name_en . ' (Copy)' : null;
         $newPage->name_ar = $page->name_ar ? $page->name_ar . ' (نسخة)' : null;
-        $newPage->url_slug_en = $page->url_slug_en ? $page->url_slug_en . '-copy' : null;
-        $newPage->url_slug_ar = $page->url_slug_ar ? $page->url_slug_ar . '-copy' : null;
+        
+        // Generate unique slugs for the copy
+        if ($page->url_slug_en) {
+            $newPage->url_slug_en = $this->generateUniqueSlug($page->url_slug_en . '-copy', 'url_slug_en');
+        }
+        if ($page->url_slug_ar) {
+            $newPage->url_slug_ar = $this->generateUniqueSlug($page->url_slug_ar . '-copy', 'url_slug_ar');
+        }
+        
+        // Duplicated page should never be homepage
+        $newPage->is_homepage = false;
         
         // Copy images if they exist
         if ($page->og_image_en) {
@@ -206,7 +284,68 @@ class PageController extends Controller
         }
         
         $newPage->save();
+        
+        // Duplicate all sections
+        $page->duplicateSectionsTo($newPage);
 
         return redirect()->route('pages.index')->with('success', 'Page duplicated successfully.');
+    }
+
+    /**
+     * Toggle homepage status for a page.
+     */
+    public function toggleHomepage(Page $page)
+    {
+        if ($page->is_homepage) {
+            // Cannot unset homepage without setting another
+            return redirect()->route('pages.index')->with('error', 'You must set another page as homepage first.');
+        }
+
+        // Unset current homepage
+        Page::where('is_homepage', true)->update(['is_homepage' => false]);
+        
+        // Set this page as homepage
+        $page->update(['is_homepage' => true]);
+
+        return redirect()->route('pages.index')->with('success', 'Homepage updated successfully.');
+    }
+
+    /**
+     * Toggle published status for a page.
+     */
+    public function togglePublished(Page $page)
+    {
+        $page->update(['is_published' => !$page->is_published]);
+
+        $status = $page->is_published ? 'published' : 'unpublished';
+        return redirect()->route('pages.index')->with('success', "Page {$status} successfully.");
+    }
+
+    /**
+     * Generate a unique slug for a given field.
+     */
+    private function generateUniqueSlug(string $value, string $field): string
+    {
+        // Convert to lowercase and replace spaces with hyphens
+        $slug = Str::slug($value);
+        
+        // If Arabic, transliterate or keep as-is
+        if ($field === 'url_slug_ar' && !preg_match('/^[a-z0-9\-]+$/', $slug)) {
+            // For Arabic, we'll use the original value but make it URL-safe
+            $slug = urlencode($value);
+            // Replace encoded spaces with hyphens
+            $slug = str_replace(['%20', '+'], '-', $slug);
+        }
+        
+        // Check if slug exists and make it unique
+        $originalSlug = $slug;
+        $counter = 1;
+        
+        while (Page::where($field, $slug)->exists()) {
+            $slug = $originalSlug . '-' . $counter;
+            $counter++;
+        }
+        
+        return $slug;
     }
 }

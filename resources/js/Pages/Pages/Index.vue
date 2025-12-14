@@ -177,6 +177,12 @@ const duplicatePage = (pageId) => {
                         </td>
                         <td class="actions-column">
                             <div class="action-buttons">
+                                <button class="btn-icon btn-primary-icon" title="Builder" @click="router.visit(route('pages.builder.index', page.id))">
+                                    <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M3 5a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5z" stroke="currentColor" stroke-width="1.5"/>
+                                        <path d="M3 7h14M7 3v14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                    </svg>
+                                </button>
                                 <button class="btn-icon" title="Edit" @click="editPage(page.id, 'default')">
                                     <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M14.166 2.5L17.5 5.83333L6.66667 16.6667H3.33334V13.3333L14.166 2.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -369,6 +375,15 @@ const duplicatePage = (pageId) => {
 .action-buttons .btn-icon svg {
     width: 18px;
     height: 18px;
+}
+
+.btn-primary-icon {
+    background-color: var(--color-primary) !important;
+    color: #ffffff !important;
+}
+
+.btn-primary-icon:hover {
+    background-color: #003a38 !important;
 }
 
 /* Pagination */
