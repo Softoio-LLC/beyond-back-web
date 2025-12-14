@@ -24,3 +24,6 @@ Homestead.yaml
 Thumbs.db
 /template
 /public
+.github/
+composer.lock
+*.lock
