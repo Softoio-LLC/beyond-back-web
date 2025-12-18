@@ -2,10 +2,13 @@
 import { ref, onMounted } from 'vue';
 import { Link, router, useForm } from '@inertiajs/vue3';
 import DashboardLayout from '@/Layouts/DashboardLayout.vue';
+import { useSlugify } from '@/composables/useSlugify';
 import saFlag from '@/../assets/sa-flag.svg';
 import usFlag from '@/../assets/us-flag.svg';
 
 defineOptions({ layout: DashboardLayout });
+
+const { formatAsSlug } = useSlugify();
 
 const props = defineProps({
     page: {
@@ -41,6 +44,20 @@ const form = useForm({
 
 const ogImageEnPreview = ref(props.page.og_image_en || null);
 const ogImageArPreview = ref(props.page.og_image_ar || null);
+
+// Format English slug when edited
+const handleEnglishSlugBlur = () => {
+    if (form.url_slug_en) {
+        form.url_slug_en = formatAsSlug(form.url_slug_en, 'en');
+    }
+};
+
+// Format Arabic slug when edited
+const handleArabicSlugBlur = () => {
+    if (form.url_slug_ar) {
+        form.url_slug_ar = formatAsSlug(form.url_slug_ar, 'ar');
+    }
+};
 
 const handleImageUpload = (event, lang) => {
     const file = event.target.files[0];
@@ -130,8 +147,10 @@ const save = () => {
                             type="text" 
                             class="form-input" 
                             v-model="form.url_slug_en"
-                            placeholder=""
+                            @blur="handleEnglishSlugBlur"
+                            placeholder="page-url-slug"
                         />
+                        <div class="form-hint">The English URL slug can only contain lowercase letters, numbers, and hyphens.</div>
                         <div v-if="form.errors.url_slug_en" class="form-error">{{ form.errors.url_slug_en }}</div>
                     </div>
 
@@ -286,8 +305,11 @@ const save = () => {
                             type="text" 
                             class="form-input" 
                             v-model="form.url_slug_ar"
-                            placeholder=""
+                            @blur="handleArabicSlugBlur"
+                            placeholder="عنوان-url-الصفحة"
+                            dir="rtl"
                         />
+                        <div class="form-hint">Arabic slug with readable Arabic characters.</div>
                         <div v-if="form.errors.url_slug_ar" class="form-error">{{ form.errors.url_slug_ar }}</div>
                     </div>
 
@@ -635,6 +657,12 @@ const save = () => {
 
 .form-error {
     color: var(--color-danger);
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.form-hint {
+    color: var(--color-text-muted);
     font-size: 12px;
     margin-top: 4px;
 }

@@ -19,6 +19,7 @@ const emit = defineEmits(['close', 'add']);
 const selectedSection = ref(null);
 const hoveredSection = ref(null);
 const showPreview = ref(false);
+const previewPosition = ref({ x: 0, y: 0 });
 
 const selectSection = (sectionType) => {
     selectedSection.value = sectionType;
@@ -33,18 +34,35 @@ const handleAdd = () => {
 
 const handleClose = () => {
     selectedSection.value = null;
+    hidePreview();
     emit('close');
+};
+
+const updatePreviewPosition = (event) => {
+    // Position preview to the right of the cursor with offset
+    const offset = 20;
+    let x = event.clientX + offset;
+    let y = event.clientY + offset;
+    
+    // Prevent preview from going off-screen
+    const previewWidth = 500;
+    const previewHeight = 400;
+    
+    if (x + previewWidth > window.innerWidth) {
+        x = event.clientX - previewWidth - offset;
+    }
+    
+    if (y + previewHeight > window.innerHeight) {
+        y = window.innerHeight - previewHeight - 20;
+    }
+    
+    previewPosition.value = { x, y };
 };
 
 const showSectionPreview = (sectionType, event) => {
     if (sectionType.preview_image) {
-        hoveredSection.value = {
-            ...sectionType,
-            position: {
-                x: event.clientX,
-                y: event.clientY,
-            }
-        };
+        hoveredSection.value = sectionType;
+        updatePreviewPosition(event);
         showPreview.value = true;
     }
 };
@@ -56,6 +74,10 @@ const hidePreview = () => {
 
 const getPreviewImageUrl = (path) => {
     if (!path) return '';
+    // Support both storage and direct asset paths
+    if (path.startsWith('/assets/') || path.startsWith('http')) {
+        return path;
+    }
     return `/storage/${path}`;
 };
 </script>
@@ -78,6 +100,7 @@ const getPreviewImageUrl = (path) => {
                     :key="sectionType.id"
                     :class="['section-card', { 'selected': selectedSection?.id === sectionType.id }]"
                     @click="selectSection(sectionType)"
+                    @mouseleave="hidePreview"
                 >
                     <!-- Section Icon -->
                     <div class="card-icon">
@@ -92,10 +115,11 @@ const getPreviewImageUrl = (path) => {
                     
                     <!-- Info Button (Preview on hover) -->
                     <button
+                        v-if="sectionType.preview_image"
                         class="info-btn"
                         @click.stop
                         @mouseenter="showSectionPreview(sectionType, $event)"
-                        @mouseleave="hidePreview"
+                        @mousemove="updatePreviewPosition($event)"
                     >
                         <svg viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
@@ -124,6 +148,10 @@ const getPreviewImageUrl = (path) => {
                 <div
                     v-if="showPreview && hoveredSection && hoveredSection.preview_image"
                     class="preview-tooltip"
+                    :style="{
+                        left: previewPosition.x + 'px',
+                        top: previewPosition.y + 'px'
+                    }"
                 >
                     <div class="preview-header">
                         <h3 class="preview-title">{{ hoveredSection.name_en }}</h3>
@@ -295,16 +323,13 @@ const getPreviewImageUrl = (path) => {
 /* Preview Tooltip */
 .preview-tooltip {
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90%;
-    max-width: 500px;
+    width: 400px;
     background-color: #ffffff;
     border-radius: 8px;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
     z-index: 10001;
     overflow: hidden;
+    pointer-events: none;
 }
 
 .preview-header {
@@ -336,12 +361,11 @@ const getPreviewImageUrl = (path) => {
 /* Transitions */
 .preview-enter-active,
 .preview-leave-active {
-    transition: all 0.2s ease;
+    transition: opacity 0.15s ease;
 }
 
 .preview-enter-from,
 .preview-leave-to {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.95);
 }
 </style>

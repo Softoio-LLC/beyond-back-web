@@ -98,9 +98,16 @@
                                             class="link-input"
                                         />
                                         <TextInput
-                                            :modelValue="link.url || ''"
-                                            @update:modelValue="updateLinkField(colIndex, linkIndex, 'url', $event)"
-                                            placeholder="URL"
+                                            :modelValue="link.url_en || ''"
+                                            @update:modelValue="updateLinkField(colIndex, linkIndex, 'url_en', $event)"
+                                            placeholder="URL (EN)"
+                                            class="link-input url-input"
+                                        />
+                                        <TextInput
+                                            :modelValue="link.url_ar || ''"
+                                            @update:modelValue="updateLinkField(colIndex, linkIndex, 'url_ar', $event)"
+                                            placeholder="URL (AR)"
+                                            dir="rtl"
                                             class="link-input url-input"
                                         />
                                     </div>
@@ -122,6 +129,7 @@
         <div v-if="showContactInfo" class="editor-section">
             <div class="section-header">
                 <h4 class="section-title">Contact Info</h4>
+                <span class="fixed-notice">Fixed 4 items (Phone, WhatsApp, Email, Location)</span>
             </div>
             
             <!-- Contact Section Title -->
@@ -145,21 +153,15 @@
                 </div>
             </div>
             
-            <!-- Contact Items -->
+            <!-- Contact Items (Fixed - No Add/Remove) -->
             <div class="contact-items-section">
                 <div class="links-header">
                     <span class="links-title">Contact Items</span>
-                    <button type="button" class="add-link-btn" @click="addContactItem">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                        </svg>
-                        Add Item
-                    </button>
+                    <span class="items-count">{{ (localContactInfo.items || []).length }} / 4 items</span>
                 </div>
                 
                 <div ref="contactItemsContainer" class="contact-items-list">
-                    <div v-for="(item, itemIndex) in localContactInfo.items || []" :key="itemIndex" class="contact-item" :data-index="itemIndex">
+                    <div v-for="(item, itemIndex) in localContactInfo.items || []" :key="itemIndex" class="contact-item contact-item-fixed" :data-index="itemIndex">
                         <div class="contact-item-drag-handle">
                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <circle cx="9" cy="5" r="1"></circle>
@@ -190,12 +192,7 @@
                                 class="contact-input"
                             />
                         </div>
-                        <button type="button" class="remove-link-btn" @click="removeContactItem(itemIndex)">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <line x1="18" y1="6" x2="6" y2="18"></line>
-                                <line x1="6" y1="6" x2="18" y2="18"></line>
-                            </svg>
-                        </button>
+                        <!-- No delete button for fixed items -->
                     </div>
                 </div>
             </div>
@@ -377,7 +374,8 @@ const addLink = (colIndex) => {
     localMenuColumns.value[colIndex].links.push({
         label_en: '',
         label_ar: '',
-        url: '#'
+        url_en: '#',
+        url_ar: '#'
     });
     emit('update:menuColumns', localMenuColumns.value);
 };
@@ -713,6 +711,23 @@ onMounted(() => {
     color: var(--color-primary, #004F4C);
 }
 
+.fixed-notice {
+    font-size: 0.75rem;
+    color: #6b7280;
+    background-color: #fef3c7;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.items-count {
+    font-size: 0.75rem;
+    color: #6b7280;
+    background-color: #f3f4f6;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+}
+
 .links-list,
 .contact-items-list,
 .social-items-list {
@@ -731,6 +746,11 @@ onMounted(() => {
     background-color: #f9fafb;
     border: 1px solid #e5e7eb;
     border-radius: 4px;
+}
+
+.contact-item-fixed {
+    background-color: #f0fdf4;
+    border-color: #86efac;
 }
 
 .link-drag-handle,

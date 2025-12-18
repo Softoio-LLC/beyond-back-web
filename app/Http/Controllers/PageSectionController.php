@@ -9,6 +9,7 @@ use App\Models\PageSection;
 use App\Models\SectionType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -63,15 +64,77 @@ class PageSectionController extends Controller
             abort(403, 'Section does not belong to this page.');
         }
 
-        $validated = $request->validated();
-        
-        $section->update([
-            'is_active' => $validated['is_active'] ?? $section->is_active,
-            'content' => $validated['content'] ?? $section->content,
-            'custom_css' => $validated['custom_css'] ?? $section->custom_css,
+        // Debug logging
+        Log::info('Section Update Request', [
+            'page_id' => $page->id,
+            'section_id' => $section->id,
+            'all_input' => $request->all(),
+            'validated' => $request->validated(),
         ]);
 
-        return back()->with('success', 'Section updated successfully.');
+        $validated = $request->validated();
+        
+        // If content is provided, update it
+        if (isset($validated['content']) && !empty($validated['content'])) {
+            $content = $validated['content'];
+            
+            // Unwrap nested content if it exists (fix for corrupted data)
+            // If content has a single 'content' key that contains the actual data, unwrap it
+            if (is_array($content) && count($content) === 1 && isset($content['content']) && is_array($content['content'])) {
+                $content = $content['content'];
+            }
+            
+            // Also handle deeply nested content (recursive unwrap)
+            while (is_array($content) && isset($content['content']) && is_array($content['content']) 
+                   && count(array_diff(array_keys($content), ['content'])) === 0) {
+                $content = $content['content'];
+            }
+
+            // Validate contact_info items - must always have exactly 4 items
+            if (isset($content['contact_info']) && isset($content['contact_info']['items'])) {
+                $items = $content['contact_info']['items'];
+                
+                // Ensure exactly 4 items (no more, no less)
+                if (count($items) > 4) {
+                    $content['contact_info']['items'] = array_slice($items, 0, 4);
+                } elseif (count($items) < 4) {
+                    // Fill missing items with defaults
+                    $defaultItems = [
+                        ['icon' => '/assets/img/telephone-icon.svg', 'text' => '', 'url' => '#'],
+                        ['icon' => '/assets/img/whatsapp-icon.svg', 'text' => '', 'url' => '#'],
+                        ['icon' => '/assets/img/mail-icon.svg', 'text' => '', 'url' => '#'],
+                        ['icon' => '/assets/img/location-icon.svg', 'text' => '', 'url' => '#'],
+                    ];
+                    while (count($content['contact_info']['items']) < 4) {
+                        $idx = count($content['contact_info']['items']);
+                        $content['contact_info']['items'][] = $defaultItems[$idx] ?? $defaultItems[0];
+                    }
+                }
+            }
+            
+            $section->content = $content;
+        }
+        
+        // If is_active is provided, update it
+        if (isset($validated['is_active'])) {
+            $section->is_active = $validated['is_active'];
+        }
+        
+        // If custom_css is provided, update it
+        if (isset($validated['custom_css'])) {
+            $section->custom_css = $validated['custom_css'];
+        }
+        
+        // Save the section
+        $saved = $section->save();
+        
+        Log::info('Section Save Result', [
+            'saved' => $saved,
+            'section_content' => $section->content,
+        ]);
+
+        // Redirect to page builder index (not section URL)
+        return redirect()->route('pages.builder.index', $page)->with('success', 'Section updated successfully.');
     }
 
     /**
@@ -94,7 +157,8 @@ class PageSectionController extends Controller
         // Reorder remaining sections
         $this->reorderAfterDelete($page);
 
-        return back()->with('success', 'Section deleted successfully.');
+        // Redirect to page builder (not back to the deleted section URL)
+        return redirect()->route('pages.builder.index', $page)->with('success', 'Section deleted successfully.');
     }
 
     /**

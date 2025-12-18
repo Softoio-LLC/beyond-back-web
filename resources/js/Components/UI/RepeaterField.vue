@@ -332,6 +332,16 @@ export default {
         // Helper to get image data from item
         getImageData(item, field) {
             const imageKey = field.key;
+            
+            // For simple alt (non-bilingual), use just 'alt'
+            if (field.simpleAlt) {
+                return {
+                    image: item[imageKey] || item.image || '',
+                    alt_en: item.alt || '',
+                    alt_ar: item.alt || '',
+                };
+            }
+            
             const altEnKey = field.altKey ? `${field.altKey}_en` : `${field.key}_alt_en`;
             const altArKey = field.altKey ? `${field.altKey}_ar` : `${field.key}_alt_ar`;
             
@@ -349,7 +359,22 @@ export default {
         
         // Helper to set image data
         setImageData(index, field, value) {
+            // Guard against undefined items
+            if (!this.items || !this.items[index]) {
+                console.warn('setImageData: Invalid index or items not initialized', { index, itemsLength: this.items?.length });
+                return;
+            }
+            
             const imageKey = field.key;
+            
+            // For simple alt (non-bilingual), store as just 'alt'
+            if (field.simpleAlt) {
+                this.items[index][imageKey] = value.image;
+                this.items[index].alt = value.alt_en || value.alt_ar || '';
+                this.emitUpdate();
+                return;
+            }
+            
             const altEnKey = field.altKey ? `${field.altKey}_en` : `${field.key}_alt_en`;
             const altArKey = field.altKey ? `${field.altKey}_ar` : `${field.key}_alt_ar`;
             

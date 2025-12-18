@@ -1,6 +1,14 @@
+<script>
+// Global state to track if the app has loaded initially
+let isAppLoaded = false;
+</script>
+
 <script setup>
 import { Head } from '@inertiajs/vue3';
-import { computed, onMounted, onUnmounted, watch } from 'vue';
+import { computed, onMounted, onUnmounted, watch, ref } from 'vue';
+import GlobalLoader from '@/Components/GlobalLoader.vue';
+
+const isLoading = ref(false);
 
 const props = defineProps({
     lang: {
@@ -36,6 +44,24 @@ const props = defineProps({
 const isRtl = computed(() => props.lang === 'ar');
 const direction = computed(() => isRtl.value ? 'rtl' : 'ltr');
 
+// Inject critical CSS to prevent FOUC
+const injectCriticalCSS = () => {
+    // Check if critical CSS is already injected
+    if (document.getElementById('critical-fouc-css')) return;
+    
+    const criticalCSS = `
+        html.loading { visibility: hidden !important; opacity: 0 !important; }
+        html.loaded { visibility: visible !important; opacity: 1 !important; transition: opacity 0.2s ease-in; }
+        html { animation: fouc-fallback 0s 0.1s forwards; }
+        @keyframes fouc-fallback { to { visibility: visible; opacity: 1; } }
+    `;
+    
+    const styleElement = document.createElement('style');
+    styleElement.id = 'critical-fouc-css';
+    styleElement.textContent = criticalCSS;
+    document.head.insertBefore(styleElement, document.head.firstChild);
+};
+
 // Computed JSON-LD script content
 const jsonLdContent = computed(() => {
     if (!props.jsonLdSchema || props.jsonLdSchema.length === 0) {
@@ -54,21 +80,6 @@ const jsonLdContent = computed(() => {
     });
 });
 
-// Load external scripts
-const loadScript = (src) => {
-    return new Promise((resolve, reject) => {
-        if (document.querySelector(`script[src="${src}"]`)) {
-            resolve();
-            return;
-        }
-        const script = document.createElement('script');
-        script.src = src;
-        script.onload = resolve;
-        script.onerror = reject;
-        document.body.appendChild(script);
-    });
-};
-
 // Inject JSON-LD schema into head
 let jsonLdScriptElement = null;
 
@@ -86,25 +97,51 @@ const injectJsonLd = () => {
     }
 };
 
-// Set HTML attributes and load scripts on mount
+// Set HTML attributes on mount
 onMounted(async () => {
+    // Inject critical CSS first
+    injectCriticalCSS();
+    
+    // Prevent FOUC - add loading class
+    document.documentElement.classList.add('loading');
+    
+    // Only show loader on the very first load of the session
+    if (!isAppLoaded) {
+        isLoading.value = true;
+    }
+
     document.documentElement.setAttribute('dir', direction.value);
     document.documentElement.setAttribute('lang', props.lang);
     
     // Inject JSON-LD schema
     injectJsonLd();
 
-    // Load scripts in order
-    await loadScript('/assets/js/bootstrap.bundle.min.js');
-    await loadScript('https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js');
-    await loadScript('/assets/js/aos.js');
-    await loadScript('/assets/js/main.js');
+    // Remove loading class and show content
+    requestAnimationFrame(() => {
+        document.documentElement.classList.remove('loading');
+        document.documentElement.classList.add('loaded');
+    });
+
+    // Scripts are now bundled with Vite - no dynamic loading needed
+    // Hide loader after a short delay for smooth transition
+    if (!isAppLoaded) {
+        setTimeout(() => {
+            isLoading.value = false;
+            isAppLoaded = true;
+        }, 200);
+    }
 });
 
 // Watch for JSON-LD changes
 watch(() => props.jsonLdSchema, () => {
     injectJsonLd();
 }, { deep: true });
+
+// Update direction when language changes
+watch(() => props.lang, () => {
+    document.documentElement.setAttribute('dir', direction.value);
+    document.documentElement.setAttribute('lang', props.lang);
+});
 
 // Cleanup on unmount
 onUnmounted(() => {
@@ -115,6 +152,7 @@ onUnmounted(() => {
 </script>
 
 <template>
+    <GlobalLoader :loading="isLoading" />
     <Head>
         <title>{{ page.title }}</title>
         <meta name="description" :content="page.description" />
@@ -152,15 +190,14 @@ onUnmounted(() => {
         <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png" />
 
-        <!-- CSS Files -->
+        <!-- CSS Files (Swiper and AOS CSS is now bundled via Vite) -->
         <link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
         <link rel="stylesheet" href="/assets/fontawesome-pro/fontawesome.min.css" />
         <link rel="stylesheet" href="/assets/css/all.min.css" />
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-        <link rel="stylesheet" href="/assets/css/aos.css" />
         <link rel="stylesheet" href="/assets/css/default.css" />
         <link rel="stylesheet" href="/assets/css/style.css" />
         <link rel="stylesheet" href="/assets/css/responsive.css" />
+        <link rel="stylesheet" href="/assets/css/custom-fixes.css" />
     </Head>
 
     <div class="main-area overflow-hidden">

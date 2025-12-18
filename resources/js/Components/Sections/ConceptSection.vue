@@ -12,9 +12,32 @@ const props = defineProps({
     }
 });
 
+// Helper to get proper image URL
+const getImageUrl = (img) => {
+    if (!img || typeof img !== 'string') return '';
+    if (img.startsWith('http') || img.startsWith('/')) return img;
+    return `/storage/${img}`;
+};
+
 const getTitle = (block) => props.lang === 'ar' ? block.title_ar : block.title_en;
 const getParagraphs = (block) => props.lang === 'ar' ? block.paragraphs_ar : block.paragraphs_en;
 const getCounterLabel = (counter) => props.lang === 'ar' ? counter.label_ar : counter.label_en;
+
+// Process blocks with proper image URLs
+const blocks = computed(() => {
+    const rawBlocks = props.content.blocks || [];
+    return rawBlocks.map(block => ({
+        ...block,
+        slides: (block.slides || []).map(slide => ({
+            ...slide,
+            imageUrl: getImageUrl(slide.image)
+        }))
+    }));
+});
+
+const shapeImageUrl = computed(() => getImageUrl(props.content.shape_image));
+const counterBgImageUrl = computed(() => getImageUrl(props.content.counter_bg_image));
+const bottomShapeImageUrl = computed(() => getImageUrl(props.content.bottom_shape_image));
 </script>
 
 <template>
@@ -23,13 +46,13 @@ const getCounterLabel = (counter) => props.lang === 'ar' ? counter.label_ar : co
             <div class="concept-inner-block position-relative z-1 overflow-hidden">
                 <!-- First Concept Block -->
                 <div 
-                    v-for="(block, blockIndex) in content.blocks" 
+                    v-for="(block, blockIndex) in blocks" 
                     :key="blockIndex"
                     class="concept-wrapper position-relative z-1 overflow-hidden"
                     :class="{ 'second-concept-wrapper m-0': blockIndex > 0 }"
                 >
-                    <div class="concept-wrapper-shape position-absolute z-n1">
-                        <img class="w-100 h-100 object-fit-cover" :src="content.shape_image" alt="Shape" />
+                    <div v-if="shapeImageUrl" class="concept-wrapper-shape position-absolute z-n1">
+                        <img class="w-100 h-100 object-fit-cover" :src="shapeImageUrl" alt="Shape" loading="lazy" decoding="async" />
                     </div>
                     <div class="row align-items-center">
                         <div 
@@ -47,8 +70,10 @@ const getCounterLabel = (counter) => props.lang === 'ar' ? counter.label_ar : co
                                     >
                                         <img 
                                             class="w-100 h-100 object-fit-cover" 
-                                            :src="slide.image" 
-                                            :alt="slide.alt || 'Thumb'" 
+                                            :src="slide.imageUrl" 
+                                            :alt="slide.alt || 'Thumb'"
+                                            loading="lazy"
+                                            decoding="async"
                                         />
                                     </div>
                                 </div>
@@ -60,9 +85,8 @@ const getCounterLabel = (counter) => props.lang === 'ar' ? counter.label_ar : co
                             data-aos="fade-right"
                         >
                             <div class="concept-content">
-                                <h3>{{ getTitle(block) }}</h3>
-                                <p v-for="(paragraph, pIndex) in getParagraphs(block)" :key="pIndex">
-                                    {{ paragraph }}
+                                <h3 v-html="getTitle(block)"></h3>
+                                <p v-for="(paragraph, pIndex) in getParagraphs(block)" :key="pIndex" v-html="paragraph">
                                 </p>
                             </div>
                         </div>
@@ -75,18 +99,18 @@ const getCounterLabel = (counter) => props.lang === 'ar' ? counter.label_ar : co
                         v-for="(counter, counterIndex) in content.counters" 
                         :key="counterIndex"
                         class="counter-up-step d-flex align-items-center justify-content-center flex-column" 
-                        :style="{ backgroundImage: `url('${content.counter_bg_image}')` }"
+                        :style="{ backgroundImage: counterBgImageUrl ? `url('${counterBgImageUrl}')` : '' }"
                         data-aos="zoom-in" 
                         :data-aos-delay="(counterIndex + 1) * 100"
                     >
-                        <h5>{{ counter.value }}</h5>
-                        <p>{{ getCounterLabel(counter) }}</p>
+                        <h5 v-html="counter.value"></h5>
+                        <p v-html="getCounterLabel(counter)"></p>
                     </div>
                 </div>
 
                 <!-- Bottom Shape -->
-                <div class="concept-shape position-absolute zn-1 w-100" data-aos="fade-up">
-                    <img :src="content.bottom_shape_image" alt="Shape" />
+                <div v-if="bottomShapeImageUrl" class="concept-shape position-absolute zn-1 w-100" data-aos="fade-up">
+                    <img :src="bottomShapeImageUrl" alt="Shape" loading="lazy" decoding="async" />
                 </div>
             </div>
         </div>

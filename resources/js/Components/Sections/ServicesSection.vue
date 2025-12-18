@@ -12,9 +12,27 @@ const props = defineProps({
     }
 });
 
+// Helper to get proper image URL
+const getImageUrl = (img) => {
+    if (!img || typeof img !== 'string') return '';
+    if (img.startsWith('http') || img.startsWith('/')) return img;
+    return `/storage/${img}`;
+};
+
 const sectionTitle = computed(() => props.lang === 'ar' ? props.content.title_ar : props.content.title_en);
 const getTitle = (service) => props.lang === 'ar' ? service.title_ar : service.title_en;
 const getDescription = (service) => props.lang === 'ar' ? service.description_ar : service.description_en;
+
+// Process services with proper image URLs
+const services = computed(() => {
+    const rawServices = props.content.services || [];
+    return rawServices.map(service => ({
+        ...service,
+        imageUrl: getImageUrl(service.image)
+    }));
+});
+
+const shapeImageUrl = computed(() => getImageUrl(props.content.shape_image));
 </script>
 
 <template>
@@ -22,11 +40,11 @@ const getDescription = (service) => props.lang === 'ar' ? service.description_ar
         <div class="container">
             <div class="service-inner-block">
                 <div class="common-title text-center" data-aos="fade-up">
-                    <h3>{{ sectionTitle }}</h3>
+                    <h3 v-html="sectionTitle"></h3>
                 </div>
                 <div class="row">
                     <div 
-                        v-for="(service, index) in content.services" 
+                        v-for="(service, index) in services" 
                         :key="index"
                         class="col-md-6" 
                         data-aos="fade-up"
@@ -35,21 +53,23 @@ const getDescription = (service) => props.lang === 'ar' ? service.description_ar
                             <div class="service-card-thumb w-100">
                                 <img 
                                     class="w-100 h-100 object-fit-cover" 
-                                    :src="service.image" 
-                                    alt="Thumb" 
+                                    :src="service.imageUrl" 
+                                    alt="Thumb"
+                                    loading="lazy"
+                                    decoding="async"
                                 />
                             </div>
                             <div class="service-card-content">
-                                <h4>{{ getTitle(service) }}</h4>
-                                <p>{{ getDescription(service) }}</p>
+                                <h4 v-html="getTitle(service)"></h4>
+                                <p v-html="getDescription(service)"></p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="service-shape position-absolute z-n1">
-            <img class="w-100 h-100 object-fit-cover" :src="content.shape_image" alt="Shape" />
+        <div v-if="shapeImageUrl" class="service-shape position-absolute z-n1">
+            <img class="w-100 h-100 object-fit-cover" :src="shapeImageUrl" alt="Shape" loading="lazy" decoding="async" />
         </div>
     </section>
 </template>

@@ -1,10 +1,14 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PageSectionController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PublicContactController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\WebsiteController;
 use Illuminate\Support\Facades\Route;
@@ -45,13 +49,33 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthController::class, 'destroyLogin'])->name('logout');
 
-    Route::get('/dashboard', function () {
-        return redirect()->route('pages.index');
-    })->name('dashboard');
+    // Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    // Contacts routes
+    Route::prefix('contacts')->name('contacts.')->group(function () {
+        Route::get('/', [ContactController::class, 'index'])->name('index');
+        Route::get('/{contact}', [ContactController::class, 'show'])->name('show');
+        Route::delete('/{contact}', [ContactController::class, 'destroy'])->name('destroy');
+        Route::post('/{contact}/toggle-read', [ContactController::class, 'toggleRead'])->name('toggle-read');
+        Route::post('/bulk-delete', [ContactController::class, 'bulkDestroy'])->name('bulk-destroy');
+        Route::post('/bulk-mark-read', [ContactController::class, 'bulkMarkRead'])->name('bulk-mark-read');
+    });
+
+    // Settings routes
+    Route::prefix('settings')->name('settings.')->group(function () {
+        Route::get('/custom-code', [SettingsController::class, 'customCode'])->name('custom-code');
+        Route::put('/custom-code', [SettingsController::class, 'updateCustomCode'])->name('custom-code.update');
+        Route::get('/seo', [SettingsController::class, 'seo'])->name('seo');
+        Route::put('/seo', [SettingsController::class, 'updateSeo'])->name('seo.update');
+        Route::get('/email', [SettingsController::class, 'email'])->name('email');
+        Route::put('/email', [SettingsController::class, 'updateEmail'])->name('email.update');
+        Route::post('/email/test', [SettingsController::class, 'testEmail'])->name('email.test');
+    });
 
     // Pages CRUD routes
     Route::get('/pages', [PageController::class, 'index'])->name('pages.index');
@@ -86,7 +110,13 @@ Route::middleware('auth')->group(function () {
 });
 
 // ============================================
+// PUBLIC CONTACT FORM
+// ============================================
+Route::post('/contact', [PublicContactController::class, 'store'])->name('contact.store');
+
+// ============================================
 // DYNAMIC PAGE ROUTES (must be last - catch-all)
 // ============================================
-Route::get('/ar/{slug}', [WebsiteController::class, 'showBySlug'])->name('website.page.ar')->where('slug', '[a-zA-Z0-9\-\_\u0600-\u06FF]+');
-Route::get('/{slug}', [WebsiteController::class, 'showBySlug'])->name('website.page')->where('slug', '[a-zA-Z0-9\-\_]+');
+// Arabic routes need to accept URL-encoded Arabic characters
+Route::get('/ar/{slug}', [WebsiteController::class, 'showBySlug'])->name('website.page.ar')->where('slug', '.*');
+Route::get('/{slug}', [WebsiteController::class, 'showBySlug'])->name('website.page')->where('slug', '[a-zA-Z0-9\-_]+');

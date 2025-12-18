@@ -1,4 +1,6 @@
 <script setup>
+import { computed } from 'vue';
+
 const props = defineProps({
     content: {
         type: Object,
@@ -9,6 +11,22 @@ const props = defineProps({
         required: true
     }
 });
+
+// Helper to get proper image URL
+const getImageUrl = (img) => {
+    if (!img || typeof img !== 'string') return '';
+    if (img.startsWith('http') || img.startsWith('/')) return img;
+    return `/storage/${img}`;
+};
+
+// Process logos with proper image URLs
+const logos = computed(() => {
+    const rawLogos = props.content.logos || [];
+    return rawLogos.map(logo => ({
+        ...logo,
+        imageUrl: getImageUrl(logo.image)
+    }));
+});
 </script>
 
 <template>
@@ -17,13 +35,13 @@ const props = defineProps({
             <div class="swiper brand-logos-slide">
                 <div class="swiper-wrapper">
                     <div 
-                        v-for="(logo, index) in content.logos" 
+                        v-for="(logo, index) in logos" 
                         :key="index" 
                         class="logo-items swiper-slide" 
                         data-aos="zoom-in"
                     >
                         <a :href="logo.url || '#'">
-                            <img :src="logo.image" :alt="logo.alt || 'Logo'" />
+                            <img :src="logo.imageUrl" :alt="logo.alt || 'Logo'" loading="lazy" decoding="async" />
                         </a>
                     </div>
                 </div>

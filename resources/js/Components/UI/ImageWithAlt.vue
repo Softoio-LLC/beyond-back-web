@@ -17,7 +17,7 @@ const props = defineProps({
     },
     size: {
         type: String,
-        default: 'medium',
+        default: 'original', // Use original to avoid server-side processing issues
     },
     currentLang: {
         type: String,
@@ -66,6 +66,8 @@ watch(() => props.modelValue, (newVal) => {
 const imageUrl = computed(() => {
     const img = imageData.value.image;
     if (!img) return '';
+    // Handle case where img might be an object
+    if (typeof img !== 'string') return '';
     if (img.startsWith('http') || img.startsWith('/')) return img;
     return `/storage/${img}`;
 });

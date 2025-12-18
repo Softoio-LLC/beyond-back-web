@@ -25,5 +25,5 @@ Thumbs.db
 /template
 /public
 .github/
-composer.lock
 *.lock
+*.md

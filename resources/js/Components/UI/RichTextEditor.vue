@@ -1,7 +1,15 @@
 <script setup>
-import { ref, watch, onMounted } from 'vue';
-import { QuillEditor } from '@vueup/vue-quill';
-import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import { ref, watch, onMounted, defineAsyncComponent } from 'vue';
+
+// Only load Quill on client side (it requires DOM)
+const QuillEditor = defineAsyncComponent(() =>
+    import('@vueup/vue-quill').then(m => m.QuillEditor)
+);
+
+// Import CSS only on client side
+if (typeof window !== 'undefined') {
+    import('@vueup/vue-quill/dist/vue-quill.snow.css');
+}
 
 const props = defineProps({
     modelValue: {
@@ -33,6 +41,12 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue']);
 
 const content = ref(props.modelValue);
+const isMounted = ref(false);
+
+// Only render QuillEditor on client side after mount
+onMounted(() => {
+    isMounted.value = true;
+});
 
 // Quill toolbar options - only bold, italic, underline, and quote
 const toolbarOptions = [
@@ -73,11 +87,15 @@ const onUpdate = (value) => {
         
         <div class="editor-wrapper">
             <QuillEditor
+                v-if="isMounted"
                 :content="content"
                 content-type="html"
                 :options="editorOptions"
                 @update:content="onUpdate"
             />
+            <div v-else class="editor-placeholder">
+                Loading editor...
+            </div>
         </div>
         
         <p v-if="error" class="error-message">{{ error }}</p>

@@ -1,5 +1,17 @@
 <script setup>
+/**
+ * HeroSection - Legacy wrapper component for backward compatibility
+ * 
+ * This component maintains backward compatibility with existing pages
+ * that use the old 'hero' section type key with a 'variant' field.
+ * 
+ * New implementations should use:
+ * - HeroSliderSection for homepage slider
+ * - HeroCommonSection for service pages (dark background)
+ */
 import { computed } from 'vue';
+import HeroSliderSection from './HeroSliderSection.vue';
+import HeroCommonSection from './HeroCommonSection.vue';
 
 const props = defineProps({
     content: {
@@ -12,48 +24,39 @@ const props = defineProps({
     }
 });
 
-const subtitle = computed(() => props.lang === 'ar' ? props.content.subtitle_ar : props.content.subtitle_en);
-const title = computed(() => props.lang === 'ar' ? props.content.title_ar : props.content.title_en);
-const description = computed(() => props.lang === 'ar' ? props.content.description_ar : props.content.description_en);
-const buttonText = computed(() => props.lang === 'ar' ? props.content.button_text_ar : props.content.button_text_en);
+// Determine which component to use based on variant
+const variant = computed(() => props.content.variant || 'slider');
+
+// Check if it's a slider variant (homepage)
+const isSliderVariant = computed(() => 
+    variant.value === 'slider' || variant.value === 'v1'
+);
+
+// Check if it's a service/common variant (dark background pages)
+const isServiceVariant = computed(() => 
+    variant.value === 'service' || variant.value === 'v2' || variant.value === 'common'
+);
 </script>
 
 <template>
-    <section class="hero-area position-relative" :style="{ backgroundImage: `url('${content.background_image}')` }">
-        <div class="container">
-            <div class="hero-inner-block">
-                <div class="hero-title" data-aos="fade-up">
-                    <h5>{{ subtitle }}</h5>
-                    <h1 v-html="title"></h1>
-                </div>
-                <div class="swiper hero-slide-thumb" data-aos="fade-up" data-aos-delay="300">
-                    <div class="swiper-wrapper">
-                        <div 
-                            v-for="(slide, index) in content.slides" 
-                            :key="index" 
-                            class="swiper-slide"
-                        >
-                            <div class="hero-slide-card">
-                                <img 
-                                    class="w-100 h-100 object-fit-cover" 
-                                    :src="slide.image" 
-                                    :alt="slide.alt || 'Thumb'" 
-                                />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="hero-content text-center mt-40" data-aos="fade-up" data-aos-delay="500">
-                    <p v-html="description"></p>
-                </div>
-                <div class="hero-btn d-flex justify-content-center" data-aos="fade-up">
-                    <a :href="content.button_url || '#'" class="common-btn d-flex align-items-center">
-                        {{ buttonText }}
-                        <span><i class="far fa-angle-left"></i></span>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
+    <!-- Slider variant (Homepage) -->
+    <HeroSliderSection 
+        v-if="isSliderVariant"
+        :content="content"
+        :lang="lang"
+    />
+    
+    <!-- Service/Common variant (Dark background - Service Pages) -->
+    <HeroCommonSection 
+        v-else-if="isServiceVariant"
+        :content="content"
+        :lang="lang"
+    />
+    
+    <!-- Default fallback to slider -->
+    <HeroSliderSection 
+        v-else
+        :content="content"
+        :lang="lang"
+    />
 </template>

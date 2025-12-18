@@ -27,40 +27,59 @@ class MediaController extends Controller
     public function uploadSectionImage(Request $request)
     {
         $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120', // 5MB max
+            'image' => 'required|file|mimes:jpeg,png,jpg,gif,webp,svg|max:5120', // 5MB max
             'section_type' => 'required|string',
             'size' => 'nullable|string|in:thumbnail,small,medium,large,hero,original',
         ]);
 
-        $file = $request->file('image');
-        $sectionType = Str::slug($request->section_type);
-        $size = $request->input('size', 'medium');
-        
-        // Generate unique filename
-        $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
-        $path = "sections/{$sectionType}";
-        
-        // Process and optimize image
-        $processedImage = $this->processImage($file, $size);
-        
-        // Store the image
-        $fullPath = "{$path}/{$filename}";
-        Storage::disk('public')->put($fullPath, $processedImage);
-        
-        // Get image dimensions
-        $imageInfo = getimagesizefromstring($processedImage);
-        
-        return response()->json([
-            'success' => true,
-            'path' => $fullPath,
-            'url' => Storage::disk('public')->url($fullPath),
-            'filename' => $filename,
-            'original_name' => $file->getClientOriginalName(),
-            'size' => strlen($processedImage),
-            'width' => $imageInfo[0] ?? null,
-            'height' => $imageInfo[1] ?? null,
-            'mime_type' => $imageInfo['mime'] ?? $file->getMimeType(),
-        ]);
+        try {
+            $file = $request->file('image');
+            $sectionType = Str::slug($request->section_type);
+            $size = $request->input('size', 'original'); // Default to original to avoid processing issues
+            
+            // Generate unique filename
+            $extension = strtolower($file->getClientOriginalExtension());
+            $filename = Str::uuid() . '.' . $extension;
+            $path = "sections/{$sectionType}";
+            $fullPath = "{$path}/{$filename}";
+            
+            // For SVG files or if size is 'original', store as-is without processing
+            if ($extension === 'svg' || $size === 'original') {
+                Storage::disk('public')->putFileAs($path, $file, $filename);
+                $fileSize = $file->getSize();
+                $imageInfo = @getimagesize($file->getPathname());
+            } else {
+                // Try to process and optimize image, fall back to original if it fails
+                try {
+                    $processedImage = $this->processImage($file, $size);
+                    Storage::disk('public')->put($fullPath, $processedImage);
+                    $fileSize = strlen($processedImage);
+                    $imageInfo = @getimagesizefromstring($processedImage);
+                } catch (\Exception $e) {
+                    // If processing fails, store original
+                    Storage::disk('public')->putFileAs($path, $file, $filename);
+                    $fileSize = $file->getSize();
+                    $imageInfo = @getimagesize($file->getPathname());
+                }
+            }
+            
+            return response()->json([
+                'success' => true,
+                'path' => $fullPath,
+                'url' => Storage::disk('public')->url($fullPath),
+                'filename' => $filename,
+                'original_name' => $file->getClientOriginalName(),
+                'size' => $fileSize,
+                'width' => $imageInfo[0] ?? null,
+                'height' => $imageInfo[1] ?? null,
+                'mime_type' => $imageInfo['mime'] ?? $file->getMimeType(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Upload failed: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**

@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue';
 import TextInput from './TextInput.vue';
+import UrlAutocomplete from './UrlAutocomplete.vue';
 import Sortable from 'sortablejs';
 
 const props = defineProps({
@@ -113,7 +114,8 @@ const addItem = () => {
     items.value.push({
         label_en: '',
         label_ar: '',
-        url: '#',
+        url_en: '#',
+        url_ar: '#',
         children: []
     });
     
@@ -147,7 +149,8 @@ const addChild = (parentIndex) => {
     items.value[parentIndex].children.push({
         label_en: '',
         label_ar: '',
-        url: '#'
+        url_en: '#',
+        url_ar: '#'
     });
     
     // Expand the new child
@@ -264,19 +267,46 @@ watch(items, () => {
 
                 <!-- Item Content -->
                 <div v-if="isExpanded(index)" class="item-content">
-                    <div class="fields-row">
-                        <TextInput
-                            :model-value="item[`label_${currentLang}`]"
-                            :label="`Label (${currentLang.toUpperCase()})`"
-                            placeholder="Enter menu label"
-                            @update:model-value="updateItemField(index, `label_${currentLang}`, $event)"
-                        />
-                        <TextInput
-                            :model-value="item.url"
-                            label="URL"
-                            placeholder="#section or /page"
-                            @update:model-value="updateItemField(index, 'url', $event)"
-                        />
+                    <!-- Both language fields shown together for clarity -->
+                    <div class="bilingual-fields">
+                        <div class="lang-field">
+                            <TextInput
+                                :model-value="item.label_en"
+                                label="Label (EN)"
+                                placeholder="English label"
+                                @update:model-value="updateItemField(index, 'label_en', $event)"
+                            />
+                        </div>
+                        <div class="lang-field">
+                            <TextInput
+                                :model-value="item.label_ar"
+                                label="Label (AR)"
+                                placeholder="Arabic label"
+                                dir="rtl"
+                                @update:model-value="updateItemField(index, 'label_ar', $event)"
+                            />
+                        </div>
+                    </div>
+                    <!-- Separate URLs for each language -->
+                    <div class="bilingual-fields">
+                        <div class="lang-field">
+                            <UrlAutocomplete
+                                :model-value="item.url_en || item.url || '#'"
+                                label="URL (EN)"
+                                placeholder="Type / for internal pages or # for anchors"
+                                lang="en"
+                                @update:model-value="updateItemField(index, 'url_en', $event)"
+                            />
+                        </div>
+                        <div class="lang-field">
+                            <UrlAutocomplete
+                                :model-value="item.url_ar || item.url || '#'"
+                                label="URL (AR)"
+                                placeholder="اكتب / للصفحات الداخلية أو # للروابط"
+                                lang="ar"
+                                @update:model-value="updateItemField(index, 'url_ar', $event)"
+                            />
+                        </div>
                     </div>
                     
                     <!-- Children Section -->
@@ -325,19 +355,46 @@ watch(items, () => {
                                 </div>
                                 
                                 <div v-if="isChildExpanded(index, childIndex)" class="child-content">
-                                    <div class="fields-row">
-                                        <TextInput
-                                            :model-value="child[`label_${currentLang}`]"
-                                            :label="`Label (${currentLang.toUpperCase()})`"
-                                            placeholder="Enter sub menu label"
-                                            @update:model-value="updateChildField(index, childIndex, `label_${currentLang}`, $event)"
-                                        />
-                                        <TextInput
-                                            :model-value="child.url"
-                                            label="URL"
-                                            placeholder="#section or /page"
-                                            @update:model-value="updateChildField(index, childIndex, 'url', $event)"
-                                        />
+                                    <!-- Both language fields shown together for sub items -->
+                                    <div class="bilingual-fields">
+                                        <div class="lang-field">
+                                            <TextInput
+                                                :model-value="child.label_en"
+                                                label="Label (EN)"
+                                                placeholder="English label"
+                                                @update:model-value="updateChildField(index, childIndex, 'label_en', $event)"
+                                            />
+                                        </div>
+                                        <div class="lang-field">
+                                            <TextInput
+                                                :model-value="child.label_ar"
+                                                label="Label (AR)"
+                                                placeholder="Arabic label"
+                                                dir="rtl"
+                                                @update:model-value="updateChildField(index, childIndex, 'label_ar', $event)"
+                                            />
+                                        </div>
+                                    </div>
+                                    <!-- Separate URLs for each language -->
+                                    <div class="bilingual-fields">
+                                        <div class="lang-field">
+                                            <UrlAutocomplete
+                                                :model-value="child.url_en || child.url || '#'"
+                                                label="URL (EN)"
+                                                placeholder="Type / for internal pages or # for anchors"
+                                                lang="en"
+                                                @update:model-value="updateChildField(index, childIndex, 'url_en', $event)"
+                                            />
+                                        </div>
+                                        <div class="lang-field">
+                                            <UrlAutocomplete
+                                                :model-value="child.url_ar || child.url || '#'"
+                                                label="URL (AR)"
+                                                placeholder="اكتب / للصفحات الداخلية أو # للروابط"
+                                                lang="ar"
+                                                @update:model-value="updateChildField(index, childIndex, 'url_ar', $event)"
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -660,5 +717,21 @@ watch(items, () => {
 .add-item-btn svg {
     width: 1.25rem;
     height: 1.25rem;
+}
+
+/* Bilingual fields layout */
+.bilingual-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.lang-field {
+    flex: 1;
+}
+
+.url-field {
+    margin-bottom: 0.5rem;
 }
 </style>

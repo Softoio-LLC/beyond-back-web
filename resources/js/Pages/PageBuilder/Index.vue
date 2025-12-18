@@ -11,6 +11,8 @@ import Sortable from 'sortablejs';
 // Import section components for live preview
 import HeaderSection from '@/Components/Sections/HeaderSection.vue';
 import HeroSection from '@/Components/Sections/HeroSection.vue';
+import HeroSliderSection from '@/Components/Sections/HeroSliderSection.vue';
+import HeroCommonSection from '@/Components/Sections/HeroCommonSection.vue';
 import PartnersSection from '@/Components/Sections/PartnersSection.vue';
 import ConceptSection from '@/Components/Sections/ConceptSection.vue';
 import ServicesSection from '@/Components/Sections/ServicesSection.vue';
@@ -22,6 +24,19 @@ import GallerySection from '@/Components/Sections/GallerySection.vue';
 import FAQSection from '@/Components/Sections/FAQSection.vue';
 import InquirySection from '@/Components/Sections/InquirySection.vue';
 import FooterSection from '@/Components/Sections/FooterSection.vue';
+import PageBannerSection from '@/Components/Sections/PageBannerSection.vue';
+import ContactBannerSection from '@/Components/Sections/ContactBannerSection.vue';
+import ContactInfoSection from '@/Components/Sections/ContactInfoSection.vue';
+import AboutSection from '@/Components/Sections/AboutSection.vue';
+// New section components
+import CommonServiceSection from '@/Components/Sections/CommonServiceSection.vue';
+import CounterAreaSection from '@/Components/Sections/CounterAreaSection.vue';
+import GalleryPageSection from '@/Components/Sections/GalleryPageSection.vue';
+import HeroRiyaSection from '@/Components/Sections/HeroRiyaSection.vue';
+import HeroJiyadSection from '@/Components/Sections/HeroJiyadSection.vue';
+import HeroShopsZSection from '@/Components/Sections/HeroShopsZSection.vue';
+import HeroBeyondERPSection from '@/Components/Sections/HeroBeyondERPSection.vue';
+import HeroBeyondPaySection from '@/Components/Sections/HeroBeyondPaySection.vue';
 
 defineOptions({ layout: DashboardLayout });
 
@@ -44,7 +59,9 @@ const props = defineProps({
 const sectionComponents = {
     'header': HeaderSection,
     'hero': HeroSection,
-    'slider': HeroSection,
+    'hero_slider': HeroSliderSection,
+    'hero_common': HeroCommonSection,
+    'slider': HeroSliderSection,
     'partners': PartnersSection,
     'concept': ConceptSection,
     'services': ServicesSection,
@@ -57,6 +74,19 @@ const sectionComponents = {
     'faq': FAQSection,
     'inquiry': InquirySection,
     'footer': FooterSection,
+    'page-banner': PageBannerSection,
+    'contact-banner': ContactBannerSection,
+    'contact-info': ContactInfoSection,
+    'about': AboutSection,
+    // New section components
+    'common_service': CommonServiceSection,
+    'counter_area': CounterAreaSection,
+    'gallery_page': GalleryPageSection,
+    'hero_riya': HeroRiyaSection,
+    'hero_jiyad': HeroJiyadSection,
+    'hero_shopsz': HeroShopsZSection,
+    'hero_beyond_erp': HeroBeyondERPSection,
+    'hero_beyond_pay': HeroBeyondPaySection,
 };
 
 // Get component for section type
@@ -70,6 +100,7 @@ const editingSectionId = ref(null);
 const sectionsList = ref([...props.sections]);
 const sortableInstance = ref(null);
 const hasUnsavedChanges = ref(false);
+const isSaving = ref(false);
 const toast = ref({ show: false, message: '', type: 'success' });
 const previewLang = ref('en');
 const previewDevice = ref('desktop');
@@ -306,7 +337,10 @@ const generateSectionHtml = (key, content, lang) => {
             return generateHeaderHtml(c, lang, t);
         case 'hero':
         case 'slider':
-            return generateHeroHtml(c, lang, t);
+        case 'hero_slider':
+            return generateHeroSliderHtml(c, lang, t);
+        case 'hero_common':
+            return generateHeroCommonHtml(c, lang, t);
         case 'partners':
             return generatePartnersHtml(c, lang, t);
         case 'concept':
@@ -330,6 +364,34 @@ const generateSectionHtml = (key, content, lang) => {
             return generateInquiryHtml(c, lang, t);
         case 'footer':
             return generateFooterHtml(c, lang, t);
+        case 'page-banner':
+            return generatePageBannerHtml(c, lang, t);
+        case 'contact-banner':
+            return generateContactBannerHtml(c, lang, t);
+        case 'contact-info':
+            return generateContactInfoHtml(c, lang, t);
+        case 'about':
+            return generateAboutHtml(c, lang, t);
+        case 'newsletter':
+            return generateNewsletterHtml(c, lang, t);
+        case 'map':
+            return generateMapHtml(c, lang, t);
+        case 'common_service':
+            return generateCommonServiceHtml(c, lang, t);
+        case 'counter_area':
+            return generateCounterAreaHtml(c, lang, t);
+        case 'gallery_page':
+            return generateGalleryPageHtml(c, lang, t);
+        case 'hero_riya':
+            return generateHeroRiyaHtml(c, lang, t);
+        case 'hero_jiyad':
+            return generateHeroJiyadHtml(c, lang, t);
+        case 'hero_shopsz':
+            return generateHeroShopsZHtml(c, lang, t);
+        case 'hero_beyond_erp':
+            return generateHeroBeyondERPHtml(c, lang, t);
+        case 'hero_beyond_pay':
+            return generateHeroBeyondPayHtml(c, lang, t);
         default:
             return `<div class="p-5 text-center text-muted">Section: ${key}</div>`;
     }
@@ -399,7 +461,82 @@ const generateHeaderHtml = (c, lang, t) => {
 
 // Hero Section HTML
 const generateHeroHtml = (c, lang, t) => {
+    const variant = c.variant || 'slider';
     const slides = c.slides || [];
+    const bgImage = c.background_image && c.background_image.trim() !== '' && !c.background_image.includes('undefined');
+    const defaultBg = 'linear-gradient(135deg, #004F4C 0%, #003836 100%)';
+    const angleIcon = lang === 'ar' ? 'far fa-angle-left' : 'far fa-angle-right';
+    const longArrowIcon = lang === 'ar' ? 'fal fa-long-arrow-left' : 'fal fa-long-arrow-right';
+    
+    // Variant: Service Layout (Dark background with gradient)
+    if (variant === 'service' || variant === 'v2') {
+        const bgStyle = bgImage ? `url(${c.background_image}) center/cover no-repeat` : defaultBg;
+        return `
+        <section class="hero-area v2 position-relative text-white pb-5 pb-lg-0" style="background: ${bgStyle}; min-height: 400px; padding: 80px 0;">
+            ${c.shape_image ? `<img src="${c.shape_image}" class="hero-shape" alt="" />` : ''}
+            <div class="container">
+                <div class="row flex-column-reverse flex-lg-row gap-4 gap-lg-0 align-items-center">
+                    <div class="col-lg-6">
+                        <div class="hero__block" data-aos="fade-up">
+                            ${c.icon ? `<i><img src="${c.icon}" alt="" /></i>` : ''}
+                            <div>
+                                <h1 class="text-white fs-56">${t(c.title_ar, c.title_en) || 'Hero Title'}</h1>
+                                <p>${t(c.description_ar, c.description_en) || ''}</p>
+                                <a href="${c.button_url || '#'}" class="common-btn d-flex align-items-center w-max">
+                                    ${t(c.button_text_ar, c.button_text_en) || 'Get Started'} <span><i class="${angleIcon}"></i></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="hero__img" data-aos="fade-up" data-aos-delay="200">
+                            ${c.hero_image || c.side_image ? `<img src="${c.hero_image || c.side_image}" alt="" />` : ''}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>`;
+    }
+    
+    // Variant: Common Layout (Light background, colored title, two buttons)
+    if (variant === 'common') {
+        const titleColorClass = c.title_color_class || 'color-text';
+        return `
+        <section class="common-hero-area pb-4 pb-lg-0 pt-4">
+            ${c.shape_image ? `<img src="${c.shape_image}" class="hero-shape" alt="" />` : ''}
+            <div class="container">
+                <div class="row flex-column-reverse flex-lg-row gap-4 gap-lg-0 align-items-center">
+                    <div class="col-lg-6">
+                        <div class="hero__block">
+                            ${c.icon ? `<i><img src="${c.icon}" alt="" /></i>` : ''}
+                            <div>
+                                <h1 class="${titleColorClass} fs-56">${t(c.title_ar, c.title_en) || 'Hero Title'}</h1>
+                                <p>${t(c.description_ar, c.description_en) || ''}</p>
+                                <div class="work-card-btns green-btns d-flex align-items-center">
+                                    ${c.button_text_ar || c.button_text_en ? `
+                                    <a href="${c.button_url || '#'}">
+                                        ${t(c.button_text_ar, c.button_text_en)} <span><i class="${angleIcon}"></i></span>
+                                    </a>` : ''}
+                                    ${c.secondary_button_text_ar || c.secondary_button_text_en ? `
+                                    <a href="${c.secondary_button_url || '#'}" class="secondary-btn">
+                                        ${t(c.secondary_button_text_ar, c.secondary_button_text_en)} <span><i class="${longArrowIcon}"></i></span>
+                                    </a>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 text-center">
+                        <div class="hero__img">
+                            ${c.hero_image || c.side_image ? `<img src="${c.hero_image || c.side_image}" alt="" />` : ''}
+                            ${c.hero_bg_image ? `<img src="${c.hero_bg_image}" class="hero-icon-bg" alt="" />` : ''}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>`;
+    }
+    
+    // Default: Slider Layout (Homepage)
     return `
     <section class="hero-area position-relative" style="background-image: url('${c.background_image || '/assets/img/hero-bg.png'}')">
         <div class="container">
@@ -426,7 +563,7 @@ const generateHeroHtml = (c, lang, t) => {
                 </div>
                 <div class="hero-btn d-flex justify-content-center" data-aos="fade-up">
                     <a href="${c.button_url || '#'}" class="common-btn d-flex align-items-center">
-                        ${t(c.button_text_ar, c.button_text_en) || 'Get Started'} <span><i class="far fa-angle-left"></i></span>
+                        ${t(c.button_text_ar, c.button_text_en) || 'Get Started'} <span><i class="${angleIcon}"></i></span>
                     </a>
                 </div>
             </div>
@@ -436,15 +573,22 @@ const generateHeroHtml = (c, lang, t) => {
 
 // Partners Section HTML
 const generatePartnersHtml = (c, lang, t) => {
-    const partners = c.partners || [];
+    // Helper to get proper image URL
+    const getImageUrl = (img) => {
+        if (!img || typeof img !== 'string') return '';
+        if (img.startsWith('http') || img.startsWith('/')) return img;
+        return `/storage/${img}`;
+    };
+    
+    const logos = c.logos || c.partners || [];
     return `
     <section class="brand-area">
         <div class="container">
             <div class="swiper brand-logos-slide">
                 <div class="swiper-wrapper">
-                    ${partners.map(p => `
+                    ${logos.map(p => `
                         <div class="logo-items swiper-slide" data-aos="zoom-in">
-                            <a href="${p.url || '#'}"><img src="${p.logo || p.image || ''}" alt="${p.name || 'Partner'}" /></a>
+                            <a href="${p.url || '#'}"><img src="${getImageUrl(p.image || p.logo)}" alt="${p.alt || p.name || 'Partner'}" /></a>
                         </div>
                     `).join('')}
                 </div>
@@ -455,42 +599,71 @@ const generatePartnersHtml = (c, lang, t) => {
 
 // Concept Section HTML
 const generateConceptHtml = (c, lang, t) => {
+    // Helper to get proper image URL
+    const getImageUrl = (img) => {
+        if (!img || typeof img !== 'string') return '';
+        if (img.startsWith('http') || img.startsWith('/')) return img;
+        return `/storage/${img}`;
+    };
+    
     const blocks = c.blocks || [];
     const counters = c.counters || [];
+    
+    // Helper to strip HTML tags for safe display
+    const stripTags = (str) => {
+        if (!str) return '';
+        return str.replace(/<[^>]*>/g, '');
+    };
+    
     return `
-    <section class="concept-area position-relative pt-80">
+    <section class="concept-area position-relative pt-80" style="padding-bottom: 80px;">
         <div class="container">
             <div class="concept-area-wrapper">
-                ${blocks.map((block, idx) => `
-                <div class="concept-wrapper ${idx > 0 ? 'second-concept-wrapper' : ''} position-relative z-1 overflow-hidden ${idx === 0 ? '' : 'm-0'}">
-                    ${block.shape_image ? `<div class="concept-wrapper-shape position-absolute z-n1"><img class="w-100 h-100 object-fit-cover" src="${block.shape_image}" alt="Shape" /></div>` : ''}
-                    <div class="row align-items-center">
-                        <div class="col-lg-6 ${idx === 0 ? 'order-lg-2' : ''}" data-aos="zoom-in">
-                            <div class="swiper concept-thumbnails ${idx === 0 ? 'ms-0' : 'me-0'}">
-                                <div class="swiper-wrapper">
-                                    ${(block.images || []).map((img, imgIdx) => `
-                                        <div class="concept-single-thumb swiper-slide ${imgIdx % 2 === 0 ? 'radious-bottom-left' : 'radious-top-right'}">
-                                            <img class="w-100 h-100 object-fit-cover" src="${img.image || img}" alt="Thumb" />
-                                        </div>
-                                    `).join('')}
-                                </div>
+                ${blocks.map((block, idx) => {
+                    // Get paragraphs - handle both array of strings and array of objects
+                    const paragraphsAr = block.paragraphs_ar || [];
+                    const paragraphsEn = block.paragraphs_en || [];
+                    const paragraphs = lang === 'ar' ? paragraphsAr : paragraphsEn;
+                    
+                    // Get slides/images
+                    const slides = block.slides || block.images || [];
+                    
+                    // Determine layout (image on left or right)
+                    const imageOnLeft = block.image_on_left === true;
+                    
+                    return `
+                <div class="concept-wrapper ${idx > 0 ? 'second-concept-wrapper' : ''} position-relative z-1 overflow-hidden" style="background: linear-gradient(135deg, #004F4C 0%, #003836 100%); border-radius: 24px; padding: 40px; margin-bottom: 30px;">
+                    ${c.shape_image ? `<div class="concept-wrapper-shape position-absolute z-n1" style="top: 0; right: 0; opacity: 0.1;"><img src="${getImageUrl(c.shape_image)}" alt="Shape" style="max-width: 300px;" /></div>` : ''}
+                    <div class="row align-items-center g-4">
+                        <div class="col-lg-6 ${imageOnLeft ? '' : 'order-lg-2'}">
+                            <div class="concept-thumbnails d-flex gap-3 flex-wrap justify-content-center">
+                                ${slides.slice(0, 4).map((slide, slideIdx) => `
+                                    <div class="concept-single-thumb" style="width: calc(50% - 8px); border-radius: ${slideIdx % 2 === 0 ? '0 0 0 24px' : '24px 0 0 0'}; overflow: hidden;">
+                                        <img src="${getImageUrl(slide.image || slide)}" alt="${slide.alt || 'Thumb'}" style="width: 100%; height: 150px; object-fit: cover;" />
+                                    </div>
+                                `).join('')}
                             </div>
                         </div>
-                        <div class="col-lg-6 ${idx === 0 ? 'order-lg-1' : ''}" data-aos="fade-right">
-                            <div class="concept-content">
-                                <h3>${t(block.title_ar, block.title_en)}</h3>
-                                ${(block.paragraphs || []).map(p => `<p>${t(p.text_ar, p.text_en)}</p>`).join('')}
+                        <div class="col-lg-6 ${imageOnLeft ? 'order-lg-2' : ''}">
+                            <div class="concept-content" style="color: #fff;">
+                                <h3 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 1rem; color: #fff;">${t(block.title_ar, block.title_en)}</h3>
+                                ${paragraphs.map(p => {
+                                    // Handle both plain text and HTML content
+                                    const text = typeof p === 'object' ? (lang === 'ar' ? p.text_ar : p.text_en) : p;
+                                    const cleanText = stripTags(text);
+                                    return `<p style="color: rgba(255,255,255,0.85); margin-bottom: 0.75rem; font-size: 0.95rem; line-height: 1.6;">${cleanText}</p>`;
+                                }).join('')}
                             </div>
                         </div>
                     </div>
-                </div>
-                `).join('')}
+                </div>`;
+                }).join('')}
                 ${counters.length > 0 ? `
-                <div class="counter-up-area d-flex align-items-center justify-content-center position-relative z-1">
+                <div class="counter-up-area d-flex align-items-center justify-content-center flex-wrap gap-4 mt-4" style="position: relative;">
                     ${counters.map((counter, idx) => `
-                        <div class="counter-up-step d-flex align-items-center justify-content-center flex-column" style="background-image: url('/assets/img/counter-up-bg.png')" data-aos="zoom-in" data-aos-delay="${(idx + 1) * 100}">
-                            <h5>${counter.value}</h5>
-                            <p>${t(counter.label_ar, counter.label_en)}</p>
+                        <div class="counter-up-step d-flex align-items-center justify-content-center flex-column" style="background: linear-gradient(135deg, #004F4C 0%, #003836 100%); border-radius: 100px; padding: 20px 40px; min-width: 180px;">
+                            <h5 style="color: #fff; font-size: 1.5rem; font-weight: 700; margin: 0;">${counter.value}</h5>
+                            <p style="color: rgba(255,255,255,0.8); margin: 0; font-size: 0.875rem;">${t(counter.label_ar, counter.label_en)}</p>
                         </div>
                     `).join('')}
                 </div>
@@ -502,6 +675,13 @@ const generateConceptHtml = (c, lang, t) => {
 
 // Services Section HTML
 const generateServicesHtml = (c, lang, t) => {
+    // Helper to get proper image URL
+    const getImageUrl = (img) => {
+        if (!img || typeof img !== 'string') return '';
+        if (img.startsWith('http') || img.startsWith('/')) return img;
+        return `/storage/${img}`;
+    };
+    
     const services = c.services || [];
     return `
     <section class="service-area position-relative overflow-hidden pb-80 z-1">
@@ -515,7 +695,7 @@ const generateServicesHtml = (c, lang, t) => {
                         <div class="col-md-6" data-aos="fade-up">
                             <div class="service-single-card d-flex align-items-center">
                                 <div class="service-card-thumb w-100">
-                                    <img class="w-100 h-100 object-fit-cover" src="${service.image || '/assets/img/service-thumb-1.png'}" alt="Thumb" />
+                                    <img class="w-100 h-100 object-fit-cover" src="${getImageUrl(service.image) || '/assets/img/service-thumb-1.png'}" alt="Thumb" />
                                 </div>
                                 <div class="service-card-content">
                                     <h4>${t(service.title_ar, service.title_en)}</h4>
@@ -527,13 +707,22 @@ const generateServicesHtml = (c, lang, t) => {
                 </div>
             </div>
         </div>
-        ${c.shape_image ? `<div class="service-shape position-absolute z-n1"><img class="w-100 h-100 object-fit-cover" src="${c.shape_image}" alt="Shape" /></div>` : ''}
+        ${c.shape_image ? `<div class="service-shape position-absolute z-n1"><img class="w-100 h-100 object-fit-cover" src="${getImageUrl(c.shape_image)}" alt="Shape" /></div>` : ''}
     </section>`;
 };
 
 // CTA Section HTML
 const generateCtaHtml = (c, lang, t) => {
+    // Helper to get proper image URL
+    const getImageUrl = (img) => {
+        if (!img || typeof img !== 'string') return '';
+        if (img.startsWith('http') || img.startsWith('/')) return img;
+        return `/storage/${img}`;
+    };
+    
     const cards = c.contact_cards || [];
+    const shapeUrl = getImageUrl(c.shape_image);
+    
     return `
     <section class="cta-area overflow-hidden position-relative z-1 pt-80 pb-80">
         <div class="container">
@@ -554,7 +743,7 @@ const generateCtaHtml = (c, lang, t) => {
                                 ${cards.map(card => `
                                     <div class="col-sm-6" data-aos="zoom-in">
                                         <div class="cta-card d-flex align-items-center flex-column">
-                                            <span class="d-flex align-items-center justify-content-center"><img src="${card.icon || ''}" alt="Icon" /></span>
+                                            <span class="d-flex align-items-center justify-content-center"><img src="${getImageUrl(card.icon)}" alt="Icon" /></span>
                                             <h5>${t(card.title_ar, card.title_en)}</h5>
                                             ${(card.links || []).map(link => `<a href="${link.url || '#'}">${link.text}</a>`).join('')}
                                         </div>
@@ -565,18 +754,26 @@ const generateCtaHtml = (c, lang, t) => {
                     </div>
                 </div>
             </div>
-            ${c.shape_image ? `<div class="cta-shape position-absolute z-n1"><img class="w-100 h-100 object-fit-cover" src="${c.shape_image}" alt="Shape" /></div>` : ''}
+            ${shapeUrl ? `<div class="cta-shape position-absolute z-n1"><img class="w-100 h-100 object-fit-cover" src="${shapeUrl}" alt="Shape" /></div>` : ''}
         </div>
     </section>`;
 };
 
 // Work/Projects Section HTML
 const generateWorkHtml = (c, lang, t) => {
+    // Helper to get proper image URL
+    const getImageUrl = (img) => {
+        if (!img || typeof img !== 'string') return '';
+        if (img.startsWith('http') || img.startsWith('/')) return img;
+        return `/storage/${img}`;
+    };
+    
     const projects = c.projects || [];
+    const shapeUrl = getImageUrl(c.shape_image) || '/assets/img/service-shape.png';
     return `
     <section class="work-area position-relative z-1 overflow-hidden">
         <div class="work-shape position-absolute z-n1">
-            <img class="w-100 h-100 object-fit-cover" src="${c.shape_image || '/assets/img/service-shape.png'}" alt="Shape" />
+            <img class="w-100 h-100 object-fit-cover" src="${shapeUrl}" alt="Shape" />
         </div>
         <div class="container">
             <div class="work-inner-block">
@@ -602,7 +799,7 @@ const generateWorkHtml = (c, lang, t) => {
                                                     </div>
                                                 </div>
                                                 <div class="work-card-thumb">
-                                                    <img src="${project.image || ''}" alt="${t(project.title_ar, project.title_en)}" />
+                                                    <img src="${getImageUrl(project.image)}" alt="${t(project.title_ar, project.title_en)}" />
                                                 </div>
                                             </div>
                                         </div>
@@ -610,7 +807,7 @@ const generateWorkHtml = (c, lang, t) => {
                                 `).join('')}
                             </div>
                         </div>
-                        ${c.work_shape_image ? `<div class="work-card-shape position-absolute z-n1"><img src="${c.work_shape_image}" alt="Shape" /></div>` : ''}
+                        ${c.work_shape_image ? `<div class="work-card-shape position-absolute z-n1"><img src="${getImageUrl(c.work_shape_image)}" alt="Shape" /></div>` : ''}
                         <div class="swiper-pagination"></div>
                     </div>
                 </div>
@@ -621,7 +818,16 @@ const generateWorkHtml = (c, lang, t) => {
 
 // Team Section HTML
 const generateTeamHtml = (c, lang, t) => {
+    // Helper to get proper image URL
+    const getImageUrl = (img) => {
+        if (!img || typeof img !== 'string') return '';
+        if (img.startsWith('http') || img.startsWith('/')) return img;
+        return `/storage/${img}`;
+    };
+    
     const members = c.members || [];
+    const shapeUrl = getImageUrl(c.shape_image) || '/assets/img/team-shape.png';
+    
     return `
     <section class="team-area">
         <div class="container">
@@ -634,10 +840,10 @@ const generateTeamHtml = (c, lang, t) => {
                         ${members.map((member, idx) => `
                             <div class="swiper-slide team-card position-relative z-1" data-aos="zoom-in" data-aos-delay="${(idx + 2) * 100}">
                                 <div class="team-card-shape position-absolute z-n1">
-                                    <img class="w-100 h-100 object-fit-cover" src="${c.shape_image || '/assets/img/team-shape.png'}" alt="Shape" />
+                                    <img class="w-100 h-100 object-fit-cover" src="${shapeUrl}" alt="Shape" />
                                 </div>
                                 <div class="team-thumb">
-                                    <img class="w-100 h-100 object-fit-cover" src="${member.image || ''}" alt="Thumb" />
+                                    <img class="w-100 h-100 object-fit-cover" src="${getImageUrl(member.image)}" alt="Thumb" />
                                 </div>
                                 <div class="team-card-content">
                                     <h4>${t(member.title_ar, member.title_en)}</h4>
@@ -655,9 +861,19 @@ const generateTeamHtml = (c, lang, t) => {
 
 // Contact Section HTML
 const generateContactHtml = (c, lang, t) => {
+    // Helper to get proper image URL
+    const getImageUrl = (img) => {
+        if (!img || typeof img !== 'string') return '';
+        if (img.startsWith('http') || img.startsWith('/')) return img;
+        return `/storage/${img}`;
+    };
+    
     const cards = c.cards || [];
+    const bgUrl = getImageUrl(c.background_image) || '/assets/img/contact-bg.png';
+    const logoUrl = getImageUrl(c.contact_logo) || '/assets/img/contact-logo.svg';
+    
     return `
-    <section class="contact-area overflow-hidden" style="background-image: url('${c.background_image || '/assets/img/contact-bg.png'}')">
+    <section class="contact-area overflow-hidden" style="background-image: url('${bgUrl}')">
         <div class="container">
             <div class="contact-inner-block p-40 bg-white">
                 <div class="row">
@@ -666,7 +882,7 @@ const generateContactHtml = (c, lang, t) => {
                             ${cards.map((card, idx) => `
                                 <div class="contact-card ${idx === 1 ? 'contact-middle-card' : ''} d-flex align-items-center">
                                     <div class="contact-card-icon">
-                                        <img src="${card.icon || ''}" alt="Icon" />
+                                        <img src="${getImageUrl(card.icon)}" alt="Icon" />
                                     </div>
                                     <div class="contact-card-content">
                                         <h4>${t(card.title_ar, card.title_en)}</h4>
@@ -679,7 +895,7 @@ const generateContactHtml = (c, lang, t) => {
                     <div class="col-xl-6" data-aos="zoom-in">
                         <div class="contact-left d-flex align-items-center justify-content-start flex-column">
                             <div class="contact-logo">
-                                <a href="#"><img src="${c.contact_logo || '/assets/img/contact-logo.svg'}" alt="Logo" /></a>
+                                <a href="#"><img src="${logoUrl}" alt="Logo" /></a>
                             </div>
                             <div class="contact-btn">
                                 <a href="${c.button_url || '#'}" class="common-btn d-flex align-items-center">
@@ -696,12 +912,19 @@ const generateContactHtml = (c, lang, t) => {
 
 // Gallery Section HTML
 const generateGalleryHtml = (c, lang, t) => {
+    // Helper to get proper image URL
+    const getImageUrl = (img) => {
+        if (!img || typeof img !== 'string') return '';
+        if (img.startsWith('http') || img.startsWith('/')) return img;
+        return `/storage/${img}`;
+    };
+    
     const images = c.images || [];
     return `
     <section class="gallery-area overflow-hidden">
         <div class="container">
             <div class="gallery-inner-block position-relative z-1">
-                ${c.shape_image ? `<div class="gallery-shape position-absolute z-n1"><img class="w-100 h-100 object-fit-cover" src="${c.shape_image}" alt="Shape" /></div>` : ''}
+                ${c.shape_image ? `<div class="gallery-shape position-absolute z-n1"><img class="w-100 h-100 object-fit-cover" src="${getImageUrl(c.shape_image)}" alt="Shape" /></div>` : ''}
                 <div class="common-title text-center" data-aos="fade-up">
                     <h3>${t(c.title_ar, c.title_en)}</h3>
                     <p>${t(c.subtitle_ar, c.subtitle_en)}</p>
@@ -711,7 +934,7 @@ const generateGalleryHtml = (c, lang, t) => {
                         ${images.map(img => `
                             <div class="col-md-6" data-aos="zoom-in">
                                 <div class="gallery-thumb position-relative">
-                                    <img src="${img.image || ''}" alt="Thumb" />
+                                    <img src="${getImageUrl(img.image)}" alt="Thumb" />
                                     <div class="gallery-thumb-text position-absolute">
                                         <h3>${img.title || ''}</h3>
                                     </div>
@@ -734,11 +957,18 @@ const generateGalleryHtml = (c, lang, t) => {
 
 // FAQ Section HTML
 const generateFaqHtml = (c, lang, t) => {
+    // Helper to get proper image URL
+    const getImageUrl = (img) => {
+        if (!img || typeof img !== 'string') return '';
+        if (img.startsWith('http') || img.startsWith('/')) return img;
+        return `/storage/${img}`;
+    };
+    
     const faqs = c.faqs || [];
     return `
     <section class="faq-area position-relative z-1">
         <div class="faq-shape position-absolute z-n1">
-            <img class="w-100 h-100 object-fit-cover" src="${c.shape_image || '/assets/img/service-shape.png'}" alt="Shape" />
+            <img class="w-100 h-100 object-fit-cover" src="${getImageUrl(c.shape_image) || '/assets/img/service-shape.png'}" alt="Shape" />
         </div>
         <div class="container">
             <div class="faq-inner-block">
@@ -771,6 +1001,13 @@ const generateFaqHtml = (c, lang, t) => {
 
 // Inquiry Section HTML
 const generateInquiryHtml = (c, lang, t) => {
+    // Helper to get proper image URL
+    const getImageUrl = (img) => {
+        if (!img || typeof img !== 'string') return '';
+        if (img.startsWith('http') || img.startsWith('/')) return img;
+        return `/storage/${img}`;
+    };
+    
     return `
     <section class="inquiry-area">
         <div class="container">
@@ -795,12 +1032,12 @@ const generateInquiryHtml = (c, lang, t) => {
                         </div>
                         <div class="col-lg-5" data-aos="zoom-in">
                             <div class="inquiry-image">
-                                ${c.image ? `<img src="${c.image}" alt="Image" />` : ''}
+                                ${c.image ? `<img src="${getImageUrl(c.image)}" alt="Image" />` : ''}
                             </div>
                         </div>
                     </div>
                 </div>
-                ${c.shape_image ? `<div class="inquiry-shape position-absolute z-n1"><img class="w-100 h-100 object-fit-cover" src="${c.shape_image}" alt="Shape" /></div>` : ''}
+                ${c.shape_image ? `<div class="inquiry-shape position-absolute z-n1"><img class="w-100 h-100 object-fit-cover" src="${getImageUrl(c.shape_image)}" alt="Shape" /></div>` : ''}
             </div>
         </div>
     </section>`;
@@ -880,6 +1117,821 @@ const generateFooterHtml = (c, lang, t) => {
     </footer>`;
 };
 
+// Page Banner Section HTML
+const generatePageBannerHtml = (c, lang, t) => {
+    // Helper to get proper image URL
+    const getImageUrl = (img) => {
+        if (!img || typeof img !== 'string') return '';
+        if (img.startsWith('http') || img.startsWith('/')) return img;
+        return `/storage/${img}`;
+    };
+    
+    const variant = c.variant || 'default';
+    const title = t(c.title_ar, c.title_en) || 'Page Title';
+    const subtitle = t(c.subtitle_ar, c.subtitle_en) || '';
+    const breadcrumbHome = lang === 'ar' ? 'الرئيسية' : 'Home';
+    const breadcrumbCurrent = t(c.breadcrumb_ar, c.breadcrumb_en) || title;
+    const bgImage = c.background_image && c.background_image.trim() !== '' && !c.background_image.includes('undefined');
+    const defaultBg = 'linear-gradient(135deg, #004F4C 0%, #003836 100%)';
+    const bgUrl = bgImage ? getImageUrl(c.background_image) : '';
+    const bgStyle = bgImage ? `url(${bgUrl}) center/cover no-repeat` : defaultBg;
+    
+    if (variant === 'services') {
+        return `
+        <section class="hero-area v2 position-relative text-white" style="background: ${bgStyle}; min-height: 300px; padding: 80px 0;">
+            ${c.shape_image ? `<img src="${getImageUrl(c.shape_image)}" class="hero-shape" alt="" style="position: absolute; top: 0; right: 0; height: 100%; object-fit: contain; opacity: 0.3;" />` : ''}
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <div class="hero__block" data-aos="fade-up">
+                            ${c.icon ? `<i><img src="${getImageUrl(c.icon)}" alt="" /></i>` : ''}
+                            <div>
+                                <h1 class="text-white fs-56">${title}</h1>
+                                ${subtitle ? `<p class="text-white-50">${subtitle}</p>` : ''}
+                                <p class="mb-0 breadcrumb-text" style="color: rgba(255,255,255,0.7);">
+                                    <span>${breadcrumbHome}</span> / <span style="color: #fff;">${breadcrumbCurrent}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    ${c.side_image ? `
+                    <div class="col-lg-6">
+                        <div class="hero__img" data-aos="fade-up" data-aos-delay="200">
+                            <img src="${getImageUrl(c.side_image)}" alt="${title}" style="max-width: 100%; height: auto;" />
+                        </div>
+                    </div>
+                    ` : ''}
+                </div>
+            </div>
+        </section>`;
+    }
+    
+    if (variant === 'about') {
+        return `
+        <section class="about-banner-area" style="background: ${bgStyle}; min-height: 300px; padding: 80px 0; display: flex; align-items: center;">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 mx-auto">
+                        <div class="about__banner--content text-center" data-aos="fade-up">
+                            ${c.icon ? `<i><img src="${getImageUrl(c.icon)}" alt="" /></i>` : ''}
+                            <h1 class="fs-56 text-white mt-3">${title}</h1>
+                            ${subtitle ? `<p class="text-white-50 mb-4">${subtitle}</p>` : ''}
+                            <p class="mb-0" style="color: rgba(255,255,255,0.7);">
+                                <span>${breadcrumbHome}</span> / <span style="color: #fff;">${breadcrumbCurrent}</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>`;
+    }
+    
+    // Default page banner
+    return `
+    <section class="page-banner-area" style="background: ${bgStyle}; padding: 80px 0; min-height: 200px;">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="page__banner--content text-center" data-aos="fade-up">
+                        <div class="d-flex flex-column align-items-center gap-3">
+                            ${c.icon ? `<i><img src="${getImageUrl(c.icon)}" alt="" /></i>` : ''}
+                            <div>
+                                <h1 class="fs-56 text-white">${title}</h1>
+                                ${subtitle ? `<p class="text-white-50 mb-3">${subtitle}</p>` : ''}
+                                <p class="mb-0" style="color: rgba(255,255,255,0.7);">
+                                    <span>${breadcrumbHome}</span> / <span style="color: #fff;">${breadcrumbCurrent}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>`;
+};
+
+// About Section HTML
+const generateAboutHtml = (c, lang, t) => {
+    // Helper to get proper image URL
+    const getImageUrl = (img) => {
+        if (!img || typeof img !== 'string') return '';
+        if (img.startsWith('http') || img.startsWith('/')) return img;
+        return `/storage/${img}`;
+    };
+    
+    const blocks = c.blocks || [];
+    
+    return `
+    <section class="about-area">
+        ${c.shape_image ? `<img src="${getImageUrl(c.shape_image)}" class="hero-shape-5" alt="" />` : ''}
+        ${blocks.map((block, idx) => {
+            const title = t(block.title_ar, block.title_en) || '';
+            const content = t(block.content_ar, block.content_en) || '';
+            const layout = block.layout || 'image-right';
+            const bgColor = idx % 2 === 0 ? '' : 'background-color: #fcfcfd;';
+            
+            if (layout === 'image-right' || layout === 'first') {
+                return `
+                <div class="container pb-5">
+                    <div class="row align-items-center">
+                        <div class="col-lg-6 mt-4 mt-lg-0">
+                            <div class="about__content">
+                                ${block.icon ? `<i><img src="${getImageUrl(block.icon)}" alt="" /></i>` : ''}
+                                <div>
+                                    <h1 class="color-text">${title}</h1>
+                                    <div>${content}</div>
+                                    ${block.author ? `<span>— ${block.author}</span>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="about__img">
+                                ${block.image ? `<img src="${getImageUrl(block.image)}" alt="" />` : ''}
+                                ${block.image_bg ? `<img src="${getImageUrl(block.image_bg)}" class="hero-icon-bg" alt="" />` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            } else {
+                return `
+                <div class="position-relative" style="${bgColor}">
+                    ${c.left_shape_image ? `<img src="${getImageUrl(c.left_shape_image)}" class="ab-left" alt="" />` : ''}
+                    ${c.right_shape_image ? `<img src="${getImageUrl(c.right_shape_image)}" class="ab-right" alt="" />` : ''}
+                    <div class="container md">
+                        <div class="row align-items-center">
+                            <div class="col-lg-7">
+                                <div class="about__content v2">
+                                    ${block.icon ? `<i><img src="${getImageUrl(block.icon)}" alt="" /></i>` : ''}
+                                    <div>
+                                        <h1>${title}</h1>
+                                        <div>${content}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="about__img">
+                                    ${block.image ? `<img src="${getImageUrl(block.image)}" alt="" />` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            }
+        }).join('')}
+    </section>`;
+};
+
+// Contact Banner Section HTML
+const generateContactBannerHtml = (c, lang, t) => {
+    // Helper to get proper image URL
+    const getImageUrl = (img) => {
+        if (!img || typeof img !== 'string') return '';
+        if (img.startsWith('http') || img.startsWith('/')) return img;
+        return `/storage/${img}`;
+    };
+    
+    const title = t(c.title_ar, c.title_en) || (lang === 'ar' ? 'تواصل معنا' : 'Contact Us');
+    const breadcrumbHome = lang === 'ar' ? 'الرئيسية' : 'Home';
+    const breadcrumbCurrent = t(c.breadcrumb_ar, c.breadcrumb_en) || title;
+    const bgImage = c.background_image && c.background_image.trim() !== '';
+    const defaultBg = 'linear-gradient(135deg, #004F4C 0%, #003836 100%)';
+    const bgUrl = bgImage ? getImageUrl(c.background_image) : '';
+    
+    return `
+    <section class="contact-banner-area my-5">
+        <div class="container-fluid">
+            <div class="contact__banner" style="background: ${bgImage ? `url(${bgUrl}) center/cover no-repeat` : defaultBg}; border-radius: 24px; padding: 60px 40px;">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="contact__banner--content d-flex align-items-center justify-content-between flex-wrap gap-4">
+                            <div class="d-flex align-items-center gap-3">
+                                ${c.icon ? `<i style="background: #fff; border-radius: 50%; padding: 20px;"><img src="${getImageUrl(c.icon)}" alt="" style="width: 32px; height: 32px;" /></i>` : ''}
+                                <div>
+                                    <h1 class="fs-56 text-white">${title}</h1>
+                                    <p class="mb-0" style="color: rgba(255,255,255,0.7);">
+                                        <span>${breadcrumbHome}</span> / <span style="color: #fff;">${breadcrumbCurrent}</span>
+                                    </p>
+                                </div>
+                            </div>
+                            ${c.side_image ? `<picture><img src="${getImageUrl(c.side_image)}" alt="" style="max-height: 200px;" /></picture>` : ''}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>`;
+};
+
+// Contact Info Section HTML
+const generateContactInfoHtml = (c, lang, t) => {
+    // Helper to get proper image URL
+    const getImageUrl = (img) => {
+        if (!img || typeof img !== 'string') return '';
+        if (img.startsWith('http') || img.startsWith('/')) return img;
+        return `/storage/${img}`;
+    };
+    
+    const infoCards = c.info_cards || [];
+    const infoItems = c.info_items || [];
+    
+    return `
+    <section class="contact-info-area" style="position: relative;">
+        ${c.overlay_image ? `<img src="${getImageUrl(c.overlay_image)}" class="overly-1" alt="" style="position: absolute; top: 0; left: 0; opacity: 0.1; pointer-events: none;" />` : ''}
+        <div class="container">
+            <!-- Contact Info Cards -->
+            ${infoCards.length > 0 ? `
+            <div class="row gy-4 mb-5 pb-0 pb-md-5">
+                ${infoCards.map((card, index) => `
+                    <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="${index * 100}">
+                        <div class="contact__info--block" style="background: #fff; border-radius: 16px; padding: 30px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+                            ${card.icon ? `<i style="display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; background: #004F4C; border-radius: 50%; margin-bottom: 16px;"><img src="${getImageUrl(card.icon)}" alt="" style="width: 28px; height: 28px; filter: brightness(0) invert(1);" /></i>` : ''}
+                            <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 12px; color: #1a1a1a;">${t(card.title_ar, card.title_en)}</h3>
+                            <p style="color: #666; margin: 0; line-height: 1.6;">${t(card.content_ar, card.content_en)}</p>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+            ` : ''}
+            
+            <!-- General Info & Contact Form -->
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="contact__info--content">
+                        <h1 class="fw-bold" style="font-size: 2rem; margin-bottom: 16px;">${t(c.general_info_title_ar, c.general_info_title_en) || (lang === 'ar' ? 'معلومات عامة' : 'General Information')}</h1>
+                        <p style="color: #666; margin-bottom: 24px;">${t(c.general_info_description_ar, c.general_info_description_en) || ''}</p>
+                        ${infoItems.length > 0 ? `
+                        <ul style="list-style: none; padding: 0; margin: 0;">
+                            ${infoItems.map(item => `
+                                <li style="margin-bottom: 20px;">
+                                    <h6 style="font-weight: 600; margin-bottom: 4px;">${t(item.label_ar, item.label_en)}</h6>
+                                    <span style="color: #666;">${t(item.value_ar, item.value_en)}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                        ` : ''}
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="contact__info--form" style="background: #f8f9fa; border-radius: 16px; padding: 30px;">
+                        <h1 class="fw-bold" style="font-size: 2rem; margin-bottom: 16px;">${t(c.form_title_ar, c.form_title_en) || (lang === 'ar' ? 'اتصل بنا' : 'Contact Us')}</h1>
+                        <p style="color: #666; margin-bottom: 24px;">${t(c.form_description_ar, c.form_description_en) || ''}</p>
+                        <form>
+                            <input type="text" placeholder="${lang === 'ar' ? 'الاسم الكامل' : 'Full Name'}" style="width: 100%; padding: 12px 16px; border: 1px solid #e0e0e0; border-radius: 8px; margin-bottom: 12px;" />
+                            <input type="email" placeholder="${lang === 'ar' ? 'البريد الالكتروني' : 'Email Address'}" style="width: 100%; padding: 12px 16px; border: 1px solid #e0e0e0; border-radius: 8px; margin-bottom: 12px;" />
+                            <div class="d-flex gap-3 mb-3">
+                                <input type="text" value="+966" style="max-width: 80px; padding: 12px 16px; border: 1px solid #e0e0e0; border-radius: 8px;" readonly />
+                                <input type="text" placeholder="${lang === 'ar' ? 'مثال xxxxxxxx5' : 'Example 5xxxxxxxx'}" style="flex: 1; padding: 12px 16px; border: 1px solid #e0e0e0; border-radius: 8px;" />
+                            </div>
+                            <input type="text" placeholder="${lang === 'ar' ? 'الموضوع' : 'Subject'}" style="width: 100%; padding: 12px 16px; border: 1px solid #e0e0e0; border-radius: 8px; margin-bottom: 12px;" />
+                            <textarea placeholder="${lang === 'ar' ? 'اكتب رسالتك هنا...' : 'Write your message here...'}" rows="4" style="width: 100%; padding: 12px 16px; border: 1px solid #e0e0e0; border-radius: 8px; margin-bottom: 12px; resize: vertical;"></textarea>
+                            <button type="button" class="btn" style="background: #004F4C; color: #fff; padding: 12px 32px; border-radius: 8px; font-weight: 500;">${lang === 'ar' ? 'إرسال' : 'Send'}</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>`;
+};
+
+// Hero Slider Section HTML (Homepage slider)
+const generateHeroSliderHtml = (c, lang, t) => {
+    // Helper to get proper image URL
+    const getImageUrl = (img) => {
+        if (!img || typeof img !== 'string') return '';
+        if (img.startsWith('http') || img.startsWith('/')) return img;
+        return `/storage/${img}`;
+    };
+    
+    const slides = c.slides || [];
+    const angleIcon = lang === 'ar' ? 'far fa-angle-left' : 'far fa-angle-right';
+    const bgUrl = getImageUrl(c.background_image) || '/assets/img/hero-bg.png';
+    
+    return `
+    <section class="hero-area position-relative" style="background-image: url('${bgUrl}')">
+        <div class="container">
+            <div class="hero-inner-block">
+                <div class="hero-title" data-aos="fade-up">
+                    <h5>${t(c.subtitle_ar, c.subtitle_en) || ''}</h5>
+                    <h1>${t(c.title_ar, c.title_en) || 'Hero Title'}</h1>
+                </div>
+                ${slides.length > 0 ? `
+                <div class="swiper hero-slide-thumb" data-aos="fade-up" data-aos-delay="300">
+                    <div class="swiper-wrapper">
+                        ${slides.map(slide => `
+                            <div class="swiper-slide">
+                                <div class="hero-slide-card">
+                                    <img class="w-100 h-100 object-fit-cover" src="${getImageUrl(slide.image)}" alt="${slide.alt || 'Slide'}" />
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                ` : `<div class="text-center py-4" style="color: rgba(255,255,255,0.7);">Add slides to show here</div>`}
+                <div class="hero-content text-center mt-40" data-aos="fade-up" data-aos-delay="500">
+                    <p>${t(c.description_ar, c.description_en) || ''}</p>
+                </div>
+                <div class="hero-btn d-flex justify-content-center" data-aos="fade-up">
+                    <a href="${c.button_url || '#'}" class="common-btn d-flex align-items-center">
+                        ${t(c.button_text_ar, c.button_text_en) || 'Get Started'} <span><i class="${angleIcon}"></i></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>`;
+};
+
+// Hero Common Section HTML (Service pages with dark background - hero-area v2 style)
+const generateHeroCommonHtml = (c, lang, t) => {
+    // Helper to get proper image URL
+    const getImageUrl = (img) => {
+        if (!img || typeof img !== 'string') return '';
+        if (img.startsWith('http') || img.startsWith('/')) return img;
+        return `/storage/${img}`;
+    };
+    
+    const angleIcon = lang === 'ar' ? 'far fa-angle-left' : 'far fa-angle-right';
+    const longArrowIcon = lang === 'ar' ? 'fal fa-long-arrow-left' : 'fal fa-long-arrow-right';
+    const bgUrl = getImageUrl(c.background_image);
+    const bgStyle = bgUrl ? `url(${bgUrl}) center/cover no-repeat` : '#012d37';
+    const shapeUrl = getImageUrl(c.shape_image);
+    const iconUrl = getImageUrl(c.icon);
+    const heroImgUrl = getImageUrl(c.hero_image);
+    const heroBgImgUrl = getImageUrl(c.hero_bg_image);
+    
+    return `
+    <section class="hero-area v2 position-relative" style="background: ${bgStyle}; min-height: 400px; padding: 80px 0;">
+        ${shapeUrl ? `<img src="${shapeUrl}" class="hero-shape" alt="" style="position: absolute; top: 0; right: 0; height: 100%; object-fit: contain; opacity: 0.3;" />` : ''}
+        <div class="container">
+            <div class="row flex-column-reverse flex-lg-row gap-4 gap-lg-0 align-items-center">
+                <div class="col-lg-6">
+                    <div class="hero__block" data-aos="fade-up">
+                        ${iconUrl ? `<i><img src="${iconUrl}" alt="" /></i>` : ''}
+                        <div>
+                            <h1 class="text-white fs-56">${t(c.title_ar, c.title_en) || 'Hero Title'}</h1>
+                            <p class="text-white-50">${t(c.description_ar, c.description_en) || ''}</p>
+                            <div class="d-flex align-items-center gap-3 mt-4">
+                                ${c.button_text_ar || c.button_text_en ? `
+                                <a href="${c.button_url || '#'}" class="common-btn d-flex align-items-center" style="background: #fff; color: #012d37;">
+                                    ${t(c.button_text_ar, c.button_text_en)} <span><i class="${angleIcon}"></i></span>
+                                </a>` : ''}
+                                ${c.secondary_button_text_ar || c.secondary_button_text_en ? `
+                                <a href="${c.secondary_button_url || '#'}" class="secondary-btn text-white">
+                                    ${t(c.secondary_button_text_ar, c.secondary_button_text_en)} <span><i class="${longArrowIcon}"></i></span>
+                                </a>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <div class="hero__img" data-aos="fade-up" data-aos-delay="200">
+                        ${heroImgUrl ? `<img src="${heroImgUrl}" alt="" />` : '<div style="height: 200px; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.5);">Add hero image</div>'}
+                        ${heroBgImgUrl ? `<img src="${heroBgImgUrl}" class="hero-icon-bg" alt="" />` : ''}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>`;
+};
+
+// Newsletter Section HTML
+const generateNewsletterHtml = (c, lang, t) => {
+    // Helper to get proper image URL
+    const getImageUrl = (img) => {
+        if (!img || typeof img !== 'string') return '';
+        if (img.startsWith('http') || img.startsWith('/')) return img;
+        return `/storage/${img}`;
+    };
+    
+    const bgImage = c.background_image && c.background_image.trim() !== '';
+    const bgUrl = bgImage ? getImageUrl(c.background_image) : '';
+    const iconUrl = c.icon ? getImageUrl(c.icon) : '';
+    const defaultBg = 'linear-gradient(135deg, #004F4C 0%, #003836 100%)';
+    
+    return `
+    <section class="newsletter-area" style="background: ${bgImage ? `url(${bgUrl}) center/cover no-repeat` : defaultBg}; padding: 60px 0; border-radius: 16px;">
+        <div class="container">
+            <div class="newsletter-wrapper d-flex align-items-center justify-content-between flex-wrap gap-4">
+                <div class="newsletter-content d-flex align-items-center gap-3">
+                    ${iconUrl ? `<div class="newsletter-icon"><img src="${iconUrl}" alt="" style="width: 64px; height: 64px;" /></div>` : ''}
+                    <div>
+                        <h2 class="text-white mb-1">${t(c.title1_ar, c.title1_en) || (lang === 'ar' ? 'ابدأ معنا.' : 'Start With Us.')}</h2>
+                        <h3 class="text-white mb-0">${t(c.title2_ar, c.title2_en) || (lang === 'ar' ? 'اتصل بنا الآن!' : 'Call Us Now!')}</h3>
+                    </div>
+                </div>
+                <div class="newsletter-cta d-flex align-items-center gap-3">
+                    <div class="phone-info text-white">
+                        <span style="opacity: 0.7;">${t(c.phone_label_ar, c.phone_label_en) || (lang === 'ar' ? 'مكالمة مجانية' : 'Free Call')}</span>
+                        <h4 class="mb-0" dir="ltr">${c.phone || '+966 8001111144'}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>`;
+};
+
+// Map Section HTML
+const generateMapHtml = (c, lang, t) => {
+    const title = t(c.title_ar, c.title_en) || (lang === 'ar' ? 'موقعنا' : 'Our Location');
+    const subtitle = t(c.subtitle_ar, c.subtitle_en) || '';
+    const height = c.height || 500;
+    const embedUrl = c.embed_url;
+    const lat = c.latitude || '24.7136';
+    const lng = c.longitude || '46.6753';
+    const zoom = c.zoom || '15';
+    
+    // Use embed URL if provided, otherwise use coordinates
+    const mapSrc = embedUrl || `https://maps.google.com/maps?q=${lat},${lng}&z=${zoom}&output=embed`;
+    
+    return `
+    <section class="map-area" style="padding: 40px 0;">
+        <div class="container">
+            ${title || subtitle ? `
+            <div class="section-title text-center mb-4">
+                ${title ? `<h2>${title}</h2>` : ''}
+                ${subtitle ? `<p style="color: #666;">${subtitle}</p>` : ''}
+            </div>
+            ` : ''}
+            <div class="map-wrapper" style="border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                <iframe 
+                    src="${mapSrc}" 
+                    width="100%" 
+                    height="${height}" 
+                    style="border:0;" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+            ${c.address ? `
+            <div class="map-address text-center mt-3">
+                <p style="color: #666;"><i class="far fa-map-marker-alt me-2"></i>${c.address}</p>
+            </div>
+            ` : ''}
+        </div>
+    </section>`;
+};
+
+// Common Service Section HTML
+const generateCommonServiceHtml = (c, lang, t) => {
+    const getImageUrl = (img) => {
+        if (!img || typeof img !== 'string') return '';
+        if (img.startsWith('http') || img.startsWith('/')) return img;
+        return `/storage/${img}`;
+    };
+    
+    const services = c.services || [];
+    const titleColor = c.title_color || 'inherit';
+    
+    return `
+    <section class="comService-area" style="padding: 60px 0;">
+        <div class="container text-center">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="mb-4">
+                        ${c.section_icon ? `<i><img src="${getImageUrl(c.section_icon)}" alt="" /></i>` : ''}
+                        <h1 style="color: ${titleColor};">${t(c.title_ar, c.title_en) || ''}</h1>
+                        ${c.subtitle_ar || c.subtitle_en ? `<p class="fs-18" style="color: #768495">${t(c.subtitle_ar, c.subtitle_en)}</p>` : ''}
+                    </div>
+                </div>
+                ${services.map(service => `
+                    <div class="col-xl-3 col-lg-4 col-md-6">
+                        <div class="service__block" style="background: #fff; border-radius: 16px; padding: 24px; text-align: center; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                            ${service.icon ? `<i><img src="${getImageUrl(service.icon)}" alt="" style="width: 48px; height: 48px; margin-bottom: 16px;" /></i>` : ''}
+                            <h5 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 12px;">${t(service.title_ar, service.title_en)}</h5>
+                            <p style="color: #666; font-size: 0.9rem; margin: 0;">${t(service.description_ar, service.description_en)}</p>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    </section>`;
+};
+
+// Counter Area Section HTML
+const generateCounterAreaHtml = (c, lang, t) => {
+    const getImageUrl = (img) => {
+        if (!img || typeof img !== 'string') return '';
+        if (img.startsWith('http') || img.startsWith('/')) return img;
+        return `/storage/${img}`;
+    };
+    
+    const counters = c.counters || [];
+    const noMarginTop = c.no_margin_top ? 'margin-top: 0;' : '';
+    
+    return `
+    <section class="counter-area" style="padding: 40px 0; ${noMarginTop}">
+        <div class="container">
+            <div class="counter__wrapper" style="background: linear-gradient(135deg, #004F4C 0%, #003836 100%); border-radius: 24px; padding: 40px;">
+                <div class="row">
+                    ${counters.map(counter => `
+                        <div class="col-md-6">
+                            <div class="counter__block d-flex align-items-center gap-3" style="padding: 20px;">
+                                ${counter.icon ? `<i style="background: rgba(255,255,255,0.1); border-radius: 50%; padding: 16px;"><img src="${getImageUrl(counter.icon)}" alt="" style="width: 32px; height: 32px;" /></i>` : ''}
+                                <h1 style="color: #fff; font-size: 2.5rem; margin: 0;">
+                                    ${counter.value}
+                                    <span style="display: block; font-size: 1rem; font-weight: 400; opacity: 0.8;">${t(counter.label_ar, counter.label_en)}</span>
+                                </h1>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        </div>
+    </section>`;
+};
+
+// Gallery Page Section HTML (with breadcrumb)
+const generateGalleryPageHtml = (c, lang, t) => {
+    const getImageUrl = (img) => {
+        if (!img || typeof img !== 'string') return '';
+        if (img.startsWith('http') || img.startsWith('/')) return img;
+        return `/storage/${img}`;
+    };
+    
+    const items = c.items || [];
+    const home = lang === 'ar' ? 'الرئيسية' : 'Home';
+    const breadcrumb = t(c.breadcrumb_ar, c.breadcrumb_en) || (lang === 'ar' ? 'المعرض' : 'Gallery');
+    
+    return `
+    <div>
+        <!-- Breadcrumb Navigation -->
+        <div class="breadcrumb-nav" style="padding: 20px 0; background: #f8f9fa;">
+            <div class="container">
+                <ul style="list-style: none; padding: 0; margin: 0; display: flex; gap: 8px; align-items: center;">
+                    <li><a href="" style="color: #666; text-decoration: none;">${home}</a></li>
+                    <li><span style="color: #999;">/</span></li>
+                    <li><a href="" class="active" style="color: #004F4C; text-decoration: none; font-weight: 500;">${breadcrumb}</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Gallery Section -->
+        <section class="galleryV2-area" style="padding: 60px 0;">
+            <div class="container">
+                <div class="row gy-4">
+                    <div class="col-lg-12 text-center">
+                        <div class="mb-4">
+                            <h1 style="margin-bottom: 16px;">${t(c.title_ar, c.title_en) || (lang === 'ar' ? 'المعرض' : 'Gallery')}</h1>
+                            ${c.subtitle_ar || c.subtitle_en ? `<p class="off-text mb-0 fw-medium fs-18" style="color: #666;">${t(c.subtitle_ar, c.subtitle_en)}</p>` : ''}
+                        </div>
+                    </div>
+                    ${items.map(item => `
+                        <div class="col-md-6">
+                            <div class="img__card__block" style="position: relative; border-radius: 16px; overflow: hidden;">
+                                <img src="${getImageUrl(item.image)}" alt="${t(item.label_ar, item.label_en)}" style="width: 100%; height: 300px; object-fit: cover;" />
+                                <a href="${item.url || '#'}" style="position: absolute; bottom: 16px; left: 16px; background: rgba(255,255,255,0.9); padding: 8px 16px; border-radius: 8px; text-decoration: none; color: #333; font-weight: 500;">${t(item.label_ar, item.label_en)}</a>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        </section>
+    </div>`;
+};
+
+// Hero Riya Section HTML (Purple theme)
+const generateHeroRiyaHtml = (c, lang, t) => {
+    const getImageUrl = (img) => {
+        if (!img || typeof img !== 'string') return '';
+        if (img.startsWith('http') || img.startsWith('/')) return img;
+        return `/storage/${img}`;
+    };
+    
+    const angleIcon = lang === 'ar' ? 'far fa-angle-left' : 'far fa-angle-right';
+    const longArrowIcon = lang === 'ar' ? 'fal fa-long-arrow-left' : 'fal fa-long-arrow-right';
+    const titleColor = c.title_color || '#9B4DE0';
+    
+    return `
+    <section class="common-hero-area" style="padding: 60px 0; position: relative;">
+        ${c.shape_image ? `<img src="${getImageUrl(c.shape_image)}" class="hero-shape" alt="" style="position: absolute; top: 0; right: 0; max-width: 50%; opacity: 0.5;" />` : ''}
+        <div class="container">
+            <div class="row flex-column-reverse flex-lg-row gap-4 gap-lg-0 align-items-center">
+                <div class="col-lg-6">
+                    <div class="hero__block">
+                        ${c.icon ? `<i style="display: inline-block; margin-bottom: 16px;"><img src="${getImageUrl(c.icon)}" alt="" style="width: 48px; height: 48px;" /></i>` : ''}
+                        <div>
+                            <h1 class="fs-56" style="color: ${titleColor}; font-size: 3rem; margin-bottom: 16px;">${t(c.title_ar, c.title_en) || 'منصة ريا'}</h1>
+                            <p style="color: #666; margin-bottom: 24px;">${t(c.description_ar, c.description_en) || ''}</p>
+                            <div class="work-card-btns d-flex align-items-center gap-3">
+                                ${c.button_text_ar || c.button_text_en ? `
+                                <a href="${c.button_url || '#'}" style="background: #004F4C; color: #fff; padding: 12px 24px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                                    ${t(c.button_text_ar, c.button_text_en)}
+                                    <span><i class="${angleIcon}"></i></span>
+                                </a>` : ''}
+                                ${c.secondary_button_text_ar || c.secondary_button_text_en ? `
+                                <a href="${c.secondary_button_url || '#'}" class="secondary-btn" style="color: #004F4C; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                                    ${t(c.secondary_button_text_ar, c.secondary_button_text_en)}
+                                    <span><i class="${longArrowIcon}"></i></span>
+                                </a>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <div class="hero__img" style="position: relative;">
+                        ${c.hero_image ? `<img src="${getImageUrl(c.hero_image)}" alt="" style="max-width: 100%; position: relative; z-index: 1;" />` : ''}
+                        ${c.hero_bg_image ? `<img src="${getImageUrl(c.hero_bg_image)}" class="hero-icon-bg" alt="" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: 120%; z-index: 0; opacity: 0.3;" />` : ''}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>`;
+};
+
+// Hero Jiyad Section HTML (Blue/Grey theme)
+const generateHeroJiyadHtml = (c, lang, t) => {
+    const getImageUrl = (img) => {
+        if (!img || typeof img !== 'string') return '';
+        if (img.startsWith('http') || img.startsWith('/')) return img;
+        return `/storage/${img}`;
+    };
+    
+    const angleIcon = lang === 'ar' ? 'far fa-angle-left' : 'far fa-angle-right';
+    const longArrowIcon = lang === 'ar' ? 'fal fa-long-arrow-left' : 'fal fa-long-arrow-right';
+    const titleColor = c.title_color || '#314660';
+    
+    return `
+    <section class="common-hero-area" style="padding: 60px 0; position: relative;">
+        ${c.shape_image ? `<img src="${getImageUrl(c.shape_image)}" class="hero-shape" alt="" style="position: absolute; top: 0; right: 0; max-width: 50%; opacity: 0.5;" />` : ''}
+        <div class="container">
+            <div class="row flex-column-reverse flex-lg-row gap-4 gap-lg-0 align-items-center">
+                <div class="col-lg-6">
+                    <div class="hero__block">
+                        ${c.icon ? `<i style="display: inline-block; margin-bottom: 16px;"><img src="${getImageUrl(c.icon)}" alt="" style="width: 48px; height: 48px;" /></i>` : ''}
+                        <div>
+                            <h1 class="fs-56" style="color: ${titleColor}; font-size: 3rem; margin-bottom: 16px;">${t(c.title_ar, c.title_en) || 'منصة جياد'}</h1>
+                            <p style="color: #666; margin-bottom: 24px;">${t(c.description_ar, c.description_en) || ''}</p>
+                            <div class="work-card-btns d-flex align-items-center gap-3">
+                                ${c.button_text_ar || c.button_text_en ? `
+                                <a href="${c.button_url || '#'}" style="background: #004F4C; color: #fff; padding: 12px 24px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                                    ${t(c.button_text_ar, c.button_text_en)}
+                                    <span><i class="${angleIcon}"></i></span>
+                                </a>` : ''}
+                                ${c.secondary_button_text_ar || c.secondary_button_text_en ? `
+                                <a href="${c.secondary_button_url || '#'}" class="secondary-btn" style="color: #004F4C; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                                    ${t(c.secondary_button_text_ar, c.secondary_button_text_en)}
+                                    <span><i class="${longArrowIcon}"></i></span>
+                                </a>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <div class="hero__img" style="position: relative;">
+                        ${c.hero_image ? `<img src="${getImageUrl(c.hero_image)}" alt="" style="max-width: 100%; position: relative; z-index: 1;" />` : ''}
+                        ${c.hero_bg_image ? `<img src="${getImageUrl(c.hero_bg_image)}" class="hero-icon-bg" alt="" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: 120%; z-index: 0; opacity: 0.3;" />` : ''}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>`;
+};
+
+// Hero Shops Z Section HTML (Green theme)
+const generateHeroShopsZHtml = (c, lang, t) => {
+    const getImageUrl = (img) => {
+        if (!img || typeof img !== 'string') return '';
+        if (img.startsWith('http') || img.startsWith('/')) return img;
+        return `/storage/${img}`;
+    };
+    
+    const angleIcon = lang === 'ar' ? 'far fa-angle-left' : 'far fa-angle-right';
+    const longArrowIcon = lang === 'ar' ? 'fal fa-long-arrow-left' : 'fal fa-long-arrow-right';
+    const titleColor = c.title_color || '#00A651';
+    
+    return `
+    <section class="common-hero-area pb-4 pb-lg-0 pt-4" style="padding: 40px 0; position: relative;">
+        ${c.shape_image ? `<img src="${getImageUrl(c.shape_image)}" class="hero-shape" alt="" style="position: absolute; top: 0; right: 0; max-width: 50%; opacity: 0.5;" />` : ''}
+        <div class="container">
+            <div class="row flex-column-reverse flex-lg-row gap-4 gap-lg-0 align-items-center">
+                <div class="col-lg-6">
+                    <div class="hero__block">
+                        ${c.icon ? `<i style="display: inline-block; margin-bottom: 16px;"><img src="${getImageUrl(c.icon)}" alt="" style="width: 48px; height: 48px;" /></i>` : ''}
+                        <div>
+                            <h1 class="text-green fs-56" style="color: ${titleColor}; font-size: 3rem; margin-bottom: 16px;">${t(c.title_ar, c.title_en) || 'منصة Shops Z'}</h1>
+                            <p style="color: #666; margin-bottom: 24px;">${t(c.description_ar, c.description_en) || ''}</p>
+                            <div class="work-card-btns green-btns d-flex align-items-center gap-3">
+                                ${c.button_text_ar || c.button_text_en ? `
+                                <a href="${c.button_url || '#'}" style="background: #00A651; color: #fff; padding: 12px 24px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                                    ${t(c.button_text_ar, c.button_text_en)}
+                                    <span><i class="${angleIcon}"></i></span>
+                                </a>` : ''}
+                                ${c.secondary_button_text_ar || c.secondary_button_text_en ? `
+                                <a href="${c.secondary_button_url || '#'}" class="secondary-btn" style="color: #00A651; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                                    ${t(c.secondary_button_text_ar, c.secondary_button_text_en)}
+                                    <span><i class="${longArrowIcon}"></i></span>
+                                </a>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <div class="hero__img" style="position: relative;">
+                        ${c.hero_image ? `<img src="${getImageUrl(c.hero_image)}" alt="" style="max-width: 100%; position: relative; z-index: 1;" />` : ''}
+                        ${c.hero_bg_image ? `<img src="${getImageUrl(c.hero_bg_image)}" class="hero-icon-bg" alt="" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: 120%; z-index: 0; opacity: 0.3;" />` : ''}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>`;
+};
+
+// Hero Beyond ERP Section HTML
+const generateHeroBeyondERPHtml = (c, lang, t) => {
+    const getImageUrl = (img) => {
+        if (!img || typeof img !== 'string') return '';
+        if (img.startsWith('http') || img.startsWith('/')) return img;
+        return `/storage/${img}`;
+    };
+    
+    const angleIcon = lang === 'ar' ? 'far fa-angle-left' : 'far fa-angle-right';
+    const longArrowIcon = lang === 'ar' ? 'fal fa-long-arrow-left' : 'fal fa-long-arrow-right';
+    
+    return `
+    <section class="common-hero-area pb-4 pb-lg-0 pt-4" style="padding: 40px 0; position: relative;">
+        ${c.shape_image ? `<img src="${getImageUrl(c.shape_image)}" class="hero-shape" alt="" style="position: absolute; top: 0; right: 0; max-width: 50%; opacity: 0.5;" />` : ''}
+        <div class="container">
+            <div class="row flex-column-reverse flex-lg-row gap-4 gap-lg-0 align-items-center">
+                <div class="col-lg-6">
+                    <div class="hero__block">
+                        ${c.icon ? `<i style="display: inline-block; margin-bottom: 16px;"><img src="${getImageUrl(c.icon)}" alt="" style="width: 48px; height: 48px;" /></i>` : ''}
+                        <div>
+                            <h1 class="fs-56" style="font-size: 3rem; margin-bottom: 16px;">${t(c.title_ar, c.title_en) || 'Beyond ERP'}</h1>
+                            <p style="color: #666; margin-bottom: 24px;">${t(c.description_ar, c.description_en) || ''}</p>
+                            <div class="work-card-btns d-flex align-items-center gap-3">
+                                ${c.button_text_ar || c.button_text_en ? `
+                                <a href="${c.button_url || '#'}" style="background: #004F4C; color: #fff; padding: 12px 24px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                                    ${t(c.button_text_ar, c.button_text_en)}
+                                    <span><i class="${angleIcon}"></i></span>
+                                </a>` : ''}
+                                ${c.secondary_button_text_ar || c.secondary_button_text_en ? `
+                                <a href="${c.secondary_button_url || '#'}" class="secondary-btn" style="color: #004F4C; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                                    ${t(c.secondary_button_text_ar, c.secondary_button_text_en)}
+                                    <span><i class="${longArrowIcon}"></i></span>
+                                </a>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <div class="hero__img" style="position: relative;">
+                        ${c.hero_image ? `<img src="${getImageUrl(c.hero_image)}" alt="" style="max-width: 100%; position: relative; z-index: 1;" />` : ''}
+                        ${c.hero_bg_image ? `<img src="${getImageUrl(c.hero_bg_image)}" class="hero-icon-bg" alt="" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: 120%; z-index: 0; opacity: 0.3;" />` : ''}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>`;
+};
+
+// Hero Beyond Pay Section HTML
+const generateHeroBeyondPayHtml = (c, lang, t) => {
+    const getImageUrl = (img) => {
+        if (!img || typeof img !== 'string') return '';
+        if (img.startsWith('http') || img.startsWith('/')) return img;
+        return `/storage/${img}`;
+    };
+    
+    const angleIcon = lang === 'ar' ? 'far fa-angle-left' : 'far fa-angle-right';
+    const longArrowIcon = lang === 'ar' ? 'fal fa-long-arrow-left' : 'fal fa-long-arrow-right';
+    
+    return `
+    <section class="common-hero-area pb-4 pb-lg-0 pt-4" style="padding: 40px 0; position: relative;">
+        ${c.shape_image ? `<img src="${getImageUrl(c.shape_image)}" class="hero-shape" alt="" style="position: absolute; top: 0; right: 0; max-width: 50%; opacity: 0.5;" />` : ''}
+        <div class="container">
+            <div class="row flex-column-reverse flex-lg-row gap-4 gap-lg-0 align-items-center">
+                <div class="col-lg-6">
+                    <div class="hero__block">
+                        ${c.icon ? `<i style="display: inline-block; margin-bottom: 16px;"><img src="${getImageUrl(c.icon)}" alt="" style="width: 48px; height: 48px;" /></i>` : ''}
+                        <div>
+                            <h1 class="fs-56" style="font-size: 3rem; margin-bottom: 16px;">${t(c.title_ar, c.title_en) || 'Beyond Pay'}</h1>
+                            <p style="color: #666; margin-bottom: 24px;">${t(c.description_ar, c.description_en) || ''}</p>
+                            <div class="work-card-btns d-flex align-items-center gap-3">
+                                ${c.button_text_ar || c.button_text_en ? `
+                                <a href="${c.button_url || '#'}" style="background: #004F4C; color: #fff; padding: 12px 24px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                                    ${t(c.button_text_ar, c.button_text_en)}
+                                    <span><i class="${angleIcon}"></i></span>
+                                </a>` : ''}
+                                ${c.secondary_button_text_ar || c.secondary_button_text_en ? `
+                                <a href="${c.secondary_button_url || '#'}" class="secondary-btn" style="color: #004F4C; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                                    ${t(c.secondary_button_text_ar, c.secondary_button_text_en)}
+                                    <span><i class="${longArrowIcon}"></i></span>
+                                </a>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <div class="hero__img" style="position: relative;">
+                        ${c.hero_image ? `<img src="${getImageUrl(c.hero_image)}" alt="" style="max-width: 100%; position: relative; z-index: 1;" />` : ''}
+                        ${c.hero_bg_image ? `<img src="${getImageUrl(c.hero_bg_image)}" class="hero-icon-bg" alt="" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: 120%; z-index: 0; opacity: 0.3;" />` : ''}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>`;
+};
+
 const availableSectionTypes = computed(() => {
     return props.sectionTypes.filter(st => !st.is_fixed);
 });
@@ -923,19 +1975,29 @@ const updateSection = (sectionId, content) => {
     const section = sectionsList.value.find(s => s.id === sectionId);
     if (!section) return;
 
+    console.log('Saving section:', sectionId, 'with content:', JSON.stringify(content, null, 2));
+
     router.put(
         route('pages.builder.sections.update', [props.page.id, sectionId]),
         { content },
         {
             preserveScroll: true,
-            preserveState: true,
+            preserveState: false, // Allow props to update from server
             onSuccess: (page) => {
-                sectionsList.value = page.props.sections;
+                console.log('Save success, received sections:', page.props.sections);
+                // Update sections from props if available
+                if (page.props.sections) {
+                    sectionsList.value = page.props.sections;
+                }
                 showToast('Section updated successfully', 'success');
                 hasUnsavedChanges.value = false;
+                isSaving.value = false;
+                closeEditSidebar();
             },
             onError: (errors) => {
-                showToast('Failed to update section', 'error');
+                console.error('Save error:', errors);
+                showToast('Failed to update section: ' + JSON.stringify(errors), 'error');
+                isSaving.value = false;
             },
         }
     );
@@ -1018,7 +2080,29 @@ const reorderSections = (newOrder) => {
 };
 
 const openPreview = () => {
-    window.open(route('website.home'), '_blank');
+    // Open the actual page URL in a new tab
+    const slug = props.page.url_slug_en || props.page.slug || '';
+    const pageUrl = slug === 'home' || !slug ? '/' : `/${slug}`;
+    window.open(pageUrl, '_blank');
+};
+
+// Save all sections (for the Save button)
+const saveAllSections = () => {
+    if (isSaving.value) return;
+    
+    isSaving.value = true;
+    
+    // If there's an editing section, save it
+    if (editingSection.value) {
+        updateSection(editingSection.value.id, editingSection.value.content);
+    } else {
+        // Just show success toast if no active edits
+        setTimeout(() => {
+            isSaving.value = false;
+            showToast('All changes saved', 'success');
+            hasUnsavedChanges.value = false;
+        }, 500);
+    }
 };
 
 const showToast = (message, type = 'success') => {
@@ -1109,11 +2193,14 @@ onUnmounted(() => {
                     </svg>
                     Preview
                 </Button>
-                <Button variant="primary" size="md">
-                    <svg class="icon" viewBox="0 0 20 20" fill="currentColor">
+                <Button variant="primary" size="md" @click="saveAllSections" :disabled="isSaving">
+                    <svg v-if="isSaving" class="icon animate-spin" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" stroke-dasharray="31.416" stroke-dashoffset="10" />
+                    </svg>
+                    <svg v-else class="icon" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                     </svg>
-                    Save
+                    {{ isSaving ? 'Saving...' : 'Save' }}
                 </Button>
             </div>
         </div>
@@ -1149,23 +2236,24 @@ onUnmounted(() => {
                                 <span class="section-name">{{ section.section_type.name_en }}</span>
                             </div>
                             <div class="section-actions">
-                                <button class="action-btn" title="Edit" @click="editSection(section.id)">
+                                <button type="button" class="action-btn" title="Edit" @click="editSection(section.id)">
                                     <svg viewBox="0 0 20 20" fill="currentColor">
                                         <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                                     </svg>
                                 </button>
-                                <button class="action-btn" title="Delete" @click="deleteSection(section.id)">
+                                <button type="button" class="action-btn" title="Delete" @click="deleteSection(section.id)">
                                     <svg viewBox="0 0 20 20" fill="currentColor">
                                         <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
                                     </svg>
                                 </button>
-                                <button class="action-btn" title="Duplicate" @click="duplicateSection(section.id)">
+                                <button type="button" class="action-btn" title="Duplicate" @click="duplicateSection(section.id)">
                                     <svg viewBox="0 0 20 20" fill="currentColor">
                                         <path d="M7 9a2 2 0 012-2h6a2 2 0 012 2v6a2 2 0 01-2 2H9a2 2 0 01-2-2V9z" />
                                         <path d="M5 3a2 2 0 00-2 2v6a2 2 0 002 2V5h8a2 2 0 00-2-2H5z" />
                                     </svg>
                                 </button>
                                 <button
+                                    type="button"
                                     :class="['action-btn', 'toggle-btn', { 'active': section.is_active }]"
                                     :title="section.is_active ? 'Hide' : 'Show'"
                                     @click="toggleSection(section.id)"
@@ -1192,7 +2280,7 @@ onUnmounted(() => {
                                 <span class="section-name">{{ headerSection.section_type.name_en }}</span>
                             </div>
                             <div class="section-actions">
-                                <button class="action-btn" title="Edit" @click="editSection(headerSection.id)">
+                                <button type="button" class="action-btn" title="Edit" @click="editSection(headerSection.id)">
                                     <svg viewBox="0 0 20 20" fill="currentColor">
                                         <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                                     </svg>
@@ -1205,7 +2293,7 @@ onUnmounted(() => {
                                 <span class="section-name">{{ footerSection.section_type.name_en }}</span>
                             </div>
                             <div class="section-actions">
-                                <button class="action-btn" title="Edit" @click="editSection(footerSection.id)">
+                                <button type="button" class="action-btn" title="Edit" @click="editSection(footerSection.id)">
                                     <svg viewBox="0 0 20 20" fill="currentColor">
                                         <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                                     </svg>
@@ -1224,10 +2312,12 @@ onUnmounted(() => {
                         <!-- Language Toggle -->
                         <div class="preview-lang-toggle">
                             <button 
+                                type="button"
                                 :class="['lang-btn', { active: previewLang === 'en' }]"
                                 @click="previewLang = 'en'"
                             >EN</button>
                             <button 
+                                type="button"
                                 :class="['lang-btn', { active: previewLang === 'ar' }]"
                                 @click="previewLang = 'ar'"
                             >AR</button>
@@ -1235,6 +2325,7 @@ onUnmounted(() => {
                         
                         <!-- Device Toggle -->
                         <button 
+                            type="button"
                             :class="['preview-device', { active: previewDevice === 'desktop' }]" 
                             title="Desktop"
                             @click="previewDevice = 'desktop'"
@@ -1244,6 +2335,7 @@ onUnmounted(() => {
                             </svg>
                         </button>
                         <button 
+                            type="button"
                             :class="['preview-device', { active: previewDevice === 'tablet' }]" 
                             title="Tablet"
                             @click="previewDevice = 'tablet'"
@@ -1253,6 +2345,7 @@ onUnmounted(() => {
                             </svg>
                         </button>
                         <button 
+                            type="button"
                             :class="['preview-device', { active: previewDevice === 'mobile' }]" 
                             title="Mobile"
                             @click="previewDevice = 'mobile'"
@@ -1311,6 +2404,9 @@ onUnmounted(() => {
     display: flex;
     flex-direction: column;
 }
+.hero-area.v2 {
+    background-color: #012d37;
+}
 
 /* Header */
 .builder-header {
@@ -1363,6 +2459,19 @@ onUnmounted(() => {
 .icon {
     width: 1.25rem;
     height: 1.25rem;
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* Main Content */
@@ -1599,6 +2708,7 @@ onUnmounted(() => {
     padding: 1.5rem;
     display: flex;
     justify-content: center;
+    min-height: 600px;
 }
 
 /* Preview Frame Container - Responsive */
@@ -1609,6 +2719,7 @@ onUnmounted(() => {
     overflow: hidden;
     transition: width 0.3s ease;
     height: 100%;
+    min-height: 550px;
 }
 
 .preview-frame-container.preview-desktop {

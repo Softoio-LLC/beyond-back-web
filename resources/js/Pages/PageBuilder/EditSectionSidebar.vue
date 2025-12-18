@@ -1,12 +1,14 @@
 <script setup>
 import { ref, reactive, watch, computed, onMounted } from 'vue';
 import TextInput from '@/Components/UI/TextInput.vue';
+import UrlAutocomplete from '@/Components/UI/UrlAutocomplete.vue';
 import RichTextEditor from '@/Components/UI/RichTextEditor.vue';
 import ImageWithAlt from '@/Components/UI/ImageWithAlt.vue';
 import Button from '@/Components/UI/Button.vue';
 import RepeaterField from '@/Components/UI/RepeaterField.vue';
 import NestedMenuEditor from '@/Components/UI/NestedMenuEditor.vue';
 import FooterMenuEditor from '@/Components/UI/FooterMenuEditor.vue';
+import ConceptBlockEditor from '@/Components/UI/ConceptBlockEditor.vue';
 import saFlag from '@/../assets/sa-flag.svg';
 import usFlag from '@/../assets/us-flag.svg';
 
@@ -116,18 +118,41 @@ const getSectionFields = computed(() => {
     switch (key) {
         case 'hero':
             return {
-                basicFields: ['subtitle', 'title', 'description'],
-                buttonFields: ['button_text', 'button_url'],
-                imageFields: ['background_image'],
+                basicFields: [
+                    { key: 'subtitle', type: 'text' },
+                    { key: 'title', type: 'text' },
+                    { key: 'description', type: 'richtext' }
+                ],
+                buttonFields: [
+                    { key: 'button_text', label: 'Primary Button Text' },
+                    { key: 'button_url', label: 'Primary Button URL' },
+                    { key: 'secondary_button_text', label: 'Secondary Button Text' },
+                    { key: 'secondary_button_url', label: 'Secondary Button URL' }
+                ],
+                imageFields: [
+                    { key: 'background_image', showAlt: true },
+                    { key: 'shape_image', showAlt: false },
+                    { key: 'icon', showAlt: false },
+                    { key: 'hero_image', showAlt: false },
+                    { key: 'hero_bg_image', showAlt: false }
+                ],
                 repeaterFields: [{
                     key: 'slides',
-                    label: 'Slider Images',
+                    label: 'Slider Images (for Slider variant)',
                     itemLabel: 'Slide',
                     fields: [
-                        { key: 'image', label: 'Image', type: 'image', showAlt: true }
+                        { key: 'image', label: 'Image', type: 'image', showAlt: true, simpleAlt: true }
                     ],
-                    defaultItem: { image: '', alt: '', alt_en: '', alt_ar: '' }
-                }]
+                    defaultItem: { image: '', alt: '' }
+                }],
+                variantField: {
+                    key: 'variant',
+                    options: [
+                        { value: 'slider', label: 'Slider (Homepage)' },
+                        { value: 'service', label: 'Service (Dark Background)' },
+                        { value: 'common', label: 'Common (Light Background)' }
+                    ]
+                }
             };
             
         case 'partners':
@@ -140,10 +165,10 @@ const getSectionFields = computed(() => {
                     label: 'Partner Logos',
                     itemLabel: 'Logo',
                     fields: [
-                        { key: 'image', label: 'Logo Image', type: 'image', showAlt: true },
+                        { key: 'image', label: 'Logo Image', type: 'image', showAlt: true, simpleAlt: true },
                         { key: 'url', label: 'Website URL', type: 'url' }
                     ],
-                    defaultItem: { image: '', url: '#', alt: '', alt_en: '', alt_ar: '' }
+                    defaultItem: { image: '', url: '#', alt: '' }
                 }]
             };
             
@@ -151,41 +176,20 @@ const getSectionFields = computed(() => {
             return {
                 basicFields: [],
                 buttonFields: [],
-                imageFields: ['shape_image', 'bottom_shape_image', 'counter_bg_image'],
-                repeaterFields: [
-                    {
-                        key: 'blocks',
-                        label: 'Content Blocks',
-                        itemLabel: 'Block',
-                        fields: [
-                            { key: 'title', label: 'Title', type: 'text', bilingual: true },
-                            { key: 'paragraphs', label: 'Content', type: 'richtext', bilingual: true, isArray: true }
-                        ],
-                        defaultItem: { 
-                            title_en: '', title_ar: '', 
-                            paragraphs_en: [], paragraphs_ar: [],
-                            slides: [],
-                            image_on_left: false
-                        }
-                    },
-                    {
-                        key: 'counters',
-                        label: 'Counter Stats',
-                        itemLabel: 'Counter',
-                        fields: [
-                            { key: 'value', label: 'Value', type: 'text' },
-                            { key: 'label', label: 'Label', type: 'text', bilingual: true }
-                        ],
-                        defaultItem: { value: '', label_en: '', label_ar: '' }
-                    }
-                ]
+                imageFields: [
+                    { key: 'shape_image', showAlt: false },
+                    { key: 'bottom_shape_image', showAlt: false },
+                    { key: 'counter_bg_image', showAlt: false }
+                ],
+                repeaterFields: [],
+                conceptEditor: true  // Use dedicated ConceptBlockEditor
             };
             
         case 'services':
             return {
-                basicFields: ['title'],
+                basicFields: [{ key: 'title', type: 'text' }],
                 buttonFields: [],
-                imageFields: ['shape_image'],
+                imageFields: [{ key: 'shape_image', showAlt: false }],
                 repeaterFields: [{
                     key: 'services',
                     label: 'Services',
@@ -201,9 +205,12 @@ const getSectionFields = computed(() => {
             
         case 'cta':
             return {
-                basicFields: ['title', 'description'],
+                basicFields: [
+                    { key: 'title', type: 'text' },
+                    { key: 'description', type: 'richtext' }
+                ],
                 buttonFields: ['button_text', 'button_url'],
-                imageFields: ['shape_image'],
+                imageFields: [{ key: 'shape_image', showAlt: false }],
                 repeaterFields: [{
                     key: 'contact_cards',
                     label: 'Contact Cards',
@@ -218,9 +225,12 @@ const getSectionFields = computed(() => {
             
         case 'projects':
             return {
-                basicFields: ['title'],
+                basicFields: [{ key: 'title', type: 'text' }],
                 buttonFields: [],
-                imageFields: ['shape_image', 'work_shape_image'],
+                imageFields: [
+                    { key: 'shape_image', showAlt: false },
+                    { key: 'work_shape_image', showAlt: false }
+                ],
                 repeaterFields: [{
                     key: 'projects',
                     label: 'Projects',
@@ -246,9 +256,9 @@ const getSectionFields = computed(() => {
             
         case 'team':
             return {
-                basicFields: ['title'],
+                basicFields: [{ key: 'title', type: 'text' }],
                 buttonFields: [],
-                imageFields: ['shape_image'],
+                imageFields: [{ key: 'shape_image', showAlt: false }],
                 repeaterFields: [{
                     key: 'members',
                     label: 'Team Members',
@@ -266,7 +276,10 @@ const getSectionFields = computed(() => {
             return {
                 basicFields: [],
                 buttonFields: ['button_text', 'button_url'],
-                imageFields: ['background_image', 'contact_logo'],
+                imageFields: [
+                    { key: 'background_image', showAlt: true },
+                    { key: 'contact_logo', showAlt: false }
+                ],
                 repeaterFields: [{
                     key: 'cards',
                     label: 'Feature Cards',
@@ -282,9 +295,12 @@ const getSectionFields = computed(() => {
             
         case 'gallery':
             return {
-                basicFields: ['title', 'subtitle'],
+                basicFields: [
+                    { key: 'title', type: 'text' },
+                    { key: 'subtitle', type: 'text' }
+                ],
                 buttonFields: ['button_text', 'button_url'],
-                imageFields: ['shape_image'],
+                imageFields: [{ key: 'shape_image', showAlt: false }],
                 repeaterFields: [{
                     key: 'images',
                     label: 'Gallery Images',
@@ -299,9 +315,12 @@ const getSectionFields = computed(() => {
             
         case 'faq':
             return {
-                basicFields: ['title', 'subtitle'],
+                basicFields: [
+                    { key: 'title', type: 'text' },
+                    { key: 'subtitle', type: 'text' }
+                ],
                 buttonFields: [],
-                imageFields: ['shape_image'],
+                imageFields: [{ key: 'shape_image', showAlt: false }],
                 repeaterFields: [{
                     key: 'faqs',
                     label: 'FAQ Items',
@@ -316,14 +335,20 @@ const getSectionFields = computed(() => {
             
         case 'inquiry':
             return {
-                basicFields: ['title', 'description'],
+                basicFields: [
+                    { key: 'title', type: 'text' },
+                    { key: 'description', type: 'richtext' }
+                ],
                 buttonFields: [
                     { key: 'primary_button_text', label: 'Primary Button Text' },
                     { key: 'primary_button_url', label: 'Primary Button URL' },
                     { key: 'secondary_button_text', label: 'Secondary Button Text' },
                     { key: 'secondary_button_url', label: 'Secondary Button URL' }
                 ],
-                imageFields: ['shape_image', 'image'],
+                imageFields: [
+                    { key: 'shape_image', showAlt: false },
+                    { key: 'image', showAlt: false }
+                ],
                 repeaterFields: []
             };
             
@@ -331,11 +356,23 @@ const getSectionFields = computed(() => {
             return {
                 basicFields: [],
                 buttonFields: ['contact_button_text', 'contact_button_url'],
-                imageFields: ['logo', 'flag_ar', 'flag_en', 'check_icon'],
+                imageFields: [
+                    { key: 'logo', showAlt: false },
+                    { key: 'flag_ar', showAlt: false },
+                    { key: 'flag_en', showAlt: false },
+                    { key: 'check_icon', showAlt: false }
+                ],
                 repeaterFields: [],
                 nestedMenuField: {
                     key: 'menu_items',
                     label: 'Menu Items'
+                },
+                variantField: {
+                    key: 'variant',
+                    options: [
+                        { value: 'dark', label: 'Dark (Transparent/White)' },
+                        { value: 'light', label: 'Light (Solid Background)' }
+                    ]
                 }
             };
             
@@ -343,13 +380,294 @@ const getSectionFields = computed(() => {
             return {
                 basicFields: ['tagline', 'copyright_text'],
                 buttonFields: [],
-                imageFields: ['logo', 'shape_image'],
+                imageFields: [
+                    { key: 'logo', showAlt: false },
+                    { key: 'shape_image', showAlt: false }
+                ],
                 repeaterFields: [],
                 footerFields: {
                     menuColumns: 'menu_columns',
                     contactInfo: 'contact_info',
                     social: 'social'
                 }
+            };
+        
+        case 'contact-info':
+            return {
+                basicFields: [
+                    { key: 'section_title', type: 'text' },
+                    { key: 'section_description', type: 'richtext' },
+                    { key: 'general_info_title', type: 'text' },
+                    { key: 'general_info_description', type: 'richtext' },
+                    { key: 'form_title', type: 'text' },
+                    { key: 'form_description', type: 'richtext' }
+                ],
+                buttonFields: [],
+                imageFields: [{ key: 'overlay_image', showAlt: false }],
+                repeaterFields: [
+                    {
+                        key: 'info_cards',
+                        label: 'Contact Info Cards',
+                        itemLabel: 'Card',
+                        fields: [
+                            { key: 'icon', label: 'Icon', type: 'image', showAlt: false },
+                            { key: 'title', label: 'Title', type: 'text', bilingual: true },
+                            { key: 'content', label: 'Content', type: 'richtext', bilingual: true }
+                        ],
+                        defaultItem: { icon: '', title_en: '', title_ar: '', content_en: '', content_ar: '' }
+                    },
+                    {
+                        key: 'info_items',
+                        label: 'General Info Items',
+                        itemLabel: 'Info Item',
+                        fields: [
+                            { key: 'label', label: 'Label', type: 'text', bilingual: true },
+                            { key: 'value', label: 'Value', type: 'text', bilingual: true },
+                            { key: 'type', label: 'Type', type: 'text' }
+                        ],
+                        defaultItem: { label_en: '', label_ar: '', value_en: '', value_ar: '', type: 'text' }
+                    }
+                ]
+            };
+        
+        case 'page-banner':
+            return {
+                basicFields: [
+                    { key: 'title', type: 'text' },
+                    { key: 'subtitle', type: 'text' },
+                    { key: 'breadcrumb', type: 'text' }
+                ],
+                buttonFields: [],
+                imageFields: [
+                    { key: 'background_image', showAlt: true },
+                    { key: 'icon', showAlt: false },
+                    { key: 'shape_image', showAlt: false },
+                    { key: 'side_image', showAlt: false }
+                ],
+                repeaterFields: [],
+                variantField: {
+                    key: 'variant',
+                    options: [
+                        { value: 'default', label: 'Default (Centered)' },
+                        { value: 'services', label: 'Services (Side Image)' },
+                        { value: 'about', label: 'About (Wide)' }
+                    ]
+                }
+            };
+        
+        case 'contact-banner':
+            return {
+                basicFields: [
+                    { key: 'title', type: 'text' },
+                    { key: 'breadcrumb', type: 'text' }
+                ],
+                buttonFields: [],
+                imageFields: [
+                    { key: 'background_image', showAlt: true },
+                    { key: 'icon', showAlt: false },
+                    { key: 'side_image', showAlt: false }
+                ],
+                repeaterFields: []
+            };
+
+        case 'about':
+            return {
+                basicFields: [],
+                buttonFields: [],
+                imageFields: [
+                    { key: 'shape_image', showAlt: false },
+                    { key: 'left_shape_image', showAlt: false },
+                    { key: 'right_shape_image', showAlt: false }
+                ],
+                repeaterFields: [{
+                    key: 'blocks',
+                    label: 'About Blocks',
+                    itemLabel: 'Block',
+                    fields: [
+                        { key: 'icon', label: 'Icon', type: 'image', showAlt: false },
+                        { key: 'title', label: 'Title', type: 'text', bilingual: true },
+                        { key: 'content', label: 'Content', type: 'richtext', bilingual: true },
+                        { key: 'image', label: 'Image', type: 'image', showAlt: false },
+                        { key: 'image_bg', label: 'Image Background', type: 'image', showAlt: false },
+                        { key: 'layout', label: 'Layout', type: 'text' }
+                    ],
+                    defaultItem: { 
+                        icon: '', 
+                        title_en: '', 
+                        title_ar: '', 
+                        content_en: '', 
+                        content_ar: '', 
+                        image: '',
+                        image_bg: '',
+                        layout: 'image-right'
+                    }
+                }]
+            };
+
+        case 'hero_slider':
+            return {
+                basicFields: [
+                    { key: 'subtitle', type: 'text' },
+                    { key: 'title', type: 'text' },
+                    { key: 'description', type: 'richtext' }
+                ],
+                buttonFields: ['button_text', 'button_url'],
+                imageFields: [
+                    { key: 'background_image', showAlt: true }
+                ],
+                repeaterFields: [{
+                    key: 'slides',
+                    label: 'Slider Images',
+                    itemLabel: 'Slide',
+                    fields: [
+                        { key: 'image', label: 'Image', type: 'image', showAlt: true, simpleAlt: true }
+                    ],
+                    defaultItem: { image: '', alt: '' }
+                }]
+            };
+
+        case 'hero_common':
+            return {
+                basicFields: [
+                    { key: 'title', type: 'text' },
+                    { key: 'description', type: 'richtext' }
+                ],
+                buttonFields: [
+                    { key: 'button_text', label: 'Primary Button Text' },
+                    { key: 'button_url', label: 'Primary Button URL' },
+                    { key: 'secondary_button_text', label: 'Secondary Button Text' },
+                    { key: 'secondary_button_url', label: 'Secondary Button URL' }
+                ],
+                imageFields: [
+                    { key: 'background_image', showAlt: false },
+                    { key: 'shape_image', showAlt: false },
+                    { key: 'icon', showAlt: false },
+                    { key: 'hero_image', showAlt: false },
+                    { key: 'hero_bg_image', showAlt: false }
+                ],
+                repeaterFields: []
+            };
+
+        case 'newsletter':
+            return {
+                basicFields: [
+                    { key: 'title1', type: 'text' },
+                    { key: 'title2', type: 'text' },
+                    { key: 'phone_label', type: 'text' },
+                    { key: 'phone', type: 'text' }
+                ],
+                buttonFields: [],
+                imageFields: [
+                    { key: 'background_image', showAlt: false },
+                    { key: 'icon', showAlt: false }
+                ],
+                repeaterFields: []
+            };
+
+        case 'map':
+            return {
+                basicFields: [
+                    { key: 'title', type: 'text' },
+                    { key: 'subtitle', type: 'text' },
+                    { key: 'address', type: 'text' },
+                    { key: 'business_name', type: 'text' },
+                    { key: 'latitude', type: 'text' },
+                    { key: 'longitude', type: 'text' },
+                    { key: 'zoom', type: 'text' },
+                    { key: 'height', type: 'text' },
+                    { key: 'embed_url', type: 'text' }
+                ],
+                buttonFields: [],
+                imageFields: [],
+                repeaterFields: []
+            };
+
+        case 'common_service':
+            return {
+                basicFields: [
+                    { key: 'title', type: 'text' },
+                    { key: 'subtitle', type: 'text' },
+                    { key: 'title_color', type: 'text' }
+                ],
+                buttonFields: [],
+                imageFields: [{ key: 'section_icon', showAlt: false }],
+                repeaterFields: [{
+                    key: 'services',
+                    label: 'Services',
+                    itemLabel: 'Service',
+                    fields: [
+                        { key: 'icon', label: 'Icon', type: 'image', showAlt: false },
+                        { key: 'title', label: 'Title', type: 'text', bilingual: true },
+                        { key: 'description', label: 'Description', type: 'richtext', bilingual: true }
+                    ],
+                    defaultItem: { icon: '', title_en: '', title_ar: '', description_en: '', description_ar: '' }
+                }]
+            };
+
+        case 'counter_area':
+            return {
+                basicFields: [{ key: 'no_margin_top', type: 'checkbox' }],
+                buttonFields: [],
+                imageFields: [],
+                repeaterFields: [{
+                    key: 'counters',
+                    label: 'Counter Items',
+                    itemLabel: 'Counter',
+                    fields: [
+                        { key: 'icon', label: 'Icon', type: 'image', showAlt: false },
+                        { key: 'value', label: 'Value (e.g. +40)', type: 'text' },
+                        { key: 'label', label: 'Label', type: 'text', bilingual: true }
+                    ],
+                    defaultItem: { icon: '', value: '', label_en: '', label_ar: '' }
+                }]
+            };
+
+        case 'gallery_page':
+            return {
+                basicFields: [
+                    { key: 'title', type: 'text' },
+                    { key: 'subtitle', type: 'text' },
+                    { key: 'breadcrumb', type: 'text' }
+                ],
+                buttonFields: [],
+                imageFields: [],
+                repeaterFields: [{
+                    key: 'items',
+                    label: 'Gallery Items',
+                    itemLabel: 'Item',
+                    fields: [
+                        { key: 'image', label: 'Image', type: 'image', showAlt: false },
+                        { key: 'label', label: 'Label', type: 'text', bilingual: true },
+                        { key: 'url', label: 'URL', type: 'url' }
+                    ],
+                    defaultItem: { image: '', label_en: '', label_ar: '', url: '#' }
+                }]
+            };
+
+        case 'hero_riya':
+        case 'hero_jiyad':
+        case 'hero_shopsz':
+        case 'hero_beyond_erp':
+        case 'hero_beyond_pay':
+            return {
+                basicFields: [
+                    { key: 'title', type: 'text' },
+                    { key: 'description', type: 'richtext' },
+                    { key: 'title_color', type: 'text' }
+                ],
+                buttonFields: [
+                    { key: 'button_text', label: 'Primary Button Text' },
+                    { key: 'button_url', label: 'Primary Button URL' },
+                    { key: 'secondary_button_text', label: 'Secondary Button Text' },
+                    { key: 'secondary_button_url', label: 'Secondary Button URL' }
+                ],
+                imageFields: [
+                    { key: 'shape_image', showAlt: false },
+                    { key: 'icon', showAlt: false },
+                    { key: 'hero_image', showAlt: false },
+                    { key: 'hero_bg_image', showAlt: false }
+                ],
+                repeaterFields: []
             };
             
         default:
@@ -382,16 +700,20 @@ const formatLabel = (key) => {
 const updateImage = (field, value) => {
     if (typeof value === 'object' && value.image !== undefined) {
         formData[field] = value.image;
-        if (value.alt_en) formData[`${field}_alt_en`] = value.alt_en;
-        if (value.alt_ar) formData[`${field}_alt_ar`] = value.alt_ar;
+        formData[`${field}_alt_en`] = value.alt_en || '';
+        formData[`${field}_alt_ar`] = value.alt_ar || '';
     } else {
         formData[field] = value;
     }
     emit('change');
 };
 
-// Get image data for ImageWithAlt
+// Get image data for ImageWithAlt - always return a valid object
 const getImageData = (field) => {
+    // Ensure the field exists in formData for reactivity
+    if (!(field in formData)) {
+        formData[field] = '';
+    }
     return {
         image: formData[field] || '',
         alt_en: formData[`${field}_alt_en`] || '',
@@ -444,9 +766,28 @@ const updateRepeater = (key, value) => {
             <div class="content-fields">
                 
                 <!-- Basic Text Fields (Title, Subtitle, Description) -->
-                <template v-for="field in getSectionFields.basicFields" :key="field">
-                    <RichTextEditor
-                        v-if="hasField(field)"
+                <template v-for="field in getSectionFields.basicFields" :key="typeof field === 'object' ? field.key : field">
+                    <template v-if="typeof field === 'object'">
+                        <!-- TextInput for text type fields -->
+                        <TextInput
+                            v-if="field.type === 'text' && hasField(field.key)"
+                            :model-value="getFieldValue(field.key)"
+                            :label="formatLabel(field.key)"
+                            :placeholder="`Enter ${formatLabel(field.key).toLowerCase()}`"
+                            @update:model-value="setFieldValue(field.key, $event)"
+                        />
+                        <!-- RichTextEditor for richtext type fields -->
+                        <RichTextEditor
+                            v-else-if="field.type === 'richtext' && hasField(field.key)"
+                            :model-value="getFieldValue(field.key)"
+                            :label="formatLabel(field.key)"
+                            :placeholder="`Enter ${formatLabel(field.key).toLowerCase()}`"
+                            @update:model-value="setFieldValue(field.key, $event)"
+                        />
+                    </template>
+                    <!-- Backward compatibility: string field names use TextInput by default -->
+                    <TextInput
+                        v-else-if="hasField(field)"
                         :model-value="getFieldValue(field)"
                         :label="formatLabel(field)"
                         :placeholder="`Enter ${formatLabel(field).toLowerCase()}`"
@@ -466,12 +807,12 @@ const updateRepeater = (key, value) => {
                                 :placeholder="`Enter ${btnField.label.toLowerCase()}`"
                                 @update:model-value="setFieldValue(btnField.key, $event)"
                             />
-                            <TextInput
+                            <UrlAutocomplete
                                 v-else-if="hasField(btnField.key)"
                                 :model-value="formData[btnField.key]"
                                 :label="btnField.label"
-                                :placeholder="`Enter ${btnField.label.toLowerCase()}`"
-                                type="url"
+                                :placeholder="`Type / for internal pages or enter URL`"
+                                :lang="currentLang"
                                 @update:model-value="formData[btnField.key] = $event; emit('change')"
                             />
                         </template>
@@ -483,12 +824,12 @@ const updateRepeater = (key, value) => {
                                 :placeholder="`Enter ${formatLabel(btnField).toLowerCase()}`"
                                 @update:model-value="setFieldValue(btnField, $event)"
                             />
-                            <TextInput
+                            <UrlAutocomplete
                                 v-else-if="hasField(btnField)"
                                 :model-value="formData[btnField]"
                                 :label="formatLabel(btnField)"
-                                :placeholder="`Enter ${formatLabel(btnField).toLowerCase()}`"
-                                type="url"
+                                :placeholder="`Type / for internal pages or enter URL`"
+                                :lang="currentLang"
                                 @update:model-value="formData[btnField] = $event; emit('change')"
                             />
                         </template>
@@ -498,17 +839,38 @@ const updateRepeater = (key, value) => {
                 <!-- Image Fields -->
                 <div v-if="getSectionFields.imageFields.length > 0" class="field-group">
                     <h3 class="group-title">Images</h3>
-                    <template v-for="imgField in getSectionFields.imageFields" :key="imgField">
-                        <ImageWithAlt
-                            v-if="hasField(imgField)"
-                            :model-value="getImageData(imgField)"
-                            :label="formatLabel(imgField)"
-                            :section-type="sectionKey"
-                            :current-lang="currentLang"
-                            :show-alt-fields="imgField.includes('background') || imgField === 'image'"
-                            @update:model-value="updateImage(imgField, $event)"
-                        />
+                    <template v-for="imgField in getSectionFields.imageFields" :key="typeof imgField === 'object' ? imgField.key : imgField">
+                        <template v-if="typeof imgField === 'object'">
+                            <ImageWithAlt
+                                :model-value="getImageData(imgField.key)"
+                                :label="formatLabel(imgField.key)"
+                                :section-type="sectionKey"
+                                :current-lang="currentLang"
+                                :show-alt-fields="imgField.showAlt"
+                                @update:model-value="updateImage(imgField.key, $event)"
+                            />
+                        </template>
+                        <template v-else>
+                            <ImageWithAlt
+                                :model-value="getImageData(imgField)"
+                                :label="formatLabel(imgField)"
+                                :section-type="sectionKey"
+                                :current-lang="currentLang"
+                                :show-alt-fields="imgField.includes('background') || imgField === 'image'"
+                                @update:model-value="updateImage(imgField, $event)"
+                            />
+                        </template>
                     </template>
+                </div>
+
+                <!-- Concept Block Editor (for concept section) -->
+                <div v-if="getSectionFields.conceptEditor" class="field-group">
+                    <h3 class="group-title">Content</h3>
+                    <ConceptBlockEditor
+                        :model-value="{ blocks: formData.blocks || [], counters: formData.counters || [] }"
+                        :current-lang="currentLang"
+                        @update:model-value="formData.blocks = $event.blocks; formData.counters = $event.counters; emit('change')"
+                    />
                 </div>
 
                 <!-- Repeater Fields -->
@@ -550,6 +912,31 @@ const updateRepeater = (key, value) => {
                         @update:contact-info="formData[getSectionFields.footerFields.contactInfo] = $event; emit('change')"
                         @update:social="formData[getSectionFields.footerFields.social] = $event; emit('change')"
                     />
+                </div>
+
+                <!-- Variant Selector -->
+                <div v-if="getSectionFields.variantField" class="field-group">
+                    <h3 class="group-title">Layout Style</h3>
+                    <div class="variant-selector">
+                        <label class="field-label">{{ formatLabel(getSectionFields.variantField.key) }}</label>
+                        <div class="variant-options">
+                            <label 
+                                v-for="option in getSectionFields.variantField.options" 
+                                :key="option.value"
+                                class="variant-option"
+                                :class="{ 'active': formData[getSectionFields.variantField.key] === option.value }"
+                            >
+                                <input 
+                                    type="radio"
+                                    :name="getSectionFields.variantField.key"
+                                    :value="option.value"
+                                    :checked="formData[getSectionFields.variantField.key] === option.value"
+                                    @change="formData[getSectionFields.variantField.key] = option.value; emit('change')"
+                                />
+                                <span class="option-label">{{ option.label }}</span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -740,5 +1127,58 @@ const updateRepeater = (key, value) => {
 .icon {
     width: 1.25rem;
     height: 1.25rem;
+}
+
+/* Variant Selector Styles */
+.variant-selector {
+    margin-bottom: 1rem;
+}
+
+.variant-selector .field-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 0.5rem;
+}
+
+.variant-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.variant-option {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    background-color: #fff;
+}
+
+.variant-option:hover {
+    border-color: var(--color-primary, #004F4C);
+    background-color: #f9fafb;
+}
+
+.variant-option.active {
+    border-color: var(--color-primary, #004F4C);
+    background-color: rgba(0, 79, 76, 0.05);
+}
+
+.variant-option input[type="radio"] {
+    accent-color: var(--color-primary, #004F4C);
+    width: 1rem;
+    height: 1rem;
+}
+
+.variant-option .option-label {
+    font-size: 0.875rem;
+    color: #374151;
+    font-weight: 500;
 }
 </style>

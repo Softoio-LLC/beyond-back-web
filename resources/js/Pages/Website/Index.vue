@@ -3,6 +3,8 @@ import { computed } from 'vue';
 import WebsiteLayout from '@/Layouts/WebsiteLayout.vue';
 import HeaderSection from '@/Components/Sections/HeaderSection.vue';
 import HeroSection from '@/Components/Sections/HeroSection.vue';
+import HeroSliderSection from '@/Components/Sections/HeroSliderSection.vue';
+import HeroCommonSection from '@/Components/Sections/HeroCommonSection.vue';
 import PartnersSection from '@/Components/Sections/PartnersSection.vue';
 import ConceptSection from '@/Components/Sections/ConceptSection.vue';
 import ServicesSection from '@/Components/Sections/ServicesSection.vue';
@@ -14,6 +16,20 @@ import GallerySection from '@/Components/Sections/GallerySection.vue';
 import FAQSection from '@/Components/Sections/FAQSection.vue';
 import InquirySection from '@/Components/Sections/InquirySection.vue';
 import FooterSection from '@/Components/Sections/FooterSection.vue';
+import MapSection from '@/Components/Sections/MapSection.vue';
+import ContactInfoSection from '@/Components/Sections/ContactInfoSection.vue';
+import ContactBannerSection from '@/Components/Sections/ContactBannerSection.vue';
+import PageBannerSection from '@/Components/Sections/PageBannerSection.vue';
+import NewsletterSection from '@/Components/Sections/NewsletterSection.vue';
+// New sections
+import CommonServiceSection from '@/Components/Sections/CommonServiceSection.vue';
+import CounterAreaSection from '@/Components/Sections/CounterAreaSection.vue';
+import GalleryPageSection from '@/Components/Sections/GalleryPageSection.vue';
+import HeroRiyaSection from '@/Components/Sections/HeroRiyaSection.vue';
+import HeroJiyadSection from '@/Components/Sections/HeroJiyadSection.vue';
+import HeroShopsZSection from '@/Components/Sections/HeroShopsZSection.vue';
+import HeroBeyondERPSection from '@/Components/Sections/HeroBeyondERPSection.vue';
+import HeroBeyondPaySection from '@/Components/Sections/HeroBeyondPaySection.vue';
 
 const props = defineProps({
     page: {
@@ -42,6 +58,8 @@ const props = defineProps({
 const sectionComponents = {
     'header': HeaderSection,
     'hero': HeroSection,
+    'hero_slider': HeroSliderSection,
+    'hero_common': HeroCommonSection,
     'partners': PartnersSection,
     'concept': ConceptSection,
     'services': ServicesSection,
@@ -53,7 +71,21 @@ const sectionComponents = {
     'gallery': GallerySection,
     'faq': FAQSection,
     'inquiry': InquirySection,
-    'footer': FooterSection
+    'footer': FooterSection,
+    'map': MapSection,
+    'contact-info': ContactInfoSection,
+    'contact-banner': ContactBannerSection,
+    'page-banner': PageBannerSection,
+    'newsletter': NewsletterSection,
+    // New sections
+    'common_service': CommonServiceSection,
+    'counter_area': CounterAreaSection,
+    'gallery_page': GalleryPageSection,
+    'hero_riya': HeroRiyaSection,
+    'hero_jiyad': HeroJiyadSection,
+    'hero_shopsz': HeroShopsZSection,
+    'hero_beyond_erp': HeroBeyondERPSection,
+    'hero_beyond_pay': HeroBeyondPaySection
 };
 
 // Get component for section type
@@ -77,6 +109,7 @@ const mainSections = computed(() => props.sections.filter(s =>
             :is="getComponent('header')"
             :content="headerSection.content"
             :lang="lang"
+            :hreflang="seo?.hreflang"
         />
 
         <main>

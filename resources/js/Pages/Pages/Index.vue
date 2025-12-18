@@ -135,7 +135,7 @@ const duplicatePage = (pageId) => {
                                 </svg>
                             </div>
                         </th>
-                        <th class="languages-column"></th>
+                       
                         <th class="actions-column">Actions</th>
                     </tr>
                 </thead>
@@ -155,26 +155,7 @@ const duplicatePage = (pageId) => {
                         <td class="date-column">
                             <span class="date-text">{{ page.lastEditDate }}</span>
                         </td>
-                        <td class="languages-column">
-                            <div class="language-badges">
-                                <button 
-                                    v-if="page.hasArabic" 
-                                    class="badge badge-sa"
-                                    @click="editPage(page.id, 'ar')"
-                                >
-                                    <img :src="saFlag" alt="SA" class="flag-icon" />
-                                    Edit
-                                </button>
-                                <button 
-                                    v-if="page.hasEnglish" 
-                                    class="badge badge-en"
-                                    @click="editPage(page.id, 'en')"
-                                >
-                                    <img :src="usFlag" alt="US" class="flag-icon" />
-                                    Edit
-                                </button>
-                            </div>
-                        </td>
+                        
                         <td class="actions-column">
                             <div class="action-buttons">
                                 <button class="btn-icon btn-primary-icon" title="Builder" @click="router.visit(route('pages.builder.index', page.id))">

@@ -12,10 +12,32 @@ const props = defineProps({
     }
 });
 
+// Helper to get proper image URL
+const getImageUrl = (img) => {
+    if (!img || typeof img !== 'string') return '';
+    if (img.startsWith('http') || img.startsWith('/')) return img;
+    return `/storage/${img}`;
+};
+
+// Strip HTML tags from text
+const stripHtml = (html) => {
+    if (!html) return '';
+    return html.replace(/<[^>]*>/g, '').trim();
+};
+
 const title = computed(() => props.lang === 'ar' ? props.content.title_ar : props.content.title_en);
 const description = computed(() => props.lang === 'ar' ? props.content.description_ar : props.content.description_en);
-const primaryButtonText = computed(() => props.lang === 'ar' ? props.content.primary_button_text_ar : props.content.primary_button_text_en);
-const secondaryButtonText = computed(() => props.lang === 'ar' ? props.content.secondary_button_text_ar : props.content.secondary_button_text_en);
+const primaryButtonText = computed(() => {
+    const text = props.lang === 'ar' ? props.content.primary_button_text_ar : props.content.primary_button_text_en;
+    return stripHtml(text);
+});
+const secondaryButtonText = computed(() => {
+    const text = props.lang === 'ar' ? props.content.secondary_button_text_ar : props.content.secondary_button_text_en;
+    return stripHtml(text);
+});
+
+const imageUrl = computed(() => getImageUrl(props.content.image));
+const shapeImageUrl = computed(() => getImageUrl(props.content.shape_image));
 </script>
 
 <template>
@@ -27,8 +49,8 @@ const secondaryButtonText = computed(() => props.lang === 'ar' ? props.content.s
                         <div class="col-lg-7" data-aos="fade-right">
                             <div class="inquiry-right-block">
                                 <div class="inquiry-content">
-                                    <h4>{{ title }}</h4>
-                                    <p>{{ description }}</p>
+                                    <h4 v-html="title"></h4>
+                                    <p v-html="description"></p>
                                 </div>
                                 <div class="inquiry-btns d-flex align-items-center">
                                     <a :href="content.primary_button_url || '#'" class="secondary-btn">
@@ -42,15 +64,15 @@ const secondaryButtonText = computed(() => props.lang === 'ar' ? props.content.s
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-5" data-aos="zoom-in">
+                        <div v-if="imageUrl" class="col-lg-5" data-aos="zoom-in">
                             <div class="inquiry-image">
-                                <img :src="content.image" alt="Image" />
+                                <img :src="imageUrl" alt="Image" loading="lazy" decoding="async" />
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="inquiry-shape position-absolute z-n1">
-                    <img class="w-100 h-100 object-fit-cover" :src="content.shape_image" alt="Shape" />
+                <div v-if="shapeImageUrl" class="inquiry-shape position-absolute z-n1">
+                    <img class="w-100 h-100 object-fit-cover" :src="shapeImageUrl" alt="Shape" loading="lazy" decoding="async" />
                 </div>
             </div>
         </div>

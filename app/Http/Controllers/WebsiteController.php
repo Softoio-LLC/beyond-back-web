@@ -39,6 +39,9 @@ class WebsiteController extends Controller
     {
         $lang = $this->detectLanguage($request);
         
+        // URL decode the slug (handles Arabic characters)
+        $slug = urldecode($slug);
+        
         $page = Page::findBySlug($slug, $lang);
         
         if (!$page) {

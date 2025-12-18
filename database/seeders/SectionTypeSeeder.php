@@ -30,17 +30,18 @@ class SectionTypeSeeder extends Seeder
                     'contact_button_text_en' => 'Contact Us',
                     'contact_button_text_ar' => 'تواصل معنا',
                     'contact_button_url' => '#contact',
+                    'variant' => 'dark',
                 ],
             ],
             
-            // Hero/Slider section
+            // Hero/Slider section (Homepage)
             [
-                'key' => 'hero',
-                'name_en' => 'Slider',
-                'name_ar' => 'السلايدر',
+                'key' => 'hero_slider',
+                'name_en' => 'Hero Slider',
+                'name_ar' => 'السلايدر الرئيسي',
                 'icon' => 'far fa-images',
                 'preview_image' => null,
-                'component_name' => 'HeroSection',
+                'component_name' => 'HeroSliderSection',
                 'is_fixed' => false,
                 'default_order' => 1,
                 'is_active' => true,
@@ -53,13 +54,34 @@ class SectionTypeSeeder extends Seeder
                     'description_ar' => '',
                     'background_image' => null,
                     'slides' => [],
-                    'button' => [
-                        'text_en' => 'Start Your Project',
-                        'text_ar' => 'ابدأ مشروعك الآن',
-                        'url' => '#',
-                        'icon' => 'far fa-angle-left',
-                        'icon_position' => 'after',
-                    ],
+                    'button_text_en' => 'Start Your Project',
+                    'button_text_ar' => 'ابدأ مشروعك الآن',
+                    'button_url' => '#',
+                ],
+            ],
+            
+            // Hero Common section (Service Pages - Dark background)
+            [
+                'key' => 'hero_common',
+                'name_en' => 'Hero Common',
+                'name_ar' => 'الهيرو العام',
+                'icon' => 'far fa-window-alt',
+                'preview_image' => null,
+                'component_name' => 'HeroCommonSection',
+                'is_fixed' => false,
+                'default_order' => 1,
+                'is_active' => true,
+                'default_content' => [
+                    'title_en' => '',
+                    'title_ar' => '',
+                    'description_en' => '',
+                    'description_ar' => '',
+                    'shape_image' => '/assets/img/hero-shape.svg',
+                    'icon' => null,
+                    'hero_image' => null,
+                    'button_text_en' => 'Start Your Project',
+                    'button_text_ar' => 'ابدأ مشروعك الآن',
+                    'button_url' => '#',
                 ],
             ],
             
@@ -340,32 +362,6 @@ class SectionTypeSeeder extends Seeder
                     'description_en' => '',
                     'description_ar' => '',
                     'items' => [],
-                ],
-            ],
-            
-            // Contact CTA section 2 (Inquiry)
-            [
-                'key' => 'contact_cta_2',
-                'name_en' => 'Contact us 2',
-                'name_ar' => 'تواصل معنا 2',
-                'icon' => 'far fa-envelope',
-                'preview_image' => null,
-                'component_name' => 'InquirySection',
-                'is_fixed' => false,
-                'default_order' => 12,
-                'is_active' => true,
-                'default_content' => [
-                    'title_en' => '',
-                    'title_ar' => '',
-                    'description_en' => '',
-                    'description_ar' => '',
-                    'button' => [
-                        'text_en' => 'Contact Us',
-                        'text_ar' => 'تواصل معنا',
-                        'url' => '#',
-                        'icon' => 'far fa-angle-left',
-                        'icon_position' => 'after',
-                    ],
                 ],
             ],
             

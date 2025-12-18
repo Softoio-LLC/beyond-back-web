@@ -73,6 +73,23 @@ class Page extends Model
     }
 
     /**
+     * Get all slugs for published pages.
+     */
+    public static function getSlugs(): array
+    {
+        $slugs = static::select(['url_slug_en', 'url_slug_ar'])
+            ->where('is_published', true)
+            ->get()
+            ->map(function ($page) {
+                return [
+                    'en' => $page->url_slug_en,
+                    'ar' => $page->url_slug_ar,
+                ];
+            });
+        
+        return $slugs->toArray();
+    }
+    /**
      * Find a page by its slug based on language.
      */
     public static function findBySlug(string $slug, string $lang = 'en'): ?self
@@ -142,13 +159,30 @@ class Page extends Model
 
     /**
      * Initialize default sections for a new page.
+     * Only initializes fixed sections (header/footer) by default.
+     * Content sections should be added manually via page builder.
      */
     public function initializeDefaultSections(): void
+    {
+        // Only create fixed sections (header and footer) for new pages
+        $fixedSectionTypes = SectionType::active()->fixed()->ordered()->get();
+        
+        foreach ($fixedSectionTypes as $index => $type) {
+            // Set order: header at 0, footer at high number
+            $order = $type->key === 'footer' ? 999 : $index;
+            $type->createDefaultSection($this->id, $order);
+        }
+    }
+
+    /**
+     * Initialize all sections for a new page (for homepage or template duplication).
+     */
+    public function initializeAllSections(): void
     {
         $sectionTypes = SectionType::active()->ordered()->get();
         
         foreach ($sectionTypes as $index => $type) {
-            $type->createDefaultSection($this->id, $index);
+            $type->createDefaultSection($this->id, $type->default_order ?? $index);
         }
     }
 
