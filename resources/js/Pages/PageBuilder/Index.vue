@@ -24,7 +24,6 @@ import GallerySection from '@/Components/Sections/GallerySection.vue';
 import FAQSection from '@/Components/Sections/FAQSection.vue';
 import InquirySection from '@/Components/Sections/InquirySection.vue';
 import FooterSection from '@/Components/Sections/FooterSection.vue';
-import PageBannerSection from '@/Components/Sections/PageBannerSection.vue';
 import ContactBannerSection from '@/Components/Sections/ContactBannerSection.vue';
 import ContactInfoSection from '@/Components/Sections/ContactInfoSection.vue';
 import AboutSection from '@/Components/Sections/AboutSection.vue';
@@ -37,6 +36,7 @@ import HeroJiyadSection from '@/Components/Sections/HeroJiyadSection.vue';
 import HeroShopsZSection from '@/Components/Sections/HeroShopsZSection.vue';
 import HeroBeyondERPSection from '@/Components/Sections/HeroBeyondERPSection.vue';
 import HeroBeyondPaySection from '@/Components/Sections/HeroBeyondPaySection.vue';
+import ProductSection from '@/Components/Sections/ProductSection.vue';
 
 defineOptions({ layout: DashboardLayout });
 
@@ -74,7 +74,6 @@ const sectionComponents = {
     'faq': FAQSection,
     'inquiry': InquirySection,
     'footer': FooterSection,
-    'page-banner': PageBannerSection,
     'contact-banner': ContactBannerSection,
     'contact-info': ContactInfoSection,
     'about': AboutSection,
@@ -87,6 +86,7 @@ const sectionComponents = {
     'hero_shopsz': HeroShopsZSection,
     'hero_beyond_erp': HeroBeyondERPSection,
     'hero_beyond_pay': HeroBeyondPaySection,
+    'product': ProductSection,
 };
 
 // Get component for section type
@@ -364,16 +364,14 @@ const generateSectionHtml = (key, content, lang) => {
             return generateInquiryHtml(c, lang, t);
         case 'footer':
             return generateFooterHtml(c, lang, t);
-        case 'page-banner':
-            return generatePageBannerHtml(c, lang, t);
         case 'contact-banner':
             return generateContactBannerHtml(c, lang, t);
         case 'contact-info':
             return generateContactInfoHtml(c, lang, t);
         case 'about':
             return generateAboutHtml(c, lang, t);
-        case 'newsletter':
-            return generateNewsletterHtml(c, lang, t);
+        case 'product':
+            return generateProductHtml(c, lang, t);
         case 'map':
             return generateMapHtml(c, lang, t);
         case 'common_service':
@@ -1117,98 +1115,7 @@ const generateFooterHtml = (c, lang, t) => {
     </footer>`;
 };
 
-// Page Banner Section HTML
-const generatePageBannerHtml = (c, lang, t) => {
-    // Helper to get proper image URL
-    const getImageUrl = (img) => {
-        if (!img || typeof img !== 'string') return '';
-        if (img.startsWith('http') || img.startsWith('/')) return img;
-        return `/storage/${img}`;
-    };
-    
-    const variant = c.variant || 'default';
-    const title = t(c.title_ar, c.title_en) || 'Page Title';
-    const subtitle = t(c.subtitle_ar, c.subtitle_en) || '';
-    const breadcrumbHome = lang === 'ar' ? 'الرئيسية' : 'Home';
-    const breadcrumbCurrent = t(c.breadcrumb_ar, c.breadcrumb_en) || title;
-    const bgImage = c.background_image && c.background_image.trim() !== '' && !c.background_image.includes('undefined');
-    const defaultBg = 'linear-gradient(135deg, #004F4C 0%, #003836 100%)';
-    const bgUrl = bgImage ? getImageUrl(c.background_image) : '';
-    const bgStyle = bgImage ? `url(${bgUrl}) center/cover no-repeat` : defaultBg;
-    
-    if (variant === 'services') {
-        return `
-        <section class="hero-area v2 position-relative text-white" style="background: ${bgStyle}; min-height: 300px; padding: 80px 0;">
-            ${c.shape_image ? `<img src="${getImageUrl(c.shape_image)}" class="hero-shape" alt="" style="position: absolute; top: 0; right: 0; height: 100%; object-fit: contain; opacity: 0.3;" />` : ''}
-            <div class="container">
-                <div class="row align-items-center">
-                    <div class="col-lg-6">
-                        <div class="hero__block" data-aos="fade-up">
-                            ${c.icon ? `<i><img src="${getImageUrl(c.icon)}" alt="" /></i>` : ''}
-                            <div>
-                                <h1 class="text-white fs-56">${title}</h1>
-                                ${subtitle ? `<p class="text-white-50">${subtitle}</p>` : ''}
-                                <p class="mb-0 breadcrumb-text" style="color: rgba(255,255,255,0.7);">
-                                    <span>${breadcrumbHome}</span> / <span style="color: #fff;">${breadcrumbCurrent}</span>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    ${c.side_image ? `
-                    <div class="col-lg-6">
-                        <div class="hero__img" data-aos="fade-up" data-aos-delay="200">
-                            <img src="${getImageUrl(c.side_image)}" alt="${title}" style="max-width: 100%; height: auto;" />
-                        </div>
-                    </div>
-                    ` : ''}
-                </div>
-            </div>
-        </section>`;
-    }
-    
-    if (variant === 'about') {
-        return `
-        <section class="about-banner-area" style="background: ${bgStyle}; min-height: 300px; padding: 80px 0; display: flex; align-items: center;">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-8 mx-auto">
-                        <div class="about__banner--content text-center" data-aos="fade-up">
-                            ${c.icon ? `<i><img src="${getImageUrl(c.icon)}" alt="" /></i>` : ''}
-                            <h1 class="fs-56 text-white mt-3">${title}</h1>
-                            ${subtitle ? `<p class="text-white-50 mb-4">${subtitle}</p>` : ''}
-                            <p class="mb-0" style="color: rgba(255,255,255,0.7);">
-                                <span>${breadcrumbHome}</span> / <span style="color: #fff;">${breadcrumbCurrent}</span>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>`;
-    }
-    
-    // Default page banner
-    return `
-    <section class="page-banner-area" style="background: ${bgStyle}; padding: 80px 0; min-height: 200px;">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="page__banner--content text-center" data-aos="fade-up">
-                        <div class="d-flex flex-column align-items-center gap-3">
-                            ${c.icon ? `<i><img src="${getImageUrl(c.icon)}" alt="" /></i>` : ''}
-                            <div>
-                                <h1 class="fs-56 text-white">${title}</h1>
-                                ${subtitle ? `<p class="text-white-50 mb-3">${subtitle}</p>` : ''}
-                                <p class="mb-0" style="color: rgba(255,255,255,0.7);">
-                                    <span>${breadcrumbHome}</span> / <span style="color: #fff;">${breadcrumbCurrent}</span>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>`;
-};
+
 
 // About Section HTML
 const generateAboutHtml = (c, lang, t) => {
@@ -1493,8 +1400,8 @@ const generateHeroCommonHtml = (c, lang, t) => {
     </section>`;
 };
 
-// Newsletter Section HTML
-const generateNewsletterHtml = (c, lang, t) => {
+// Product Section HTML
+const generateProductHtml = (c, lang, t) => {
     // Helper to get proper image URL
     const getImageUrl = (img) => {
         if (!img || typeof img !== 'string') return '';
@@ -1502,26 +1409,33 @@ const generateNewsletterHtml = (c, lang, t) => {
         return `/storage/${img}`;
     };
     
-    const bgImage = c.background_image && c.background_image.trim() !== '';
-    const bgUrl = bgImage ? getImageUrl(c.background_image) : '';
-    const iconUrl = c.icon ? getImageUrl(c.icon) : '';
-    const defaultBg = 'linear-gradient(135deg, #004F4C 0%, #003836 100%)';
+    const leftShape = getImageUrl(c.left_shape) || '/assets/img/pd-left.svg';
+    const topRightShape = getImageUrl(c.top_right_shape) || '/assets/img/pd-top-right.svg';
+    const icon = getImageUrl(c.icon) || '/assets/img/icon/product-icon.svg';
+    const image = getImageUrl(c.image) || '/assets/img/product-img.png';
+    const title = t(c.title_ar, c.title_en) || (lang === 'ar' ? 'القيمة المضافة' : 'Added Value');
+    const description = t(c.description_ar, c.description_en) || '';
     
     return `
-    <section class="newsletter-area" style="background: ${bgImage ? `url(${bgUrl}) center/cover no-repeat` : defaultBg}; padding: 60px 0; border-radius: 16px;">
-        <div class="container">
-            <div class="newsletter-wrapper d-flex align-items-center justify-content-between flex-wrap gap-4">
-                <div class="newsletter-content d-flex align-items-center gap-3">
-                    ${iconUrl ? `<div class="newsletter-icon"><img src="${iconUrl}" alt="" style="width: 64px; height: 64px;" /></div>` : ''}
-                    <div>
-                        <h2 class="text-white mb-1">${t(c.title1_ar, c.title1_en) || (lang === 'ar' ? 'ابدأ معنا.' : 'Start With Us.')}</h2>
-                        <h3 class="text-white mb-0">${t(c.title2_ar, c.title2_en) || (lang === 'ar' ? 'اتصل بنا الآن!' : 'Call Us Now!')}</h3>
+    <section class="product-area" style="position: relative; padding: 80px 0; overflow: hidden;">
+        <img src="${leftShape}" class="product-left" alt="" style="position: absolute; ${lang === 'ar' ? 'right' : 'left'}: 0; top: 50%; transform: translateY(-50%) ${lang === 'ar' ? 'scaleX(-1)' : ''}; max-width: 200px; z-index: 1;" />
+        <img src="${topRightShape}" class="product-top-right" alt="" style="position: absolute; ${lang === 'ar' ? 'left' : 'right'}: 0; top: 0; transform: ${lang === 'ar' ? 'scaleX(-1)' : 'none'}; max-width: 250px; z-index: 1;" />
+        <div class="container md" style="max-width: 1320px;">
+            <div class="row align-items-center flex-column-reverse flex-lg-row gap-4 gap-lg-0">
+                <div class="col-lg-7">
+                    <div class="product__content" style="position: relative; z-index: 2;">
+                        <i style="display: inline-block; margin-bottom: 20px;">
+                            <img src="${icon}" alt="" style="width: 60px; height: 60px; object-fit: contain;" />
+                        </i>
+                        <div>
+                            <h1 style="font-size: 48px; font-weight: 700; margin-bottom: 20px; line-height: 1.2; color: #1a1a1a;">${title}</h1>
+                            <p style="font-size: 18px; line-height: 1.8; color: #666; margin: 0;">${description}</p>
+                        </div>
                     </div>
                 </div>
-                <div class="newsletter-cta d-flex align-items-center gap-3">
-                    <div class="phone-info text-white">
-                        <span style="opacity: 0.7;">${t(c.phone_label_ar, c.phone_label_en) || (lang === 'ar' ? 'مكالمة مجانية' : 'Free Call')}</span>
-                        <h4 class="mb-0" dir="ltr">${c.phone || '+966 8001111144'}</h4>
+                <div class="col-lg-5">
+                    <div class="product__image" style="position: relative; z-index: 2; text-align: center;">
+                        <img src="${image}" alt="" style="max-width: 100%; height: auto; border-radius: 10px;" />
                     </div>
                 </div>
             </div>

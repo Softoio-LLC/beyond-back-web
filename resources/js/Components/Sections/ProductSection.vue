@@ -1,0 +1,220 @@
+<script setup>
+import { computed } from 'vue';
+
+const props = defineProps({
+    content: {
+        type: Object,
+        required: true
+    },
+    lang: {
+        type: String,
+        required: true
+    }
+});
+
+// Helper to get proper image URL
+const getImageUrl = (img) => {
+    if (!img || typeof img !== 'string') return '';
+    if (img.startsWith('http') || img.startsWith('/')) return img;
+    return `/storage/${img}`;
+};
+
+// Computed properties for bilingual content
+const leftShape = computed(() => getImageUrl(props.content.left_shape));
+const topRightShape = computed(() => getImageUrl(props.content.top_right_shape));
+const icon = computed(() => getImageUrl(props.content.icon));
+const image = computed(() => getImageUrl(props.content.image));
+const title = computed(() => props.lang === 'ar' ? props.content.title_ar : props.content.title_en);
+const description = computed(() => props.lang === 'ar' ? props.content.description_ar : props.content.description_en);
+</script>
+
+<template>
+    <!--------- Section START product Area ---------->
+    <section class="product-area">
+        <!-- Left shape decoration -->
+        <img 
+            v-if="leftShape" 
+            :src="leftShape" 
+            class="product-left" 
+            alt="" 
+            loading="lazy" 
+            decoding="async" 
+        />
+        
+        <!-- Top right shape decoration -->
+        <img 
+            v-if="topRightShape" 
+            :src="topRightShape" 
+            class="product-top-right" 
+            alt="" 
+            loading="lazy" 
+            decoding="async" 
+        />
+        
+        <div class="container md">
+            <div 
+                class="row align-items-center gap-4 gap-lg-0" 
+                :class="lang === 'ar' ? 'flex-column-reverse flex-lg-row' : 'flex-column-reverse flex-lg-row-reverse'"
+            >
+                <!-- Content Column -->
+                <div :class="lang === 'ar' ? 'col-lg-7' : 'col-lg-7'">
+                    <div class="product__content">
+                        <i v-if="icon">
+                            <img 
+                                :src="icon" 
+                                alt="" 
+                                loading="lazy" 
+                                decoding="async" 
+                            />
+                        </i>
+                        <div>
+                            <h1 v-if="title">{{ title }}</h1>
+                            <p v-if="description">{{ description }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Image Column -->
+                <div :class="lang === 'ar' ? 'col-lg-5' : 'col-lg-5'">
+                    <div class="product__image">
+                        <img 
+                            v-if="image" 
+                            :src="image" 
+                            alt="" 
+                            loading="lazy" 
+                            decoding="async" 
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--------- Section END product Area ---------->
+</template>
+
+<style scoped>
+/* Product Area Styles */
+.product-area {
+    position: relative;
+    padding: 80px 0;
+    overflow: hidden;
+}
+
+.product-left {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    max-width: 200px;
+    z-index: 1;
+}
+
+.product-top-right {
+    position: absolute;
+    right: 0;
+    top: 0;
+    max-width: 250px;
+    z-index: 1;
+}
+
+/* RTL adjustments */
+[dir="rtl"] .product-left {
+    left: auto;
+    right: 0;
+    transform: translateY(-50%) scaleX(-1);
+}
+
+[dir="rtl"] .product-top-right {
+    right: auto;
+    left: 0;
+    transform: scaleX(-1);
+}
+
+.container.md {
+    max-width: 1320px;
+}
+
+.product__content {
+    position: relative;
+    z-index: 2;
+}
+
+.product__content i {
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.product__content i img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+}
+
+.product__content h1 {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    line-height: 1.2;
+    color: #1a1a1a;
+}
+
+.product__content p {
+    font-size: 18px;
+    line-height: 1.8;
+    color: #666;
+    margin: 0;
+}
+
+.product__image {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+}
+
+.product__image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+/* Responsive styles */
+@media (max-width: 991px) {
+    .product-area {
+        padding: 60px 0;
+    }
+    
+    .product__content h1 {
+        font-size: 36px;
+    }
+    
+    .product__content p {
+        font-size: 16px;
+    }
+    
+    .product-left,
+    .product-top-right {
+        max-width: 150px;
+    }
+}
+
+@media (max-width: 767px) {
+    .product-area {
+        padding: 40px 0;
+    }
+    
+    .product__content h1 {
+        font-size: 28px;
+    }
+    
+    .product__content i img {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .product-left,
+    .product-top-right {
+        max-width: 100px;
+        opacity: 0.3;
+    }
+}
+</style>

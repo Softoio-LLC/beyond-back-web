@@ -57,11 +57,11 @@ const slidesWithUrls = computed(() => {
     >
         <div class="container">
             <div class="hero-inner-block">
-                <div class="hero-title" data-aos="fade-up">
+                <div class="hero-title">
                     <h5 v-html="subtitle"></h5>
                     <h1 v-html="title"></h1>
                 </div>
-                <div class="swiper hero-slide-thumb" data-aos="fade-up" data-aos-delay="300">
+                <div class="swiper hero-slide-thumb">
                     <div class="swiper-wrapper">
                         <div 
                             v-for="(slide, index) in slidesWithUrls" 
@@ -81,10 +81,10 @@ const slidesWithUrls = computed(() => {
                     </div>
                 </div>
 
-                <div class="hero-content text-center mt-40" data-aos="fade-up" data-aos-delay="500">
+                <div class="hero-content text-center mt-40">
                     <p v-html="description"></p>
                 </div>
-                <div class="hero-btn d-flex justify-content-center" data-aos="fade-up">
+                <div class="hero-btn d-flex justify-content-center">
                     <a :href="content.button_url || '#'" class="common-btn d-flex align-items-center">
                         {{ buttonText }}
                         <span><i :class="angleIcon"></i></span>

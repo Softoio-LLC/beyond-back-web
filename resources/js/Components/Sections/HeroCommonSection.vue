@@ -58,7 +58,7 @@ const bgStyle = computed(() => {
 
 <template>
     <!-- Hero Common Layout (Dark background - Service Pages) - matches template hero-area v2 -->
-    <section class="hero-area v2 position-relative text-white pb-5 pb-lg-0" :style="bgStyle">
+    <section class="hero-area v2 position-relative text-white pb-1 pb-lg-1" :style="bgStyle">
         <img 
             v-if="shapeImageUrl"
             :src="shapeImageUrl" 
@@ -68,9 +68,9 @@ const bgStyle = computed(() => {
             decoding="async"
         />
         <div class="container">
-            <div class="row flex-column-reverse flex-lg-row gap-4 gap-lg-0 align-items-center">
+            <div class="row flex-column-reverse flex-lg-row gap-4 gap-lg-4 align-items-center">
                 <div class="col-lg-6">
-                    <div class="hero__block" data-aos="fade-up">
+                    <div class="hero__block">
                         <i v-if="iconUrl">
                             <img 
                                 :src="iconUrl" 
@@ -103,8 +103,8 @@ const bgStyle = computed(() => {
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6">
-                    <div class="hero__img" data-aos="fade-up" data-aos-delay="200">
+                <div class="col-lg-5">
+                    <div class="hero__img">
                         <img 
                             v-if="heroImageUrl"
                             :src="heroImageUrl" 
@@ -129,5 +129,14 @@ const bgStyle = computed(() => {
 <style scoped>
 .hero-area.v2 {
     background-color: #012d37;
+    padding-top: 100px;
+    padding-bottom: 100px;
+}
+
+@media (max-width: 991px) {
+    .hero-area.v2 {
+        padding-top: 60px;
+        padding-bottom: 60px;
+    }
 }
 </style>

@@ -46,7 +46,7 @@ const shapeImageUrl = computed(() => getImageUrl(props.content.shape_image));
             <div class="inquiry-inner-block overflow-hidden position-relative z-1">
                 <div class="inquiry-wrapper">
                     <div class="row align-items-center">
-                        <div class="col-lg-7" data-aos="fade-right">
+                        <div class="col-lg-7">
                             <div class="inquiry-right-block">
                                 <div class="inquiry-content">
                                     <h4 v-html="title"></h4>
@@ -64,7 +64,7 @@ const shapeImageUrl = computed(() => getImageUrl(props.content.shape_image));
                                 </div>
                             </div>
                         </div>
-                        <div v-if="imageUrl" class="col-lg-5" data-aos="zoom-in">
+                        <div v-if="imageUrl" class="col-lg-5">
                             <div class="inquiry-image">
                                 <img :src="imageUrl" alt="Image" loading="lazy" decoding="async" />
                             </div>

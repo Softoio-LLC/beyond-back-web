@@ -760,60 +760,6 @@ class SectionContentSeeder extends Seeder
             ],
 
             // ========================================
-            // PAGE BANNER SECTION (Hidden - use Contact Banner instead)
-            // ========================================
-            [
-                'key' => 'page-banner',
-                'name_en' => 'Page Banner',
-                'name_ar' => 'بانر الصفحة',
-                'icon' => 'far fa-flag',
-                'preview_image' => null,
-                'component_name' => 'PageBannerSection',
-                'is_fixed' => true, // Hidden from section selection
-                'default_order' => 15,
-                'is_active' => true,
-                'default_content' => [
-                    'variant' => 'default',
-                    'background_image' => '/assets/img/page-banner-bg.png',
-                    'icon' => null,
-                    'title_ar' => 'عنوان الصفحة',
-                    'title_en' => 'Page Title',
-                    'subtitle_ar' => '',
-                    'subtitle_en' => '',
-                    'breadcrumb_ar' => 'الصفحة',
-                    'breadcrumb_en' => 'Page',
-                    'shape_image' => null,
-                    'side_image' => null,
-                ],
-            ],
-
-            // ========================================
-            // NEWSLETTER SECTION
-            // ========================================
-            [
-                'key' => 'newsletter',
-                'name_en' => 'Newsletter',
-                'name_ar' => 'النشرة البريدية',
-                'icon' => 'far fa-envelope-open',
-                'preview_image' => null,
-                'component_name' => 'NewsletterSection',
-                'is_fixed' => false,
-                'default_order' => 16,
-                'is_active' => true,
-                'default_content' => [
-                    'background_image' => '/assets/img/newsLatter-bg.png',
-                    'icon' => '/assets/img/gpt-img.svg',
-                    'title1_ar' => 'ابدأ معنا.',
-                    'title1_en' => 'Start With Us.',
-                    'title2_ar' => 'اتصل بنا الآن!',
-                    'title2_en' => 'Call Us Now!',
-                    'phone_label_ar' => 'مكالمة مجانية',
-                    'phone_label_en' => 'Free Call',
-                    'phone' => '+966 8001111144',
-                ],
-            ],
-            
-            // ========================================
             // COMMON SERVICE SECTION
             // ========================================
             [
@@ -1161,6 +1107,31 @@ class SectionContentSeeder extends Seeder
                             'layout' => 'image-left',
                         ],
                     ],
+                ],
+            ],
+            
+            // ========================================
+            // PRODUCT/ADDED VALUE SECTION
+            // ========================================
+            [
+                'key' => 'product',
+                'name_en' => 'Product / Added Value',
+                'name_ar' => 'المنتج / القيمة المضافة',
+                'icon' => 'far fa-box',
+                'preview_image' => '/assets/section-preview/product-section.png',
+                'component_name' => 'ProductSection',
+                'is_fixed' => false,
+                'default_order' => 15,
+                'is_active' => true,
+                'default_content' => [
+                    'left_shape' => '/assets/img/pd-left.svg',
+                    'top_right_shape' => '/assets/img/pd-top-right.svg',
+                    'icon' => '/assets/img/icon/product-icon.svg',
+                    'image' => '/assets/img/product-img.png',
+                    'title_ar' => 'القيمة المضافة',
+                    'title_en' => 'Added Value',
+                    'description_ar' => 'تساعد هذه الخدمة المشروع على تحقيق نمو مستدام من خلال تنظيم العمليات التجارية، بناء شراكات قوية مع المصانع، وتحقيق أعلى عائد من كل استثمار تجاري.',
+                    'description_en' => 'This service helps the project achieve sustainable growth by organizing business operations, building strong partnerships with factories, and achieving the highest return from every business investment.',
                 ],
             ],
             

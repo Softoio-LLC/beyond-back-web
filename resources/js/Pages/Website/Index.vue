@@ -19,8 +19,6 @@ import FooterSection from '@/Components/Sections/FooterSection.vue';
 import MapSection from '@/Components/Sections/MapSection.vue';
 import ContactInfoSection from '@/Components/Sections/ContactInfoSection.vue';
 import ContactBannerSection from '@/Components/Sections/ContactBannerSection.vue';
-import PageBannerSection from '@/Components/Sections/PageBannerSection.vue';
-import NewsletterSection from '@/Components/Sections/NewsletterSection.vue';
 // New sections
 import CommonServiceSection from '@/Components/Sections/CommonServiceSection.vue';
 import CounterAreaSection from '@/Components/Sections/CounterAreaSection.vue';
@@ -30,6 +28,7 @@ import HeroJiyadSection from '@/Components/Sections/HeroJiyadSection.vue';
 import HeroShopsZSection from '@/Components/Sections/HeroShopsZSection.vue';
 import HeroBeyondERPSection from '@/Components/Sections/HeroBeyondERPSection.vue';
 import HeroBeyondPaySection from '@/Components/Sections/HeroBeyondPaySection.vue';
+import ProductSection from '@/Components/Sections/ProductSection.vue';
 
 const props = defineProps({
     page: {
@@ -75,8 +74,7 @@ const sectionComponents = {
     'map': MapSection,
     'contact-info': ContactInfoSection,
     'contact-banner': ContactBannerSection,
-    'page-banner': PageBannerSection,
-    'newsletter': NewsletterSection,
+    
     // New sections
     'common_service': CommonServiceSection,
     'counter_area': CounterAreaSection,
@@ -85,8 +83,9 @@ const sectionComponents = {
     'hero_jiyad': HeroJiyadSection,
     'hero_shopsz': HeroShopsZSection,
     'hero_beyond_erp': HeroBeyondERPSection,
-    'hero_beyond_pay': HeroBeyondPaySection
-};
+    'hero_beyond_pay': HeroBeyondPaySection,
+        'product': ProductSection,
+    };
 
 // Get component for section type
 const getComponent = (sectionKey) => {
