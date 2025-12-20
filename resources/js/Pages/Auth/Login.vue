@@ -4,6 +4,10 @@ import AuthLayout from '@/Layouts/AuthLayout.vue';
 
 defineOptions({ layout: AuthLayout });
 
+const props = defineProps({
+    status: String,
+});
+
 const form = useForm({
     email: '',
     password: '',
@@ -21,6 +25,10 @@ const submit = () => {
             <p class="text-xs uppercase tracking-[0.35em] text-[#0b8a46]">Beyond Technology</p>
             <h1 class="text-2xl font-semibold text-gray-800">Welcome back</h1>
             <p class="text-sm text-gray-500">Sign in to access the dashboard.</p>
+        </div>
+
+        <div v-if="status" class="rounded-xl border border-[#cde6d6] bg-[#f4fbf6] px-4 py-3 text-sm text-[#0b8a46] font-medium">
+            {{ status }}
         </div>
 
         <form class="space-y-5" @submit.prevent="submit">
