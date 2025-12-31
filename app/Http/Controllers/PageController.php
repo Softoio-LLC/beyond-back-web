@@ -14,15 +14,34 @@ class PageController extends Controller
     /**
      * Display a listing of pages.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $pages = Page::orderBy('updated_at', 'desc')->get()->map(function ($page) {
+        $perPage = $request->input('per_page', 20);
+        $search = $request->input('search', '');
+
+        $query = Page::query();
+
+        // Apply search filter
+        if (! empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name_en', 'like', "%{$search}%")
+                    ->orWhere('name_ar', 'like', "%{$search}%")
+                    ->orWhere('url_slug_en', 'like', "%{$search}%")
+                    ->orWhere('url_slug_ar', 'like', "%{$search}%");
+            });
+        }
+
+        $paginatedPages = $query->orderBy('updated_at', 'desc')->paginate($perPage)->withQueryString();
+
+        $pages = $paginatedPages->through(function ($page) {
             return [
                 'id' => $page->id,
                 'name' => $page->name_en ?: $page->name_ar,
+                'name_en' => $page->name_en,
+                'name_ar' => $page->name_ar,
                 'lastEditDate' => $page->updated_at->format('d.m.Y'),
-                'hasArabic' => !empty($page->name_ar),
-                'hasEnglish' => !empty($page->name_en),
+                'hasArabic' => ! empty($page->name_ar),
+                'hasEnglish' => ! empty($page->name_en),
                 'is_homepage' => $page->is_homepage,
                 'is_published' => $page->is_published,
                 'url_slug_en' => $page->url_slug_en,
@@ -32,6 +51,10 @@ class PageController extends Controller
 
         return Inertia::render('Pages/Index', [
             'pages' => $pages,
+            'filters' => [
+                'search' => $search,
+                'per_page' => (int) $perPage,
+            ],
         ]);
     }
 
@@ -90,10 +113,10 @@ class PageController extends Controller
         ]);
 
         // Auto-generate slugs from names if not provided
-        if (empty($validated['url_slug_en']) && !empty($validated['name_en'])) {
+        if (empty($validated['url_slug_en']) && ! empty($validated['name_en'])) {
             $validated['url_slug_en'] = $this->generateUniqueSlug($validated['name_en'], 'url_slug_en');
         }
-        if (empty($validated['url_slug_ar']) && !empty($validated['name_ar'])) {
+        if (empty($validated['url_slug_ar']) && ! empty($validated['name_ar'])) {
             $validated['url_slug_ar'] = $this->generateUniqueSlug($validated['name_ar'], 'url_slug_ar');
         }
 
@@ -107,7 +130,7 @@ class PageController extends Controller
         }
 
         // If this page is set as homepage, unset other homepages
-        if (!empty($validated['is_homepage']) && $validated['is_homepage']) {
+        if (! empty($validated['is_homepage']) && $validated['is_homepage']) {
             Page::where('is_homepage', true)->update(['is_homepage' => false]);
         }
 
@@ -221,7 +244,7 @@ class PageController extends Controller
         }
 
         // If this page is set as homepage, unset other homepages
-        if (!empty($validated['is_homepage']) && $validated['is_homepage'] && !$page->is_homepage) {
+        if (! empty($validated['is_homepage']) && $validated['is_homepage'] && ! $page->is_homepage) {
             Page::where('is_homepage', true)->update(['is_homepage' => false]);
         }
 
@@ -254,37 +277,37 @@ class PageController extends Controller
     public function duplicate(Page $page)
     {
         $newPage = $page->replicate();
-        $newPage->name_en = $page->name_en ? $page->name_en . ' (Copy)' : null;
-        $newPage->name_ar = $page->name_ar ? $page->name_ar . ' (نسخة)' : null;
-        
+        $newPage->name_en = $page->name_en ? $page->name_en.' (Copy)' : null;
+        $newPage->name_ar = $page->name_ar ? $page->name_ar.' (نسخة)' : null;
+
         // Generate unique slugs for the copy
         if ($page->url_slug_en) {
-            $newPage->url_slug_en = $this->generateUniqueSlug($page->url_slug_en . '-copy', 'url_slug_en');
+            $newPage->url_slug_en = $this->generateUniqueSlug($page->url_slug_en.'-copy', 'url_slug_en');
         }
         if ($page->url_slug_ar) {
-            $newPage->url_slug_ar = $this->generateUniqueSlug($page->url_slug_ar . '-copy', 'url_slug_ar');
+            $newPage->url_slug_ar = $this->generateUniqueSlug($page->url_slug_ar.'-copy', 'url_slug_ar');
         }
-        
+
         // Duplicated page should never be homepage
         $newPage->is_homepage = false;
-        
+
         // Copy images if they exist
         if ($page->og_image_en) {
             $extension = pathinfo($page->og_image_en, PATHINFO_EXTENSION);
-            $newPath = 'pages/og-images/' . uniqid() . '.' . $extension;
+            $newPath = 'pages/og-images/'.uniqid().'.'.$extension;
             Storage::disk('public')->copy($page->og_image_en, $newPath);
             $newPage->og_image_en = $newPath;
         }
-        
+
         if ($page->og_image_ar) {
             $extension = pathinfo($page->og_image_ar, PATHINFO_EXTENSION);
-            $newPath = 'pages/og-images/' . uniqid() . '.' . $extension;
+            $newPath = 'pages/og-images/'.uniqid().'.'.$extension;
             Storage::disk('public')->copy($page->og_image_ar, $newPath);
             $newPage->og_image_ar = $newPath;
         }
-        
+
         $newPage->save();
-        
+
         // Duplicate all sections
         $page->duplicateSectionsTo($newPage);
 
@@ -303,7 +326,7 @@ class PageController extends Controller
 
         // Unset current homepage
         Page::where('is_homepage', true)->update(['is_homepage' => false]);
-        
+
         // Set this page as homepage
         $page->update(['is_homepage' => true]);
 
@@ -315,9 +338,10 @@ class PageController extends Controller
      */
     public function togglePublished(Page $page)
     {
-        $page->update(['is_published' => !$page->is_published]);
+        $page->update(['is_published' => ! $page->is_published]);
 
         $status = $page->is_published ? 'published' : 'unpublished';
+
         return redirect()->route('pages.index')->with('success', "Page {$status} successfully.");
     }
 
@@ -328,24 +352,24 @@ class PageController extends Controller
     {
         // Convert to lowercase and replace spaces with hyphens
         $slug = Str::slug($value);
-        
+
         // If Arabic, transliterate or keep as-is
-        if ($field === 'url_slug_ar' && !preg_match('/^[a-z0-9\-]+$/', $slug)) {
+        if ($field === 'url_slug_ar' && ! preg_match('/^[a-z0-9\-]+$/', $slug)) {
             // For Arabic, we'll use the original value but make it URL-safe
             $slug = urlencode($value);
             // Replace encoded spaces with hyphens
             $slug = str_replace(['%20', '+'], '-', $slug);
         }
-        
+
         // Check if slug exists and make it unique
         $originalSlug = $slug;
         $counter = 1;
-        
+
         while (Page::where($field, $slug)->exists()) {
-            $slug = $originalSlug . '-' . $counter;
+            $slug = $originalSlug.'-'.$counter;
             $counter++;
         }
-        
+
         return $slug;
     }
 }

@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue';
+import AppImage from '@/Components/AppImage.vue';
 
 const props = defineProps({
     content: {
@@ -45,11 +46,11 @@ const extraClasses = computed(() => props.content.no_margin_top ? 'mt-0' : '');
                     >
                         <div class="counter__block">
                             <i v-if="counter.icon">
-                                <img :src="counter.icon" alt="" loading="lazy" decoding="async" />
+                                <AppImage :src="counter.icon" alt="" loading="lazy"  />
                             </i>
                             <h1>
                                 {{ counter.value }}
-                                <span>{{ counter.label }}</span>
+                                <span v-html="counter.label"></span>
                             </h1>
                         </div>
                     </div>

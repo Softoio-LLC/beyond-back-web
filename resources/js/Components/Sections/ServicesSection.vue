@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue';
+import AppImage from '@/Components/AppImage.vue';
 
 const props = defineProps({
     content: {
@@ -51,12 +52,12 @@ const shapeImageUrl = computed(() => getImageUrl(props.content.shape_image));
                     >
                         <div class="service-single-card d-flex align-items-center">
                             <div class="service-card-thumb w-100">
-                                <img 
-                                    class="w-100 h-100 object-fit-cover" 
-                                    :src="service.imageUrl" 
+                                <AppImage
+                                    :src="service.imageUrl"
                                     alt="Thumb"
+                                    
                                     loading="lazy"
-                                    decoding="async"
+                                    class="w-100 h-100 object-fit-cover"
                                 />
                             </div>
                             <div class="service-card-content">
@@ -69,7 +70,13 @@ const shapeImageUrl = computed(() => getImageUrl(props.content.shape_image));
             </div>
         </div>
         <div v-if="shapeImageUrl" class="service-shape position-absolute z-n1">
-            <img class="w-100 h-100 object-fit-cover" :src="shapeImageUrl" alt="Shape" loading="lazy" decoding="async" />
+            <AppImage
+                :src="shapeImageUrl"
+                alt="Shape"
+                loading="lazy"
+                
+                class="w-100 h-100 object-fit-cover"
+            />
         </div>
     </section>
 </template>

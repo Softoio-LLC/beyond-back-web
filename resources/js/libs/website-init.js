@@ -2,28 +2,61 @@
  * Website initialization module
  * This module handles all website-specific initialization (sliders, animations, etc.)
  * It's loaded once and cached by the browser.
+ * 
+ * Performance optimizations:
+ * - Swiper and AOS are dynamically imported only when needed
+ * - Initialization is deferred to improve TBT
  */
 
-import Swiper from 'swiper';
-import { Navigation, Pagination, Autoplay, Mousewheel } from 'swiper/modules';
-import AOS from 'aos';
-
-// Import Swiper styles
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
-
-// Import AOS styles
-import 'aos/dist/aos.css';
+// Lazy load Swiper and AOS only when needed
+let Swiper = null;
+let SwiperModules = null;
+let AOS = null;
 
 // Track if already initialized
 let isInitialized = false;
 let swiperInstances = [];
+let librariesLoaded = false;
+
+/**
+ * Load heavy libraries dynamically
+ */
+async function loadLibraries() {
+    if (librariesLoaded) return;
+    
+    const [swiperModule, aosModule] = await Promise.all([
+        import('swiper').then(m => m.default),
+        import('aos').then(m => m.default)
+    ]);
+    
+    // Load Swiper modules
+    const modules = await import('swiper/modules');
+    SwiperModules = modules;
+    Swiper = swiperModule;
+    AOS = aosModule;
+    
+    // Import CSS (these are small and will be code-split)
+    await Promise.all([
+        import('swiper/css'),
+        import('swiper/css/navigation'),
+        import('swiper/css/pagination'),
+        import('aos/dist/aos.css')
+    ]);
+    
+    librariesLoaded = true;
+}
 
 /**
  * Initialize all Swiper sliders on the page
  */
-export function initSwipers() {
+export async function initSwipers() {
+    // Ensure libraries are loaded
+    if (!librariesLoaded) {
+        await loadLibraries();
+    }
+    
+    const { Navigation, Pagination, Autoplay, Mousewheel } = SwiperModules;
+    
     // Destroy existing instances
     swiperInstances.forEach(instance => {
         if (instance && typeof instance.destroy === 'function') {
@@ -134,10 +167,13 @@ export function initSwipers() {
             slidesPerView: 4,
             spaceBetween: 24,
             loop: true,
-            speed: 800,
+            speed: 600,
+            effect: 'slide',
+            grabCursor: true,
             pagination: {
                 el: '.team-pagination',
                 clickable: true,
+                dynamicBullets: false,
             },
             breakpoints: {
                 0: { slidesPerView: 2 },
@@ -180,9 +216,14 @@ export function initSwipers() {
 /**
  * Initialize AOS animations
  */
-export function initAOS() {
+export async function initAOS() {
     // Only initialize if we're in the browser
     if (typeof window === 'undefined' || typeof document === 'undefined') return;
+    
+    // Ensure libraries are loaded
+    if (!librariesLoaded) {
+        await loadLibraries();
+    }
     
     try {
         AOS.init({
@@ -205,9 +246,12 @@ export function initAOS() {
 /**
  * Refresh AOS (call after dynamic content changes)
  */
-export function refreshAOS() {
+export async function refreshAOS() {
     // Only refresh if we're in the browser and have AOS elements
     if (typeof window === 'undefined' || typeof document === 'undefined') return;
+    
+    // Only refresh if AOS is already loaded
+    if (!AOS) return;
     
     try {
         // Check if there are any AOS elements before refreshing
@@ -237,16 +281,16 @@ export function initLanguageSelector() {
 /**
  * Full initialization - call on first page load
  */
-export function initWebsite() {
+export async function initWebsite() {
     if (isInitialized) {
         // Re-initialize components that need refresh on navigation
-        refreshComponents();
+        await refreshComponents();
         return;
     }
 
     initLanguageSelector();
-    initSwipers();
-    initAOS();
+    await initSwipers();
+    await initAOS();
     
     isInitialized = true;
 }
@@ -254,10 +298,10 @@ export function initWebsite() {
 /**
  * Refresh components after Inertia navigation
  */
-export function refreshComponents() {
+export async function refreshComponents() {
     // Re-initialize swipers on new pages with proper DOM timing
-    requestAnimationFrame(() => {
-        initSwipers();
+    requestAnimationFrame(async () => {
+        await initSwipers();
         initLanguageSelector();
         
         // Delay AOS refresh to ensure DOM is fully ready
@@ -275,4 +319,5 @@ export default {
     initAOS,
     refreshAOS,
     initLanguageSelector,
+    loadLibraries,
 };

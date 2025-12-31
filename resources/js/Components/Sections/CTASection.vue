@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue';
+import AppImage from '@/Components/AppImage.vue';
 
 const props = defineProps({
     content: {
@@ -52,7 +53,7 @@ const shapeImageUrl = computed(() => getImageUrl(props.content.shape_image));
                 <div class="row align-items-center">
                     <div class="col-xl-5" data-aos="fade-right">
                         <div class="cta-right-block">
-                            <div class="service-card-content cta-content text-end">
+                            <div :class="'service-card-content cta-content ' + (lang === 'ar' ? 'text-end' : '')">
                                 <a :href="content.button_url || '#'" class="cta-btn">{{ buttonText }}</a>
                                 <h4 v-html="title"></h4>
                                 <p v-html="description"></p>
@@ -70,7 +71,7 @@ const shapeImageUrl = computed(() => getImageUrl(props.content.shape_image));
                                 >
                                     <div class="cta-card d-flex align-items-center flex-column">
                                         <span v-if="card.iconUrl" class="d-flex align-items-center justify-content-center">
-                                            <img :src="card.iconUrl" alt="Icon" loading="lazy" decoding="async" />
+                                            <AppImage :src="card.iconUrl" alt="Icon" loading="lazy" />
                                         </span>
                                         <h5 v-html="getCardTitle(card)"></h5>
                                         <a 
@@ -88,7 +89,7 @@ const shapeImageUrl = computed(() => getImageUrl(props.content.shape_image));
                 </div>
             </div>
             <div v-if="shapeImageUrl" class="cta-shape position-absolute z-n1">
-                <img class="w-100 h-100 object-fit-cover" :src="shapeImageUrl" alt="Shape" loading="lazy" decoding="async" />
+                <AppImage class="w-100 h-100 object-fit-cover" :src="shapeImageUrl" alt="Shape" loading="lazy" :width="800" :height="600" />
             </div>
         </div>
     </section>

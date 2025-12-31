@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue';
+import AppImage from '@/Components/AppImage.vue';
 
 const props = defineProps({
     content: {
@@ -49,7 +50,16 @@ const shapeImageUrl = computed(() => getImageUrl(props.content.shape_image));
         <div class="container">
             <div class="gallery-inner-block position-relative z-1">
                 <div v-if="shapeImageUrl" class="gallery-shape position-absolute z-n1">
-                    <img class="w-100 h-100 object-fit-cover" :src="shapeImageUrl" alt="Shape" loading="lazy" decoding="async" />
+                    <AppImage
+                        :src="shapeImageUrl"
+                        alt="Shape"
+                        loading="lazy"
+                        :width="800"
+                        :height="600"
+                        class="w-100 h-100 object-fit-cover"
+                        format="webp"
+                        :quality="80"
+                    />
                 </div>
                 <div class="common-title text-center" data-aos="fade-up">
                     <h3 v-html="sectionTitle"></h3>
@@ -64,7 +74,15 @@ const shapeImageUrl = computed(() => getImageUrl(props.content.shape_image));
                             data-aos="zoom-in"
                         >
                             <div class="gallery-thumb position-relative">
-                                <img :src="item.imageUrl" alt="Thumb" loading="lazy" decoding="async" />
+                                <AppImage
+                                    :src="item.imageUrl"
+                                    alt="Thumb"
+                                    loading="lazy"
+                                    :width="800"
+                                    :height="600"
+                                    format="webp"
+                                    :quality="85"
+                                />
                                 <div class="gallery-thumb-text position-absolute">
                                     <h3 v-html="item.title"></h3>
                                 </div>

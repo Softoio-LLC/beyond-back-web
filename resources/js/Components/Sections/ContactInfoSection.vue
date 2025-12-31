@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue';
 import { useForm } from '@inertiajs/vue3';
+import AppImage from '@/Components/AppImage.vue';
 
 const props = defineProps({
     content: {
@@ -97,13 +98,13 @@ const getInfoItemValue = (item) => props.lang === 'ar' ? item.value_ar : item.va
 
 <template>
     <section class="contact-info-area">
-        <img 
+        <AppImage 
             v-if="overlayImageUrl" 
             :src="overlayImageUrl" 
             class="overly-1" 
             alt=""
             loading="lazy"
-            decoding="async"
+            
         />
         <div class="container">
             <!-- Contact Info Cards -->
@@ -117,14 +118,14 @@ const getInfoItemValue = (item) => props.lang === 'ar' ? item.value_ar : item.va
                 >
                     <div class="contact__info--block">
                         <i v-if="card.iconUrl">
-                            <img 
+                            <AppImage 
                                 :src="card.iconUrl" 
                                 :alt="lang === 'ar' ? card.title_ar : card.title_en"
                                 loading="lazy"
-                                decoding="async"
+                                
                             />
                         </i>
-                        <h3>{{ lang === 'ar' ? card.title_ar : card.title_en }}</h3>
+                        <h3 v-html="lang === 'ar' ? card.title_ar : card.title_en"></h3>
                         <p v-html="lang === 'ar' ? card.content_ar : card.content_en"></p>
                     </div>
                 </div>
@@ -135,12 +136,12 @@ const getInfoItemValue = (item) => props.lang === 'ar' ? item.value_ar : item.va
                 <!-- General Information -->
                 <div class="col-lg-6">
                     <div class="contact__info--content" data-aos="fade-up">
-                        <h1 class="fw-bold">{{ generalInfoTitle }}</h1>
-                        <p>{{ generalInfoDescription }}</p>
+                        <h1 class="fw-bold" v-html="generalInfoTitle"></h1>
+                        <p v-html="generalInfoDescription"></p>
                         <ul>
                             <li v-for="(item, index) in content.info_items" :key="index">
-                                <h6>{{ getInfoItemLabel(item) }}</h6>
-                                <span v-if="item.type !== 'social'">{{ getInfoItemValue(item) }}</span>
+                                <h6 v-html="getInfoItemLabel(item)"></h6>
+                                <span v-if="item.type !== 'social'" v-html="getInfoItemValue(item)"></span>
                                 <div v-else class="social__link">
                                     <a 
                                         v-for="(social, sIdx) in item.links" 
@@ -165,8 +166,8 @@ const getInfoItemValue = (item) => props.lang === 'ar' ? item.value_ar : item.va
                 <!-- Contact Form -->
                 <div class="col-lg-6">
                     <div class="contact__info--form" data-aos="fade-up" data-aos-delay="100">
-                        <h1 class="fw-bold">{{ formTitle }}</h1>
-                        <p>{{ formDescription }}</p>
+                        <h1 class="fw-bold" v-html="formTitle"></h1>
+                        <p v-html="formDescription"></p>
                         
                         <!-- Success Message -->
                         <div v-if="submitSuccess" class="alert alert-success mb-4">

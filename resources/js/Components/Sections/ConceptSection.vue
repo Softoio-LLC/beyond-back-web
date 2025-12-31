@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue';
+import AppImage from '@/Components/AppImage.vue';
 
 const props = defineProps({
     content: {
@@ -52,7 +53,7 @@ const bottomShapeImageUrl = computed(() => getImageUrl(props.content.bottom_shap
                     :class="{ 'second-concept-wrapper m-0': blockIndex > 0 }"
                 >
                     <div v-if="shapeImageUrl" class="concept-wrapper-shape position-absolute z-n1">
-                        <img class="w-100 h-100 object-fit-cover" :src="shapeImageUrl" alt="Shape" loading="lazy" decoding="async" />
+                        <AppImage class="w-100 h-100 object-fit-cover" :src="shapeImageUrl" alt="Shape" loading="lazy"  />
                     </div>
                     <div class="row align-items-center">
                         <div 
@@ -68,12 +69,13 @@ const bottomShapeImageUrl = computed(() => getImageUrl(props.content.bottom_shap
                                         class="concept-single-thumb swiper-slide"
                                         :class="slide.radius_class"
                                     >
-                                        <img 
+                                        <AppImage 
                                             class="w-100 h-100 object-fit-cover" 
                                             :src="slide.imageUrl" 
                                             :alt="slide.alt || 'Thumb'"
                                             loading="lazy"
-                                            decoding="async"
+                                            :width="600"
+                                            :height="400"
                                         />
                                     </div>
                                 </div>
@@ -110,7 +112,7 @@ const bottomShapeImageUrl = computed(() => getImageUrl(props.content.bottom_shap
 
                 <!-- Bottom Shape -->
                 <div v-if="bottomShapeImageUrl" class="concept-shape position-absolute zn-1 w-100" data-aos="fade-up">
-                    <img :src="bottomShapeImageUrl" alt="Shape" loading="lazy" decoding="async" />
+                    <AppImage :src="bottomShapeImageUrl" alt="Shape" loading="lazy" :width="800" :height="600" />
                 </div>
             </div>
         </div>

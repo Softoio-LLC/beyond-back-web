@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
 import DashboardLayout from '@/Layouts/DashboardLayout.vue';
 import saFlag from '@/../assets/sa-flag.svg';
@@ -7,41 +7,88 @@ import usFlag from '@/../assets/us-flag.svg';
 
 defineOptions({ layout: DashboardLayout });
 
+// Simple debounce utility
+function debounce(fn, delay) {
+    let timeoutId;
+    return function (...args) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => fn.apply(this, args), delay);
+    };
+}
+
 // Props from backend
 const props = defineProps({
     pages: {
-        type: Array,
-        default: () => [],
+        type: Object,
+        default: () => ({ data: [], meta: {}, links: {} }),
+    },
+    filters: {
+        type: Object,
+        default: () => ({ search: '', per_page: 20 }),
     },
 });
 
 const selectedPages = ref([]);
 const selectAll = ref(false);
-const currentPage = ref(1);
-const itemsPerPage = 6;
+const searchQuery = ref(props.filters.search || '');
+const perPage = ref(props.filters.per_page || 20);
+const perPageOptions = [20, 50, 70, 100];
 
-const totalPages = computed(() => Math.ceil(props.pages.length / itemsPerPage));
-const totalResults = computed(() => props.pages.length);
-
-const paginatedPages = computed(() => {
-    const start = (currentPage.value - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    return props.pages.slice(start, end);
-});
+// Computed properties for pagination
+const paginatedPages = computed(() => props.pages.data || []);
+const currentPage = computed(() => props.pages.current_page || 1);
+const lastPage = computed(() => props.pages.last_page || 1);
+const totalResults = computed(() => props.pages.total || 0);
+const from = computed(() => props.pages.from || 0);
+const to = computed(() => props.pages.to || 0);
 
 const paginationInfo = computed(() => {
     if (totalResults.value === 0) return 'No results';
-    const start = (currentPage.value - 1) * itemsPerPage + 1;
-    const end = Math.min(currentPage.value * itemsPerPage, totalResults.value);
-    return `Showing ${start} to ${end} of ${totalResults.value} results`;
+    return `Showing ${from.value} to ${to.value} of ${totalResults.value} results`;
 });
 
 const pageNumbers = computed(() => {
     const pages = [];
-    for (let i = 1; i <= totalPages.value; i++) {
+    const maxVisible = 5;
+    let start = Math.max(1, currentPage.value - Math.floor(maxVisible / 2));
+    let end = Math.min(lastPage.value, start + maxVisible - 1);
+    
+    if (end - start + 1 < maxVisible) {
+        start = Math.max(1, end - maxVisible + 1);
+    }
+    
+    for (let i = start; i <= end; i++) {
         pages.push(i);
     }
     return pages;
+});
+
+// Fetch pages with filters
+const fetchPages = (page = 1) => {
+    router.get(route('pages.index'), {
+        page: page,
+        per_page: perPage.value,
+        search: searchQuery.value,
+    }, {
+        preserveState: true,
+        preserveScroll: true,
+        replace: true,
+    });
+};
+
+// Debounced search
+const debouncedSearch = debounce(() => {
+    fetchPages(1);
+}, 300);
+
+// Watch for search changes
+watch(searchQuery, () => {
+    debouncedSearch();
+});
+
+// Watch for per page changes
+watch(perPage, () => {
+    fetchPages(1);
 });
 
 const toggleSelectAll = () => {
@@ -67,10 +114,10 @@ const isPageSelected = (pageId) => {
 };
 
 const goToPage = (page) => {
-    if (page >= 1 && page <= totalPages.value) {
-        currentPage.value = page;
+    if (page >= 1 && page <= lastPage.value) {
         selectedPages.value = [];
         selectAll.value = false;
+        fetchPages(page);
     }
 };
 
@@ -104,6 +151,35 @@ const duplicatePage = (pageId) => {
                 </svg>
                 Add New
             </Link>
+        </div>
+
+        <!-- Filters Row -->
+        <div class="filters-row">
+            <div class="search-box">
+                <svg class="search-icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM19 19l-4.35-4.35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <input 
+                    type="text" 
+                    v-model="searchQuery"
+                    placeholder="Search by name or slug..."
+                    class="search-input"
+                />
+                <button v-if="searchQuery" @click="searchQuery = ''" class="clear-search">
+                    <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15 5L5 15M5 5l10 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="per-page-select">
+                <label for="perPage">Show:</label>
+                <select id="perPage" v-model="perPage" class="select-input">
+                    <option v-for="option in perPageOptions" :key="option" :value="option">
+                        {{ option }}
+                    </option>
+                </select>
+                <span>per page</span>
+            </div>
         </div>
 
         <!-- Table Container -->
@@ -210,7 +286,7 @@ const duplicatePage = (pageId) => {
                 </button>
                 <button 
                     class="pagination-btn"
-                    :disabled="currentPage === totalPages"
+                    :disabled="currentPage === lastPage"
                     @click="goToPage(currentPage + 1)"
                 >
                     Next
@@ -236,6 +312,111 @@ const duplicatePage = (pageId) => {
 .btn-icon-svg {
     width: 16px;
     height: 16px;
+}
+
+/* Filters Row */
+.filters-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex: 1;
+    max-width: 400px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    width: 18px;
+    height: 18px;
+    color: var(--color-text-muted);
+    pointer-events: none;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px 36px 10px 40px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    background-color: var(--color-bg-white);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(0, 75, 73, 0.1);
+}
+
+.search-input::placeholder {
+    color: var(--color-text-muted);
+}
+
+.clear-search {
+    position: absolute;
+    right: 10px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 0;
+    color: var(--color-text-muted);
+    transition: color var(--transition-fast);
+}
+
+.clear-search:hover {
+    color: var(--color-text-dark);
+}
+
+.clear-search svg {
+    width: 14px;
+    height: 14px;
+}
+
+.per-page-select {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    color: var(--color-text-muted);
+}
+
+.select-input {
+    padding: 8px 32px 8px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    background-color: var(--color-bg-white);
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%236B7280' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    transition: border-color var(--transition-fast);
+}
+
+.select-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+.select-input:hover {
+    border-color: var(--color-primary);
 }
 
 /* Table specific styles */
@@ -398,6 +579,19 @@ const duplicatePage = (pageId) => {
         flex-direction: column;
         gap: 16px;
         align-items: flex-start;
+    }
+    
+    .filters-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-box {
+        max-width: 100%;
+    }
+    
+    .per-page-select {
+        justify-content: flex-start;
     }
     
     .pagination-container {
