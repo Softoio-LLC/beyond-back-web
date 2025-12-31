@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ImageController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PageSectionController;
@@ -12,13 +13,18 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\WebsiteController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 // ============================================
 // SEO ROUTES (sitemap, robots)
 // ============================================
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/robots.txt', [SitemapController::class, 'robots'])->name('robots');
+
+// ============================================
+// IMAGE OPTIMIZATION ROUTES
+// ============================================
+Route::get('/img', [ImageController::class, 'show'])->name('image.show');
+Route::post('/img/clear-cache', [ImageController::class, 'clearCache'])->name('image.clear-cache')->middleware('auth');
 
 // ============================================
 // PUBLIC WEBSITE ROUTES
@@ -41,7 +47,7 @@ Route::middleware('guest')->group(function () {
 
     Route::get('forgot-password', [AuthController::class, 'createForgotPassword'])->name('password.request');
     Route::post('forgot-password', [AuthController::class, 'storeForgotPassword'])->name('password.email');
-    
+
     Route::get('reset-password/{token}', [AuthController::class, 'createResetPassword'])->name('password.reset');
     Route::post('reset-password', [AuthController::class, 'storeResetPassword'])->name('password.update');
 });

@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue';
+import AppImage from '@/Components/AppImage.vue';
 
 const props = defineProps({
     content: {
@@ -50,28 +51,28 @@ const heroBgImageUrl = computed(() => getImageUrl(props.content.hero_bg_image));
 <template>
     <!-- Beyond ERP Hero Section -->
     <section class="common-hero-area pb-4 pb-lg-0 pt-4">
-        <img 
+        <AppImage 
             v-if="shapeImageUrl"
             :src="shapeImageUrl" 
             class="hero-shape" 
             alt="" 
             loading="lazy"
-            decoding="async"
+            
         />
         <div class="container">
             <div class="row flex-column-reverse flex-lg-row gap-4 gap-lg-0 align-items-center">
                 <div class="col-lg-6">
                     <div class="hero__block">
                         <i v-if="iconUrl">
-                            <img 
+                            <AppImage 
                                 :src="iconUrl" 
                                 alt="" 
                                 loading="lazy"
-                                decoding="async"
+                               
                             />
                         </i>
                         <div class="">
-                            <h1 class="fs-56">{{ title }}</h1>
+                            <h1 class="fs-56" v-html="title"></h1>
                             <p v-html="description"></p>
                             <div class="work-card-btns green-btns d-flex align-items-center">
                                 <a 
@@ -95,20 +96,20 @@ const heroBgImageUrl = computed(() => getImageUrl(props.content.hero_bg_image));
                 </div>
                 <div class="col-lg-6 text-center">
                     <div class="hero__img">
-                        <img 
+                        <AppImage 
                             v-if="heroImageUrl"
                             :src="heroImageUrl" 
                             :alt="title"
                             loading="lazy"
-                            decoding="async"
+                            
                         />
-                        <img 
+                        <AppImage 
                             v-if="heroBgImageUrl"
                             :src="heroBgImageUrl" 
                             class="hero-icon-bg"
                             alt=""
                             loading="lazy"
-                            decoding="async"
+                            
                         />
                     </div>
                 </div>

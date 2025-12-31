@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue';
+import AppImage from '@/Components/AppImage.vue';
 
 const props = defineProps({
     content: {
@@ -66,13 +67,13 @@ const shapeImageUrl = computed(() => getImageUrl(props.content.shape_image));
                         </div>
                         <div v-if="imageUrl" class="col-lg-5">
                             <div class="inquiry-image">
-                                <img :src="imageUrl" alt="Image" loading="lazy" decoding="async" />
+                                <AppImage :src="imageUrl" alt="Image" loading="lazy"  />
                             </div>
                         </div>
                     </div>
                 </div>
                 <div v-if="shapeImageUrl" class="inquiry-shape position-absolute z-n1">
-                    <img class="w-100 h-100 object-fit-cover" :src="shapeImageUrl" alt="Shape" loading="lazy" decoding="async" />
+                    <AppImage class="w-100 h-100 object-fit-cover" :src="shapeImageUrl" alt="Shape" loading="lazy"  />
                 </div>
             </div>
         </div>

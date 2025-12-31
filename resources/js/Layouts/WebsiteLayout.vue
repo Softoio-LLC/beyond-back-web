@@ -9,6 +9,7 @@ import { computed, onMounted, onUnmounted, watch, ref } from 'vue';
 import GlobalLoader from '@/Components/GlobalLoader.vue';
 
 const isLoading = ref(false);
+const isMounted = ref(false);
 
 const props = defineProps({
     lang: {
@@ -38,11 +39,19 @@ const props = defineProps({
     jsonLdSchema: {
         type: Array,
         default: () => []
+    },
+    lcpImage: {
+        type: String,
+        default: null
     }
 });
 
 const isRtl = computed(() => props.lang === 'ar');
 const direction = computed(() => isRtl.value ? 'rtl' : 'ltr');
+
+onMounted(() => {
+    isMounted.value = true;
+});
 
 // Inject critical CSS to prevent FOUC
 const injectCriticalCSS = () => {
@@ -102,11 +111,11 @@ onMounted(async () => {
     // Inject critical CSS first
     injectCriticalCSS();
     
-    // Prevent FOUC - add loading class
-    document.documentElement.classList.add('loading');
-    
-    // Only show loader on the very first load of the session
-    if (!isAppLoaded) {
+    // Don't add loading class on SSR hydration - content is already rendered
+    // Only add it on first client-side load when there's no SSR content
+    const hasSSRContent = document.querySelector('[data-page]');
+    if (!hasSSRContent && !isAppLoaded) {
+        document.documentElement.classList.add('loading');
         isLoading.value = true;
     }
 
@@ -116,19 +125,18 @@ onMounted(async () => {
     // Inject JSON-LD schema
     injectJsonLd();
 
-    // Remove loading class and show content
+    // Ensure content is visible after hydration
     requestAnimationFrame(() => {
         document.documentElement.classList.remove('loading');
         document.documentElement.classList.add('loaded');
     });
 
-    // Scripts are now bundled with Vite - no dynamic loading needed
     // Hide loader after a short delay for smooth transition
     if (!isAppLoaded) {
         setTimeout(() => {
             isLoading.value = false;
             isAppLoaded = true;
-        }, 200);
+        }, 100); // Reduced from 200ms since SSR is faster
     }
 });
 
@@ -152,12 +160,19 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <GlobalLoader :loading="isLoading" />
+    <GlobalLoader v-if="isMounted" :loading="isLoading" />
     <Head>
         <title>{{ page.title }}</title>
         <meta name="description" :content="page.description" />
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        
+        <!-- Theme Color -->
+        <meta name="theme-color" content="#1a1a1a" />
+        <meta name="msapplication-TileColor" content="#1a1a1a" />
+        
+        <!-- Format Detection -->
+        <meta name="format-detection" content="telephone=no" />
         
         <!-- Robots -->
         <meta name="robots" :content="seo.robots || 'index, follow'" />
@@ -172,10 +187,13 @@ onUnmounted(() => {
 
         <!-- Open Graph / Facebook -->
         <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Beyond" />
         <meta property="og:title" :content="page.og_title || page.title" />
         <meta property="og:description" :content="page.og_description || page.description" />
         <meta v-if="seo.canonical_url" property="og:url" :content="seo.canonical_url" />
         <meta v-if="page.og_image" property="og:image" :content="page.og_image" />
+        <meta v-if="page.og_image" property="og:image:width" content="1200" />
+        <meta v-if="page.og_image" property="og:image:height" content="630" />
         <meta property="og:locale" :content="lang === 'ar' ? 'ar_SA' : 'en_US'" />
         <meta property="og:locale:alternate" :content="lang === 'ar' ? 'en_US' : 'ar_SA'" />
 
@@ -190,14 +208,30 @@ onUnmounted(() => {
         <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png" />
 
-        <!-- CSS Files (Swiper and AOS CSS is now bundled via Vite) -->
+        <!-- Preconnect to image optimization endpoint -->
+        <link rel="preconnect" href="/img" />
+        
+        <!-- Preload LCP image if provided -->
+        <link v-if="lcpImage" rel="preload" :href="lcpImage" as="image" fetchpriority="high" />
+        
+        <!-- Critical CSS - loaded synchronously (minimal) -->
         <link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
-        <link rel="stylesheet" href="/assets/fontawesome-pro/fontawesome.min.css" />
-        <link rel="stylesheet" href="/assets/css/all.min.css" />
         <link rel="stylesheet" href="/assets/css/default.css" />
         <link rel="stylesheet" href="/assets/css/style.css" />
-        <link rel="stylesheet" href="/assets/css/responsive.css" />
-        <link rel="stylesheet" href="/assets/css/custom-fixes.css" />
+        
+        <!-- Non-critical CSS - loaded with low priority using media trick -->
+        <link rel="stylesheet" href="/assets/fontawesome-pro/fontawesome.min.css" media="print" onload="this.media='all'" />
+        <link rel="stylesheet" href="/assets/css/all.min.css" media="print" onload="this.media='all'" />
+        <link rel="stylesheet" href="/assets/css/responsive.css" media="print" onload="this.media='all'" />
+        <link rel="stylesheet" href="/assets/css/custom-fixes.css" media="print" onload="this.media='all'" />
+        
+        <!-- Fallback for JS-disabled browsers -->
+        <noscript>
+            <link rel="stylesheet" href="/assets/fontawesome-pro/fontawesome.min.css" />
+            <link rel="stylesheet" href="/assets/css/all.min.css" />
+            <link rel="stylesheet" href="/assets/css/responsive.css" />
+            <link rel="stylesheet" href="/assets/css/custom-fixes.css" />
+        </noscript>
     </Head>
 
     <div class="main-area overflow-hidden">

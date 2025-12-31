@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue';
+import AppImage from '@/Components/AppImage.vue';
 
 const props = defineProps({
     content: {
@@ -69,12 +70,16 @@ const slidesWithUrls = computed(() => {
                             class="swiper-slide"
                         >
                             <div class="hero-slide-card">
-                                <img 
-                                    class="w-100 h-100 object-fit-cover" 
-                                    :src="slide.imageUrl" 
+                                <AppImage
+                                    :src="slide.imageUrl"
                                     :alt="slide.alt || 'Thumb'"
-                                    loading="lazy"
-                                    decoding="async"
+                                    :priority="index === 0"
+                                    :loading="index === 0 ? 'eager' : 'lazy'"
+                                    :width="600"
+                                    :height="400"
+                                    class="w-100 h-100 object-fit-cover"
+                                    format="webp"
+                                    :quality="85"
                                 />
                             </div>
                         </div>

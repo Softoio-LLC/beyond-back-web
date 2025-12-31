@@ -29,6 +29,7 @@ import HeroShopsZSection from '@/Components/Sections/HeroShopsZSection.vue';
 import HeroBeyondERPSection from '@/Components/Sections/HeroBeyondERPSection.vue';
 import HeroBeyondPaySection from '@/Components/Sections/HeroBeyondPaySection.vue';
 import ProductSection from '@/Components/Sections/ProductSection.vue';
+import AboutSection from '@/Components/Sections/AboutSection.vue';
 
 const props = defineProps({
     page: {
@@ -84,8 +85,9 @@ const sectionComponents = {
     'hero_shopsz': HeroShopsZSection,
     'hero_beyond_erp': HeroBeyondERPSection,
     'hero_beyond_pay': HeroBeyondPaySection,
-        'product': ProductSection,
-    };
+    'product': ProductSection,
+    'about': AboutSection,
+};
 
 // Get component for section type
 const getComponent = (sectionKey) => {
@@ -98,10 +100,45 @@ const footerSection = computed(() => props.sections.find(s => s.section_type?.ke
 const mainSections = computed(() => props.sections.filter(s => 
     s.section_type?.key !== 'header' && s.section_type?.key !== 'footer'
 ));
+
+// Get LCP image URL for preloading (first hero slide image)
+const lcpImage = computed(() => {
+    const heroSection = props.sections.find(s => 
+        s.section_type?.key === 'hero' || 
+        s.section_type?.key === 'hero_slider' ||
+        s.section_type?.key === 'hero_common'
+    );
+    
+    if (!heroSection?.content) return null;
+    
+    // Try to get the first slide image
+    const slides = heroSection.content.slides;
+    if (slides?.length > 0 && slides[0].image) {
+        const img = slides[0].image;
+        if (img.startsWith('http') || img.startsWith('/')) return img;
+        // Generate optimized image URL
+        const params = new URLSearchParams({
+            path: img,
+            q: '85',
+            f: 'webp',
+            w: '600'
+        });
+        return `/img?${params.toString()}`;
+    }
+    
+    // Try background image
+    const bgImage = heroSection.content.background_image;
+    if (bgImage) {
+        if (bgImage.startsWith('http') || bgImage.startsWith('/')) return bgImage;
+        return `/storage/${bgImage}`;
+    }
+    
+    return null;
+});
 </script>
 
 <template>
-    <WebsiteLayout :lang="lang" :page="page" :seo="seo" :jsonLdSchema="jsonLdSchema">
+    <WebsiteLayout :lang="lang" :page="page" :seo="seo" :jsonLdSchema="jsonLdSchema" :lcpImage="lcpImage">
         <!-- Header -->
         <component 
             v-if="headerSection"

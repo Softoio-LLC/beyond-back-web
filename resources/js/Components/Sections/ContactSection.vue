@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue';
+import AppImage from '@/Components/AppImage.vue';
 
 const props = defineProps({
     content: {
@@ -76,7 +77,7 @@ const bgStyle = computed(() => {
                         <div class="contact-left d-flex align-items-center justify-content-start flex-column">
                             <div v-if="contactLogoUrl" class="contact-logo">
                                 <a href="#">
-                                    <img :src="contactLogoUrl" alt="Logo" loading="lazy" decoding="async" />
+                                    <AppImage :src="contactLogoUrl" alt="Logo" loading="lazy" />
                                 </a>
                             </div>
                             <div class="contact-btn">

@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue';
+import AppImage from '@/Components/AppImage.vue';
 
 const props = defineProps({
     content: {
@@ -39,107 +40,132 @@ const t = (ar, en) => props.lang === 'ar' ? (ar || en || '') : (en || ar || '');
 </script>
 
 <template>
-    <section class="about-area">
-        <img 
-            v-if="shapeImageUrl" 
-            :src="shapeImageUrl" 
-            class="hero-shape-5" 
-            alt=""
-            loading="lazy"
-            decoding="async"
-        />
-        
-        <!-- First block style (CEO Message style) -->
-        <template v-for="(block, idx) in blocks" :key="idx">
-            <!-- Image Right Layout (First block style) -->
-            <div 
-                v-if="block.layout === 'image-right' || block.layout === 'first' || (idx === 0 && !block.layout)" 
-                class="container pb-5"
-            >
-                <div class="row align-items-center">
-                    <div class="col-lg-6 mt-4 mt-lg-0">
-                        <div class="about__content">
-                            <i v-if="block.iconUrl">
-                                <img :src="block.iconUrl" alt="" loading="lazy" decoding="async" />
-                            </i>
-                            <div>
-                                <h1 class="color-text">{{ t(block.title_ar, block.title_en) }}</h1>
-                                <div v-html="t(block.content_ar, block.content_en)"></div>
-                                <span v-if="block.author">— {{ block.author }}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="about__img">
-                            <img 
-                                v-if="block.imageUrl" 
-                                :src="block.imageUrl" 
-                                alt=""
-                                loading="lazy"
-                                decoding="async"
-                            />
-                            <img 
-                                v-if="block.imageBgUrl" 
-                                :src="block.imageBgUrl" 
-                                class="hero-icon-bg" 
-                                alt=""
-                                loading="lazy"
-                                decoding="async"
-                            />
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- About section wrapper with proper spacing -->
+    <div class="about-section-wrapper">
+        <section class="about-area">
+            <AppImage 
+                v-if="shapeImageUrl" 
+                :src="shapeImageUrl" 
+                class="hero-shape-5" 
+                alt=""
+                loading="lazy"
+            />
             
-            <!-- Alternative Layout (company info, vision style) -->
-            <div 
-                v-else 
-                class="position-relative"
-                :style="{ backgroundColor: idx % 2 !== 0 ? '#fcfcfd' : '' }"
-            >
-                <img 
-                    v-if="leftShapeImageUrl" 
-                    :src="leftShapeImageUrl" 
-                    class="ab-left" 
-                    alt=""
-                    loading="lazy"
-                    decoding="async"
-                />
-                <img 
-                    v-if="rightShapeImageUrl" 
-                    :src="rightShapeImageUrl" 
-                    class="ab-right" 
-                    alt=""
-                    loading="lazy"
-                    decoding="async"
-                />
-                <div class="container md">
+            <!-- First block style (CEO Message style) -->
+            <template v-for="(block, idx) in blocks" :key="idx">
+                <!-- Image Right Layout (First block style) -->
+                <div 
+                    v-if="block.layout === 'image-right' || block.layout === 'first' || (idx === 0 && !block.layout)" 
+                    class="container pb-5"
+                >
                     <div class="row align-items-center">
-                        <div class="col-lg-7">
-                            <div class="about__content v2">
+                        <div class="col-lg-6 mt-4 mt-lg-0 order-lg-1 order-2">
+                            <div class="about__content">
                                 <i v-if="block.iconUrl">
-                                    <img :src="block.iconUrl" alt="" loading="lazy" decoding="async" />
+                                    <AppImage :src="block.iconUrl" alt="" loading="lazy" :width="80" :height="80" />
                                 </i>
                                 <div>
-                                    <h1>{{ t(block.title_ar, block.title_en) }}</h1>
+                                    <h1 class="color-text" v-html="t(block.title_ar, block.title_en)"></h1>
                                     <div v-html="t(block.content_ar, block.content_en)"></div>
+                                    <span v-if="block.author">— {{ block.author }}</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-5">
+                        <div class="col-lg-6 order-lg-2 order-1">
                             <div class="about__img">
-                                <img 
+                                <AppImage 
                                     v-if="block.imageUrl" 
                                     :src="block.imageUrl" 
                                     alt=""
                                     loading="lazy"
-                                    decoding="async"
+                                    class="about-main-img"
+                                />
+                                <AppImage 
+                                    v-if="block.imageBgUrl" 
+                                    :src="block.imageBgUrl" 
+                                    class="hero-icon-bg" 
+                                    alt=""
+                                    loading="lazy"
                                 />
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </template>
-    </section>
+                
+                <!-- Alternative Layout (company info, vision style) -->
+                <div 
+                    v-else 
+                    class="position-relative about-block-alt"
+                    :class="{ 'bg-light-gray': idx % 2 !== 0 }"
+                >
+                    <AppImage 
+                        v-if="leftShapeImageUrl" 
+                        :src="leftShapeImageUrl" 
+                        class="ab-left" 
+                        alt=""
+                        loading="lazy"
+                        :width="300"
+                        :height="400"
+                    />
+                    <AppImage 
+                        v-if="rightShapeImageUrl" 
+                        :src="rightShapeImageUrl" 
+                        class="ab-right" 
+                        alt=""
+                        loading="lazy"
+                        :width="300"
+                        :height="400"
+                    />
+                    <div class="container md">
+                        <div class="row align-items-center">
+                            <div class="col-lg-7 order-lg-1 order-2">
+                                <div class="about__content v2">
+                                    <i v-if="block.iconUrl">
+                                        <AppImage :src="block.iconUrl" alt="" loading="lazy" :width="80" :height="80" />
+                                    </i>
+                                    <div>
+                                        <h1 v-html="t(block.title_ar, block.title_en)"></h1>
+                                        <div v-html="t(block.content_ar, block.content_en)"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-5 order-lg-2 order-1">
+                                <div class="about__img">
+                                    <AppImage 
+                                        v-if="block.imageUrl" 
+                                        :src="block.imageUrl" 
+                                        alt=""
+                                        loading="lazy"
+                                        class="about-main-img"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </section>
+    </div>
 </template>
+
+<style scoped>
+.about-section-wrapper {
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+    padding-top: 2rem;
+}
+
+.about-area {
+    position: relative;
+}
+
+.about-block-alt {
+    padding: 3rem 0;
+}
+
+.bg-light-gray {
+    background-color: #fcfcfd;
+}
+
+/* RTL adjustments handled by Bootstrap's order classes */
+</style>

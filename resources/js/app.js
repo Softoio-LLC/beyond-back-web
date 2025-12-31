@@ -36,23 +36,47 @@ injectCriticalCSS();
 let isFirstLoadComplete = false;
 
 createInertiaApp({
+    title: title => title ? `${title} - Beyond` : 'Beyond',
+    progress: {
+        color: '#4B5563',
+        delay: 250,
+        includeCSS: true,
+        showSpinner: false,
+    },
     resolve: name => {
-        const pages = import.meta.glob('./Pages/**/*.vue', { eager: true })
-        const page = pages[`./Pages/${name}.vue`]
-        return page.default ? page.default : page
+        // Lazy load pages for better code splitting and faster initial load
+        const pages = import.meta.glob('./Pages/**/*.vue')
+        return pages[`./Pages/${name}.vue`]()
     },
     setup({ el, App, props, plugin }) {
         const app = createSSRApp({ render: () => h(App, props) })
             .use(plugin)
             .use(ZiggyVue)
-            .mount(el)
         
-        // Initialize website components after first render
+        // Suppress hydration mismatch warnings in production
+        app.config.warnHandler = (msg, instance, trace) => {
+            // Ignore hydration warnings - they're expected for dynamic content injection
+            if (msg.includes('Hydration') || msg.includes('hydration')) {
+                return;
+            }
+            console.warn(msg, trace);
+        };
+        
+        app.mount(el)
+        
+        // Initialize website components after first render using requestIdleCallback
+        // This defers non-critical work to improve TBT
         if (!isFirstLoadComplete) {
-            setTimeout(() => {
+            const initFn = () => {
                 websiteInit.initWebsite();
                 isFirstLoadComplete = true;
-            }, 100);
+            };
+            
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(initFn, { timeout: 500 });
+            } else {
+                setTimeout(initFn, 200);
+            }
         }
         
         return app;
@@ -65,4 +89,14 @@ router.on('finish', () => {
     if (isFirstLoadComplete) {
         websiteInit.refreshComponents();
     }
+    
+    // Ensure loading class is removed
+    document.documentElement.classList.remove('loading');
+    document.documentElement.classList.add('loaded');
+});
+
+// Remove loading class on first render
+router.on('navigate', () => {
+    document.documentElement.classList.remove('loading');
+    document.documentElement.classList.add('loaded');
 });

@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue';
+import AppImage from '@/Components/AppImage.vue';
 
 const props = defineProps({
     content: {
@@ -59,24 +60,25 @@ const bgStyle = computed(() => {
 <template>
     <!-- Hero Common Layout (Dark background - Service Pages) - matches template hero-area v2 -->
     <section class="hero-area v2 position-relative text-white pb-1 pb-lg-1" :style="bgStyle">
-        <img 
+        <AppImage 
             v-if="shapeImageUrl"
             :src="shapeImageUrl" 
             class="hero-shape" 
             alt="" 
             loading="lazy"
-            decoding="async"
+            
         />
         <div class="container">
             <div class="row flex-column-reverse flex-lg-row gap-4 gap-lg-4 align-items-center">
                 <div class="col-lg-6">
                     <div class="hero__block">
                         <i v-if="iconUrl">
-                            <img 
+                            <AppImage 
                                 :src="iconUrl" 
                                 alt="" 
                                 loading="lazy"
-                                decoding="async"
+                                :width="80"
+                                :height="80"
                             />
                         </i>
                         <div class="">
@@ -105,20 +107,22 @@ const bgStyle = computed(() => {
                 </div>
                 <div class="col-lg-5">
                     <div class="hero__img">
-                        <img 
+                        <AppImage 
                             v-if="heroImageUrl"
                             :src="heroImageUrl" 
                             :alt="title"
                             loading="lazy"
-                            decoding="async"
+                            :width="600"
+                            :height="500"
                         />
-                        <img 
+                        <AppImage 
                             v-if="heroBgImageUrl"
                             :src="heroBgImageUrl" 
                             class="hero-icon-bg"
                             alt=""
                             loading="lazy"
-                            decoding="async"
+                            :width="600"
+                            :height="500"
                         />
                     </div>
                 </div>

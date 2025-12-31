@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onMounted, onUnmounted } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
+import AppImage from '@/Components/AppImage.vue';
 
 const props = defineProps({
     content: {
@@ -238,7 +239,7 @@ const switchLanguage = (newLang) => {
                 <div class="header-left-block d-flex align-items-center">
                     <div class="header-logo">
                         <Link :href="lang === 'ar' ? '/ar' : '/'">
-                            <img :src="logo" alt="Logo" loading="lazy" />
+                            <AppImage :src="logo" alt="Logo" loading="lazy"  />
                         </Link>
                     </div>
                     <div class="main-menu d-none d-lg-block">
@@ -319,7 +320,7 @@ const switchLanguage = (newLang) => {
                                             @change="switchLanguage('ar')"
                                         />
                                         <p class="select-box__input-text">
-                                            <img :src="flagAr" alt="" loading="lazy" /> عربي
+                                            <AppImage :src="flagAr" alt="" loading="lazy"  /> عربي
                                         </p>
                                     </div>
                                     <div class="select-box__value">
@@ -333,25 +334,25 @@ const switchLanguage = (newLang) => {
                                             @change="switchLanguage('en')"
                                         />
                                         <p class="select-box__input-text">
-                                            <img :src="flagEn" alt="" loading="lazy" />English
+                                            <AppImage :src="flagEn" alt="" loading="lazy"  />English
                                         </p>
                                     </div>
                                 </div>
                                 <ul class="select-box__list">
                                     <li :class="{ active: lang === 'ar' }" @click="switchLanguage('ar')">
                                         <label class="select-box__option" for="lang-ar" aria-hidden="true">
-                                            <img :src="flagAr" alt="" loading="lazy" /> عربي
+                                            <AppImage :src="flagAr" alt="" loading="lazy"  /> عربي
                                         </label>
                                         <span class="check-image">
-                                            <img :src="checkRadio" alt="check-radio" loading="lazy" />
+                                            <AppImage :src="checkRadio" alt="check-radio" loading="lazy" />
                                         </span>
                                     </li>
                                     <li :class="{ active: lang === 'en' }" @click="switchLanguage('en')">
                                         <label class="select-box__option" for="lang-en" aria-hidden="true">
-                                            <img :src="flagEn" alt="" loading="lazy" />English
+                                            <AppImage :src="flagEn" alt="" loading="lazy"  />English
                                         </label>
                                         <span class="check-image">
-                                            <img :src="checkRadio" alt="check-radio" loading="lazy" />
+                                            <AppImage :src="checkRadio" alt="check-radio" loading="lazy" />
                                         </span>
                                     </li>
                                 </ul>
@@ -386,4 +387,11 @@ const switchLanguage = (newLang) => {
 .header-light .main-menu nav ul li a:hover {
     color: #000000;
 }
+
+/* Check-image positioning for RTL/LTR */
+.check-image {
+    right: 5px !important;
+    left: auto !important;
+}
+
 </style>

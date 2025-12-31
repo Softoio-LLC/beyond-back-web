@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue';
+import AppImage from '@/Components/AppImage.vue';
 
 const props = defineProps({
     content: {
@@ -50,26 +51,27 @@ const bgStyle = computed(() => ({
                         <div class="contact__banner--content" data-aos="fade-up">
                             <div class="d-flex align-items-center gap-3">
                                 <i v-if="iconUrl">
-                                    <img 
+                                    <AppImage 
                                         :src="iconUrl" 
                                         alt=""
                                         loading="lazy"
-                                        decoding="async"
+                                        
                                     />
                                 </i>
                                 <div>
-                                    <h1 class="fs-56">{{ title }}</h1>
+                                    <h1 class="fs-56" v-html="title"></h1>
                                     <p class="mb-0">
                                         <span>{{ breadcrumb.home }}</span> / <span>{{ breadcrumb.current }}</span>
                                     </p>
                                 </div>
                             </div>
                             <picture v-if="sideImageUrl">
-                                <img 
+                                <AppImage 
                                     :src="sideImageUrl" 
                                     alt=""
                                     loading="lazy"
-                                    decoding="async"
+                                    :width="500"
+                                    :height="400"
                                 />
                             </picture>
                         </div>

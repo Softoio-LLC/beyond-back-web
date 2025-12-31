@@ -19,7 +19,11 @@ const isPreviewUrl = (url) => {
 
 // Watch for prop changes
 watch(() => props.loading, (newVal) => {
-    if (!isPreviewUrl(window.location.href)) {
+    // Check if we're in a browser environment (SSR guard)
+    if (typeof window !== 'undefined' && !isPreviewUrl(window.location.href)) {
+        isVisible.value = newVal;
+    } else if (typeof window === 'undefined') {
+        // During SSR, always show loading state based on prop
         isVisible.value = newVal;
     } else {
         isVisible.value = false;
@@ -27,8 +31,8 @@ watch(() => props.loading, (newVal) => {
 }, { immediate: true });
 
 onMounted(() => {
-    // Double check on mount
-    if (isPreviewUrl(window.location.href)) {
+    // Double check on mount (only runs in browser)
+    if (typeof window !== 'undefined' && isPreviewUrl(window.location.href)) {
         isVisible.value = false;
     }
 });
@@ -57,6 +61,15 @@ onMounted(() => {
     display: flex;
     justify-content: center;
     align-items: center;
+    /* Ensure visibility during loading */
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Override any parent visibility rules */
+html.loading .loader-container {
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 .loader-content {

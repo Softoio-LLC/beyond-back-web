@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue';
+import AppImage from '@/Components/AppImage.vue';
 
 const props = defineProps({
     content: {
@@ -39,26 +40,15 @@ const galleryItems = computed(() => {
 </script>
 
 <template>
-    <main>
-        <!-- Breadcrumb Navigation -->
-        <div class="breadcrumb-nav">
-            <div class="container">
-                <ul>
-                    <li><a href="">{{ breadcrumb.home }}</a></li>
-                    <li><span>/</span></li>
-                    <li><a href="" class="active">{{ breadcrumb.current }}</a></li>
-                </ul>
-            </div>
-        </div>
-
+    <div class="gallery-page-section my-5">
         <!---------gallery Section START ---------->
         <section class="galleryV2-area">
             <div class="container py-5">
                 <div class="row gy-4">
                     <div class="col-lg-12 text-center">
-                        <div class="">
-                            <h1 class="mb-3">{{ title }}</h1>
-                            <p v-if="subtitle" class="off-text mb-0 fw-medium fs-18">{{ subtitle }}</p>
+                        <div>
+                            <h1 class="mb-3" v-html="title"></h1>
+                            <p v-if="subtitle" class="off-text mb-0 fw-medium fs-18" v-html="subtitle"></p>
                         </div>
                     </div>
                     <div 
@@ -67,13 +57,13 @@ const galleryItems = computed(() => {
                         class="col-md-6"
                     >
                         <div class="img__card__block">
-                            <img :src="item.image" :alt="item.label" loading="lazy" decoding="async" />
-                            <a :href="item.url">{{ item.label }}</a>
+                            <AppImage :src="item.image" :alt="item.label" loading="lazy" />
+                            <a :href="item.url" v-html="item.label"></a>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
         <!---------gallery Section End ---------->
-    </main>
+    </div>
 </template>

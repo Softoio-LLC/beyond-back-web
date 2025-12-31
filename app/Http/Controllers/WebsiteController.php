@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Page;
-use App\Models\PageSection;
 use App\Models\SectionType;
+use App\Services\GlobalSectionService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -13,6 +13,8 @@ use Inertia\Response;
 
 class WebsiteController extends Controller
 {
+    public function __construct(protected GlobalSectionService $globalSectionService) {}
+
     /**
      * Display the homepage.
      */
@@ -20,15 +22,15 @@ class WebsiteController extends Controller
     {
         // Get the homepage (page marked as homepage)
         $page = Page::getHomepage();
-        
+
         // Determine language from request
         $lang = $this->detectLanguage($request);
-        
+
         // If no page exists, create mock data for development
-        if (!$page) {
+        if (! $page) {
             return $this->renderWithMockData($lang);
         }
-        
+
         return $this->renderPage($page, $lang, true);
     }
 
@@ -38,22 +40,23 @@ class WebsiteController extends Controller
     public function showBySlug(Request $request, string $slug): Response|RedirectResponse
     {
         $lang = $this->detectLanguage($request);
-        
+
         // URL decode the slug (handles Arabic characters)
         $slug = urldecode($slug);
-        
+
         $page = Page::findBySlug($slug, $lang);
-        
-        if (!$page) {
+
+        if (! $page) {
             abort(404);
         }
-        
+
         // If this is the homepage, redirect to / for SEO
         if ($page->is_homepage) {
             $redirectUrl = $lang === 'ar' ? '/ar' : '/';
+
             return redirect($redirectUrl, 301);
         }
-        
+
         return $this->renderPage($page, $lang, false);
     }
 
@@ -63,7 +66,7 @@ class WebsiteController extends Controller
     public function show(Request $request, Page $page): Response
     {
         $lang = $this->detectLanguage($request);
-        
+
         return $this->renderPage($page, $lang, $page->is_homepage);
     }
 
@@ -77,25 +80,35 @@ class WebsiteController extends Controller
             ->active()
             ->ordered()
             ->get()
-            ->map(function ($section) use ($lang) {
+            ->map(function ($section) {
+                $sectionTypeKey = $section->sectionType->key;
+                $content = $section->content;
+
+                // Merge global content for header/footer sections
+                if ($sectionTypeKey === 'header') {
+                    $content = $this->globalSectionService->mergeHeaderContent($content ?? []);
+                } elseif ($sectionTypeKey === 'footer') {
+                    $content = $this->globalSectionService->mergeFooterContent($content ?? []);
+                }
+
                 return [
                     'id' => $section->id,
                     'section_type' => [
                         'id' => $section->sectionType->id,
-                        'key' => $section->sectionType->key,
+                        'key' => $sectionTypeKey,
                         'name_ar' => $section->sectionType->name_ar,
                         'name_en' => $section->sectionType->name_en,
                         'component_name' => $section->sectionType->component_name,
                     ],
                     'order' => $section->order,
-                    'content' => $section->content,
+                    'content' => $content,
                     'is_active' => $section->is_active,
                 ];
             });
 
         // Build SEO data
         $seoData = $this->buildSeoData($page, $lang, $isHomepage);
-        
+
         // Build JSON-LD schema
         $jsonLdSchema = $this->buildJsonLdSchema($page, $sections, $lang, $isHomepage);
 
@@ -107,8 +120,8 @@ class WebsiteController extends Controller
                 'h1' => $lang === 'ar' ? $page->h1_title_ar : $page->h1_title_en,
                 'og_title' => $lang === 'ar' ? ($page->og_title_ar ?: $page->meta_title_ar) : ($page->og_title_en ?: $page->meta_title_en),
                 'og_description' => $lang === 'ar' ? ($page->og_description_ar ?: $page->meta_description_ar) : ($page->og_description_en ?: $page->meta_description_en),
-                'og_image' => $lang === 'ar' 
-                    ? ($page->og_image_ar ? Storage::url($page->og_image_ar) : null) 
+                'og_image' => $lang === 'ar'
+                    ? ($page->og_image_ar ? Storage::url($page->og_image_ar) : null)
                     : ($page->og_image_en ? Storage::url($page->og_image_en) : null),
                 'canonical_url' => $seoData['canonical_url'],
                 'hreflang' => $seoData['hreflang'],
@@ -126,7 +139,7 @@ class WebsiteController extends Controller
     private function buildSeoData(Page $page, string $lang, bool $isHomepage): array
     {
         $baseUrl = config('app.url');
-        
+
         // Determine canonical URL
         if ($isHomepage) {
             $canonicalUrl = $lang === 'ar' ? "{$baseUrl}/ar" : $baseUrl;
@@ -139,7 +152,7 @@ class WebsiteController extends Controller
             $alternateEn = $slugEn ? "{$baseUrl}/{$slugEn}" : null;
             $alternateAr = $slugAr ? "{$baseUrl}/ar/{$slugAr}" : null;
         }
-        
+
         return [
             'canonical_url' => $canonicalUrl,
             'hreflang' => [
@@ -158,10 +171,10 @@ class WebsiteController extends Controller
     {
         $baseUrl = config('app.url');
         $companyName = $lang === 'ar' ? 'بيوند' : 'Beyond';
-        
+
         // Base Organization schema
         $schemas = [];
-        
+
         // Organization Schema (always present)
         $organizationSchema = [
             '@context' => 'https://schema.org',
@@ -170,49 +183,49 @@ class WebsiteController extends Controller
             'url' => $baseUrl,
             'logo' => "{$baseUrl}/assets/images/logo.png",
         ];
-        
+
         // Try to get contact info from contact section
         $contactSection = $sections->first(function ($section) {
             return $section['section_type']['key'] === 'contact';
         });
-        
+
         if ($contactSection && isset($contactSection['content'])) {
             $content = $contactSection['content'];
             $contactPoint = [];
-            
-            if (!empty($content['phone'])) {
+
+            if (! empty($content['phone'])) {
                 $contactPoint['telephone'] = $content['phone'];
             }
-            if (!empty($content['email'])) {
+            if (! empty($content['email'])) {
                 $contactPoint['email'] = $content['email'];
             }
-            if (!empty($content['address_' . $lang])) {
+            if (! empty($content['address_'.$lang])) {
                 $organizationSchema['address'] = [
                     '@type' => 'PostalAddress',
-                    'streetAddress' => $content['address_' . $lang],
+                    'streetAddress' => $content['address_'.$lang],
                 ];
             }
-            
-            if (!empty($contactPoint)) {
+
+            if (! empty($contactPoint)) {
                 $contactPoint['@type'] = 'ContactPoint';
                 $contactPoint['contactType'] = 'customer service';
                 $organizationSchema['contactPoint'] = $contactPoint;
             }
-            
+
             // Social links
             $sameAs = [];
             foreach (['facebook', 'twitter', 'linkedin', 'instagram', 'youtube'] as $social) {
-                if (!empty($content[$social])) {
+                if (! empty($content[$social])) {
                     $sameAs[] = $content[$social];
                 }
             }
-            if (!empty($sameAs)) {
+            if (! empty($sameAs)) {
                 $organizationSchema['sameAs'] = $sameAs;
             }
         }
-        
+
         $schemas[] = $organizationSchema;
-        
+
         // WebSite schema for homepage
         if ($isHomepage) {
             $schemas[] = [
@@ -227,11 +240,11 @@ class WebsiteController extends Controller
                 ],
             ];
         }
-        
+
         // WebPage schema
         $pageTitle = $lang === 'ar' ? $page->meta_title_ar : $page->meta_title_en;
         $pageDescription = $lang === 'ar' ? $page->meta_description_ar : $page->meta_description_en;
-        
+
         $webPageSchema = [
             '@context' => 'https://schema.org',
             '@type' => $isHomepage ? 'WebPage' : 'AboutPage',
@@ -245,7 +258,7 @@ class WebsiteController extends Controller
             ],
             'inLanguage' => $lang === 'ar' ? 'ar-SA' : 'en-US',
         ];
-        
+
         // Add breadcrumb
         $breadcrumb = [
             '@context' => 'https://schema.org',
@@ -259,8 +272,8 @@ class WebsiteController extends Controller
                 ],
             ],
         ];
-        
-        if (!$isHomepage) {
+
+        if (! $isHomepage) {
             $breadcrumb['itemListElement'][] = [
                 '@type' => 'ListItem',
                 'position' => 2,
@@ -268,21 +281,21 @@ class WebsiteController extends Controller
                 'item' => "{$baseUrl}{$page->getUrl($lang)}",
             ];
         }
-        
+
         $webPageSchema['breadcrumb'] = $breadcrumb;
         $schemas[] = $webPageSchema;
-        
+
         // Services schema from services section
         $servicesSection = $sections->first(function ($section) {
             return $section['section_type']['key'] === 'services';
         });
-        
+
         if ($servicesSection && isset($servicesSection['content']['items'])) {
             $services = [];
             foreach ($servicesSection['content']['items'] as $item) {
-                $serviceName = $item['title_' . $lang] ?? $item['title_en'] ?? '';
-                $serviceDesc = $item['description_' . $lang] ?? $item['description_en'] ?? '';
-                
+                $serviceName = $item['title_'.$lang] ?? $item['title_en'] ?? '';
+                $serviceDesc = $item['description_'.$lang] ?? $item['description_en'] ?? '';
+
                 if ($serviceName) {
                     $services[] = [
                         '@type' => 'Service',
@@ -295,8 +308,8 @@ class WebsiteController extends Controller
                     ];
                 }
             }
-            
-            if (!empty($services)) {
+
+            if (! empty($services)) {
                 $schemas[] = [
                     '@context' => 'https://schema.org',
                     '@type' => 'ItemList',
@@ -311,18 +324,18 @@ class WebsiteController extends Controller
                 ];
             }
         }
-        
+
         // FAQ schema from FAQ section
         $faqSection = $sections->first(function ($section) {
             return $section['section_type']['key'] === 'faq';
         });
-        
+
         if ($faqSection && isset($faqSection['content']['items'])) {
             $faqItems = [];
             foreach ($faqSection['content']['items'] as $item) {
-                $question = $item['question_' . $lang] ?? $item['question_en'] ?? '';
-                $answer = $item['answer_' . $lang] ?? $item['answer_en'] ?? '';
-                
+                $question = $item['question_'.$lang] ?? $item['question_en'] ?? '';
+                $answer = $item['answer_'.$lang] ?? $item['answer_en'] ?? '';
+
                 if ($question && $answer) {
                     $faqItems[] = [
                         '@type' => 'Question',
@@ -334,8 +347,8 @@ class WebsiteController extends Controller
                     ];
                 }
             }
-            
-            if (!empty($faqItems)) {
+
+            if (! empty($faqItems)) {
                 $schemas[] = [
                     '@context' => 'https://schema.org',
                     '@type' => 'FAQPage',
@@ -343,18 +356,18 @@ class WebsiteController extends Controller
                 ];
             }
         }
-        
+
         // Team/About schema
         $teamSection = $sections->first(function ($section) {
             return $section['section_type']['key'] === 'team';
         });
-        
+
         if ($teamSection && isset($teamSection['content']['items'])) {
             $teamMembers = [];
             foreach ($teamSection['content']['items'] as $item) {
-                $name = $item['name_' . $lang] ?? $item['name_en'] ?? '';
-                $role = $item['role_' . $lang] ?? $item['role_en'] ?? '';
-                
+                $name = $item['name_'.$lang] ?? $item['name_en'] ?? '';
+                $role = $item['role_'.$lang] ?? $item['role_en'] ?? '';
+
                 if ($name) {
                     $person = [
                         '@type' => 'Person',
@@ -365,20 +378,20 @@ class WebsiteController extends Controller
                             'name' => $companyName,
                         ],
                     ];
-                    
-                    if (!empty($item['image'])) {
+
+                    if (! empty($item['image'])) {
                         $person['image'] = "{$baseUrl}/storage/{$item['image']}";
                     }
-                    
+
                     $teamMembers[] = $person;
                 }
             }
-            
-            if (!empty($teamMembers)) {
+
+            if (! empty($teamMembers)) {
                 $organizationSchema['employee'] = $teamMembers;
             }
         }
-        
+
         return $schemas;
     }
 
@@ -389,9 +402,18 @@ class WebsiteController extends Controller
     {
         // Get all section types ordered
         $sectionTypes = SectionType::active()->ordered()->get();
-        
+
         // Build mock sections from section types with their default content
         $sections = $sectionTypes->map(function ($type, $index) {
+            $content = $type->default_content;
+
+            // Merge global content for header/footer
+            if ($type->key === 'header') {
+                $content = $this->globalSectionService->mergeHeaderContent($content ?? []);
+            } elseif ($type->key === 'footer') {
+                $content = $this->globalSectionService->mergeFooterContent($content ?? []);
+            }
+
             return [
                 'id' => $index + 1,
                 'section_type' => [
@@ -402,24 +424,24 @@ class WebsiteController extends Controller
                     'component_name' => $type->component_name,
                 ],
                 'order' => $type->default_order,
-                'content' => $type->default_content,
+                'content' => $content,
                 'is_active' => true,
             ];
         });
 
         $baseUrl = config('app.url');
-        
+
         return Inertia::render('Website/Index', [
             'page' => [
                 'id' => 0,
                 'title' => $lang === 'ar' ? 'بيوند' : 'Beyond',
-                'description' => $lang === 'ar' 
-                    ? 'شركة سعودية متخصصة في بناء وتشغيل المنصات الرقمية' 
+                'description' => $lang === 'ar'
+                    ? 'شركة سعودية متخصصة في بناء وتشغيل المنصات الرقمية'
                     : 'A Saudi company specializing in building and operating digital platforms',
                 'h1' => $lang === 'ar' ? 'بيوند' : 'Beyond',
                 'og_title' => $lang === 'ar' ? 'بيوند' : 'Beyond',
-                'og_description' => $lang === 'ar' 
-                    ? 'شركة سعودية متخصصة في بناء وتشغيل المنصات الرقمية' 
+                'og_description' => $lang === 'ar'
+                    ? 'شركة سعودية متخصصة في بناء وتشغيل المنصات الرقمية'
                     : 'A Saudi company specializing in building and operating digital platforms',
                 'og_image' => null,
                 'canonical_url' => $lang === 'ar' ? "{$baseUrl}/ar" : $baseUrl,
@@ -460,10 +482,10 @@ class WebsiteController extends Controller
         if (str_starts_with($request->path(), 'ar/') || $request->path() === 'ar') {
             return 'ar';
         }
-        
+
         // Check Accept-Language header for preference
         $acceptLang = $request->header('Accept-Language', 'ar');
-        
+
         // Default to Arabic (RTL) as the template is primarily RTL
         return str_contains($acceptLang, 'en') ? 'en' : 'ar';
     }

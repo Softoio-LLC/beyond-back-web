@@ -1,5 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue';
+import AppImage from '@/Components/AppImage.vue';
 
 const props = defineProps({
     content: {
@@ -36,10 +37,10 @@ const toggleFaq = (index) => {
 <template>
     <section class="faq-area position-relative z-1">
         <div v-if="shapeImageUrl" class="faq-shape position-absolute z-n1">
-            <img class="w-100 h-100 object-fit-cover" :src="shapeImageUrl" alt="Shape" loading="lazy" decoding="async" />
+            <AppImage class="w-100 h-100 object-fit-cover" :src="shapeImageUrl" alt="Shape" loading="lazy"  />
         </div>
         <div v-if="shapeImageUrl" class="faq-sec-shape position-absolute z-n1">
-            <img class="w-100 h-100 object-fit-cover" :src="shapeImageUrl" alt="Shape" loading="lazy" decoding="async" />
+            <AppImage class="w-100 h-100 object-fit-cover" :src="shapeImageUrl" alt="Shape" loading="lazy"  />
         </div>
         <div class="container">
             <div class="faq-inner-block">

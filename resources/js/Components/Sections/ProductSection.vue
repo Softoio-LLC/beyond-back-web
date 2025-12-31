@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue';
+import AppImage from '@/Components/AppImage.vue';
 
 const props = defineProps({
     content: {
@@ -32,23 +33,23 @@ const description = computed(() => props.lang === 'ar' ? props.content.descripti
     <!--------- Section START product Area ---------->
     <section class="product-area">
         <!-- Left shape decoration -->
-        <img 
+        <AppImage 
             v-if="leftShape" 
             :src="leftShape" 
             class="product-left" 
             alt="" 
             loading="lazy" 
-            decoding="async" 
+            
         />
         
         <!-- Top right shape decoration -->
-        <img 
+        <AppImage 
             v-if="topRightShape" 
             :src="topRightShape" 
             class="product-top-right" 
             alt="" 
             loading="lazy" 
-            decoding="async" 
+           
         />
         
         <div class="container md">
@@ -60,16 +61,16 @@ const description = computed(() => props.lang === 'ar' ? props.content.descripti
                 <div :class="lang === 'ar' ? 'col-lg-7' : 'col-lg-7'">
                     <div class="product__content">
                         <i v-if="icon">
-                            <img 
+                            <AppImage 
                                 :src="icon" 
                                 alt="" 
                                 loading="lazy" 
-                                decoding="async" 
+                                
                             />
                         </i>
                         <div>
-                            <h1 v-if="title">{{ title }}</h1>
-                            <p v-if="description">{{ description }}</p>
+                            <h1 v-if="title" v-html="title"></h1>
+                            <p v-if="description" v-html="description"></p>
                         </div>
                     </div>
                 </div>
@@ -77,12 +78,12 @@ const description = computed(() => props.lang === 'ar' ? props.content.descripti
                 <!-- Image Column -->
                 <div :class="lang === 'ar' ? 'col-lg-5' : 'col-lg-5'">
                     <div class="product__image">
-                        <img 
+                        <AppImage 
                             v-if="image" 
                             :src="image" 
                             alt="" 
                             loading="lazy" 
-                            decoding="async" 
+                            
                         />
                     </div>
                 </div>

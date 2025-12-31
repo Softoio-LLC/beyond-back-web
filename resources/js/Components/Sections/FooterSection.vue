@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
+import AppImage from '@/Components/AppImage.vue';
 
 const props = defineProps({
     content: {
@@ -82,7 +83,7 @@ const socialLinks = computed(() => {
                             <div class="footer-identity">
                                 <div class="footer-logo">
                                     <Link :href="lang === 'ar' ? '/ar' : '/'">
-                                        <img v-if="logoUrl" :src="logoUrl" alt="Logo" loading="lazy" />
+                                        <AppImage v-if="logoUrl" :src="logoUrl" alt="Logo" loading="lazy"  />
                                     </Link>
                                 </div>
                                 <div class="footer-content">
@@ -118,7 +119,7 @@ const socialLinks = computed(() => {
                                     <li v-for="(item, itemIndex) in contactItems" :key="itemIndex">
                                         <a :href="item.url" class="d-flex align-items-center">
                                             <span v-if="item.iconUrl" class="d-flex align-items-center justify-content-between">
-                                                <img :src="item.iconUrl" alt="Icon" loading="lazy" />
+                                                <AppImage :src="item.iconUrl" alt="Icon" loading="lazy" :width="24" :height="24" />
                                             </span>
                                             <span v-html="item.text"></span>
                                         </a>
@@ -140,7 +141,7 @@ const socialLinks = computed(() => {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                     >
-                                        <img v-if="social.iconUrl" :src="social.iconUrl" alt="Icon" loading="lazy" />
+                                        <AppImage v-if="social.iconUrl" :src="social.iconUrl" alt="Icon" loading="lazy" :width="32" :height="32" />
                                     </a>
                                 </div>
                             </div>
@@ -151,7 +152,7 @@ const socialLinks = computed(() => {
                     <p v-html="content.copyright_text"></p>
                 </div>
                 <div v-if="shapeImageUrl" class="footer-shape position-absolute z-n1">
-                    <img class="w-100 h-100 object-fit-cover" :src="shapeImageUrl" alt="Shape" loading="lazy" />
+                    <AppImage class="w-100 h-100 object-fit-cover" :src="shapeImageUrl" alt="Shape" loading="lazy" :width="800" :height="600" />
                 </div>
             </div>
         </div>

@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue';
+import AppImage from '@/Components/AppImage.vue';
 
 const props = defineProps({
     content: {
@@ -47,10 +48,22 @@ const workShapeImageUrl = computed(() => getImageUrl(props.content.work_shape_im
 <template>
     <section class="work-area position-relative z-1 overflow-hidden">
         <div v-if="shapeImageUrl" class="work-shape position-absolute z-n1">
-            <img class="w-100 h-100 object-fit-cover" :src="shapeImageUrl" alt="Shape" loading="lazy" decoding="async" />
+            <AppImage
+                :src="shapeImageUrl"
+                alt="Shape"
+                loading="lazy"
+                
+                class="w-100 h-100 object-fit-cover"
+            />
         </div>
         <div v-if="shapeImageUrl" class="work-second-shape position-absolute z-n1">
-            <img class="w-100 h-100 object-fit-cover" :src="shapeImageUrl" alt="Shape" loading="lazy" decoding="async" />
+            <AppImage
+                :src="shapeImageUrl"
+                alt="Shape"
+                loading="lazy"
+                
+                class="w-100 h-100 object-fit-cover"
+            />
         </div>
         <div class="container">
             <div class="work-inner-block">
@@ -97,7 +110,12 @@ const workShapeImageUrl = computed(() => getImageUrl(props.content.work_shape_im
                                                             </div>
                                                         </div>
                                                         <div class="work-card-thumb">
-                                                            <img :src="project.imageUrl" alt="Thumb" loading="lazy" decoding="async" />
+                                                            <AppImage
+                                                                :src="project.imageUrl"
+                                                                alt="Thumb"
+                                                                loading="lazy"
+                                                                
+                                                            />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -106,7 +124,12 @@ const workShapeImageUrl = computed(() => getImageUrl(props.content.work_shape_im
                                     </div>
 
                                     <div v-if="workShapeImageUrl" class="work-card-shape position-absolute z-n1">
-                                        <img :src="workShapeImageUrl" alt="Shape" loading="lazy" decoding="async" />
+                                        <AppImage
+                                            :src="workShapeImageUrl"
+                                            alt="Shape"
+                                            loading="lazy"
+                                           
+                                        />
                                     </div>
                                     <!-- Dots Pagination -->
                                     <div class="swiper-pagination"></div>

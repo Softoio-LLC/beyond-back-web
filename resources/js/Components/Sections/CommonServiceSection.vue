@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue';
+import AppImage from '@/Components/AppImage.vue';
 
 const props = defineProps({
     content: {
@@ -42,10 +43,10 @@ const services = computed(() => {
                 <div class="col-lg-12">
                     <div class="mb-3">
                         <i v-if="sectionIcon">
-                            <img :src="sectionIcon" alt="" loading="lazy" decoding="async" />
+                            <AppImage :src="sectionIcon" alt="" loading="lazy"  />
                         </i>
                         <h1 v-if="title" v-html="title" :style="{ color: titleColor }"></h1>
-                        <p v-if="subtitle" class="fs-18" style="color: #768495">{{ subtitle }}</p>
+                        <p v-if="subtitle" class="fs-18" style="color: #768495" v-html="subtitle"></p>
                     </div>
                 </div>
                 <div 
@@ -55,10 +56,10 @@ const services = computed(() => {
                 >
                     <div class="service__block">
                         <i v-if="service.icon">
-                            <img :src="service.icon" alt="" loading="lazy" decoding="async" />
+                            <AppImage :src="service.icon" alt="" loading="lazy" :width="64" :height="64" />
                         </i>
-                        <h5>{{ service.title }}</h5>
-                        <p>{{ service.description }}</p>
+                        <h5 v-html="service.title"></h5>
+                        <p v-html="service.description"></p>
                     </div>
                 </div>
             </div>
@@ -66,3 +67,31 @@ const services = computed(() => {
     </section>
     <!---------comService Section End ---------->
 </template>
+
+<style scoped>
+.comService-area .row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.comService-area .row > [class*="col-"] {
+    display: flex;
+}
+
+.comService-area .service__block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    min-height: 280px;
+}
+
+.comService-area .service__block h5 {
+    flex-shrink: 0;
+}
+
+.comService-area .service__block p {
+    flex-grow: 1;
+}
+</style>

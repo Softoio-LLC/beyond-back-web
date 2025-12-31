@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue';
+import AppImage from '@/Components/AppImage.vue';
 
 const props = defineProps({
     content: {
@@ -52,10 +53,22 @@ const shapeImageUrl = computed(() => getImageUrl(props.content.shape_image));
                             :data-aos-delay="(index + 2) * 100"
                         >
                             <div v-if="shapeImageUrl" class="team-card-shape position-absolute z-n1">
-                                <img class="w-100 h-100 object-fit-cover" :src="shapeImageUrl" alt="Shape" loading="lazy" decoding="async" />
+                                <AppImage
+                                    :src="shapeImageUrl"
+                                    alt="Shape"
+                                    loading="lazy"
+                                    
+                                    class="w-100 h-100 object-fit-cover"
+                                />
                             </div>
                             <div class="team-thumb">
-                                <img class="w-100 h-100 object-fit-cover" :src="member.imageUrl" alt="Thumb" loading="lazy" decoding="async" />
+                                <AppImage
+                                    :src="member.imageUrl"
+                                    alt="Thumb"
+                                    loading="lazy"
+                                   
+                                    class="w-100 h-100 object-fit-cover"
+                                />
                             </div>
                             <div class="team-card-content">
                                 <h4 v-html="getTitle(member)"></h4>

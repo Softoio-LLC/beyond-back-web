@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue';
+import AppImage from '@/Components/AppImage.vue';
 
 const props = defineProps({
     content: {
@@ -41,7 +42,15 @@ const logos = computed(() => {
                         data-aos="zoom-in"
                     >
                         <a :href="logo.url || '#'">
-                            <img :src="logo.imageUrl" :alt="logo.alt || 'Logo'" loading="lazy" decoding="async" />
+                            <AppImage
+                                :src="logo.imageUrl"
+                                :alt="logo.alt || 'Logo'"
+                                :width="200"
+                                :height="100"
+                                loading="lazy"
+                                format="webp"
+                                :quality="85"
+                            />
                         </a>
                     </div>
                 </div>

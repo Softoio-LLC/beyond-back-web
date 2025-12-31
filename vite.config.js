@@ -27,9 +27,18 @@ export default defineConfig({
                 manualChunks(id) {
                     // Only apply chunking for client-side build
                     if (id.includes('node_modules')) {
-                        if (id.includes('bootstrap') || id.includes('swiper') || id.includes('aos')) {
-                            return 'vendor-ui';
+                        // Heavy UI libraries - loaded on demand
+                        if (id.includes('swiper')) {
+                            return 'vendor-swiper';
                         }
+                        if (id.includes('aos')) {
+                            return 'vendor-aos';
+                        }
+                        // Bootstrap - loaded immediately but separate chunk
+                        if (id.includes('bootstrap')) {
+                            return 'vendor-bootstrap';
+                        }
+                        // Vue/Inertia core - needed immediately
                         if (id.includes('vue') || id.includes('@inertiajs')) {
                             return 'vendor-vue';
                         }
@@ -41,10 +50,12 @@ export default defineConfig({
         chunkSizeWarningLimit: 1000,
         // Enable source maps for production debugging (optional)
         sourcemap: false,
+        // Use esbuild for minification (default, faster than terser)
+        minify: 'esbuild',
     },
-    // Optimize dependencies
+    // Optimize dependencies - remove swiper/aos from here since they're lazy loaded
     optimizeDeps: {
-        include: ['vue', '@inertiajs/vue3', 'bootstrap', 'swiper', 'aos'],
+        include: ['vue', '@inertiajs/vue3', 'bootstrap'],
     },
     // SSR specific configuration
     ssr: {

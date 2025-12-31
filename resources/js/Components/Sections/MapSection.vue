@@ -63,9 +63,8 @@ const mapHeight = computed(() => props.content.height || 500);
                         class="section-title text-center mb-4"
                         data-aos="fade-up"
                     >
-                        <h2>{{ lang === 'ar' ? content.title_ar : content.title_en }}</h2>
-                        <p v-if="content.subtitle_ar || content.subtitle_en">
-                            {{ lang === 'ar' ? content.subtitle_ar : content.subtitle_en }}
+                        <h2 v-html="lang === 'ar' ? content.title_ar : content.title_en"></h2>
+                        <p v-if="content.subtitle_ar || content.subtitle_en" v-html="lang === 'ar' ? content.subtitle_ar : content.subtitle_en">
                         </p>
                     </div>
                     
