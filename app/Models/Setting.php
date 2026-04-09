@@ -19,6 +19,7 @@ class Setting extends Model
      * Cache key prefix
      */
     protected const CACHE_PREFIX = 'settings_';
+
     protected const CACHE_TTL = 3600; // 1 hour
 
     /**
@@ -27,12 +28,12 @@ class Setting extends Model
     public static function get(string $key, $default = null)
     {
         return Cache::remember(
-            self::CACHE_PREFIX . $key,
+            self::CACHE_PREFIX.$key,
             self::CACHE_TTL,
             function () use ($key, $default) {
                 $setting = static::where('key', $key)->first();
-                
-                if (!$setting) {
+
+                if (! $setting) {
                     return $default;
                 }
 
@@ -56,8 +57,8 @@ class Setting extends Model
         );
 
         // Clear cache
-        Cache::forget(self::CACHE_PREFIX . $key);
-        Cache::forget(self::CACHE_PREFIX . 'group_' . $group);
+        Cache::forget(self::CACHE_PREFIX.$key);
+        Cache::forget(self::CACHE_PREFIX.'group_'.$group);
     }
 
     /**
@@ -66,7 +67,7 @@ class Setting extends Model
     public static function getByGroup(string $group): array
     {
         return Cache::remember(
-            self::CACHE_PREFIX . 'group_' . $group,
+            self::CACHE_PREFIX.'group_'.$group,
             self::CACHE_TTL,
             function () use ($group) {
                 return static::where('group', $group)
@@ -86,12 +87,12 @@ class Setting extends Model
     {
         $settings = static::all();
         foreach ($settings as $setting) {
-            Cache::forget(self::CACHE_PREFIX . $setting->key);
+            Cache::forget(self::CACHE_PREFIX.$setting->key);
         }
-        
+
         $groups = static::distinct('group')->pluck('group');
         foreach ($groups as $group) {
-            Cache::forget(self::CACHE_PREFIX . 'group_' . $group);
+            Cache::forget(self::CACHE_PREFIX.'group_'.$group);
         }
     }
 
@@ -132,7 +133,7 @@ class Setting extends Model
     {
         // Trim whitespace
         $code = trim($code);
-        
+
         if (empty($code)) {
             return '';
         }
@@ -141,11 +142,11 @@ class Setting extends Model
         $code = preg_replace('/<\?php.*?\?>/is', '', $code);
         $code = preg_replace('/<\?=.*?\?>/is', '', $code);
         $code = preg_replace('/<\?.*?\?>/is', '', $code);
-        
+
         // Remove potentially dangerous event handlers in non-script contexts
         // But allow them within <script> tags
         // This is a balanced approach - we trust admin but prevent obvious XSS vectors
-        
+
         return $code;
     }
 

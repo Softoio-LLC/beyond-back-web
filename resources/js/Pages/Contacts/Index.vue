@@ -312,10 +312,27 @@ const truncate = (text, length = 50) => {
                     :key="link.label"
                     :href="link.url || '#'"
                     class="pagination-link"
-                    :class="{ 'active': link.active, 'disabled': !link.url }"
-                    v-html="link.label"
+                    :class="{ 
+                        'active': link.active, 
+                        'disabled': !link.url, 
+                        'arrow': link.label.toLowerCase().includes('previous') || link.label.toLowerCase().includes('next') 
+                    }"
                     :preserveState="true"
-                />
+                >
+                    <template v-if="link.label.toLowerCase().includes('previous')">
+                        <svg viewBox="0 0 20 20" fill="currentColor" class="arrow-icon">
+                            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </template>
+                    <template v-else-if="link.label.toLowerCase().includes('next')">
+                        <svg viewBox="0 0 20 20" fill="currentColor" class="arrow-icon">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </template>
+                    <template v-else>
+                        <span v-html="link.label"></span>
+                    </template>
+                </Link>
             </div>
         </div>
 
@@ -796,6 +813,11 @@ const truncate = (text, length = 50) => {
 .pagination-link.disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+.arrow-icon {
+    width: 20px;
+    height: 20px;
 }
 
 /* Modal */

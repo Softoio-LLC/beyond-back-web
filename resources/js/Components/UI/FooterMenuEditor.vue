@@ -173,11 +173,13 @@
                             </svg>
                         </div>
                         <div class="contact-item-fields">
-                            <TextInput
+                            <ImageUpload
                                 :modelValue="item.icon || ''"
                                 @update:modelValue="updateContactItemField(itemIndex, 'icon', $event)"
-                                placeholder="Icon URL"
-                                class="contact-input"
+                                label="Icon"
+                                hint="24 × 24 px (SVG preferred)"
+                                sectionType="footer"
+                                class="contact-icon-upload"
                             />
                             <TextInput
                                 :modelValue="item.text || ''"
@@ -251,11 +253,13 @@
                             </svg>
                         </div>
                         <div class="social-item-fields">
-                            <TextInput
+                            <ImageUpload
                                 :modelValue="item.icon || ''"
                                 @update:modelValue="updateSocialItemField(itemIndex, 'icon', $event)"
-                                placeholder="Icon URL/Path"
-                                class="social-input"
+                                label="Icon"
+                                hint="20 × 20 px (SVG preferred)"
+                                sectionType="footer"
+                                class="social-icon-upload"
                             />
                             <TextInput
                                 :modelValue="item.url || ''"
@@ -280,6 +284,7 @@
 <script setup>
 import { ref, reactive, computed, watch, onMounted, nextTick } from 'vue';
 import TextInput from './TextInput.vue';
+import ImageUpload from './ImageUpload.vue';
 import Sortable from 'sortablejs';
 
 const props = defineProps({

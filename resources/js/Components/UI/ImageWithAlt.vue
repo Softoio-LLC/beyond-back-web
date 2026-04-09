@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
+import { usePage } from '@inertiajs/vue3';
 import TextInput from './TextInput.vue';
 
 const props = defineProps({
@@ -35,12 +36,17 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    hint: {
+        type: String,
+        default: '',
+    },
 });
 
 const emit = defineEmits(['update:modelValue']);
 
 const uploading = ref(false);
 const uploadError = ref('');
+const imageLoadFailed = ref(false);
 
 // Internal state
 const imageData = ref({
@@ -51,6 +57,8 @@ const imageData = ref({
 
 // Watch for external changes
 watch(() => props.modelValue, (newVal) => {
+    imageLoadFailed.value = false;
+
     if (typeof newVal === 'string') {
         imageData.value.image = newVal;
     } else if (newVal) {
@@ -68,11 +76,38 @@ const imageUrl = computed(() => {
     if (!img) return '';
     // Handle case where img might be an object
     if (typeof img !== 'string') return '';
+
+    // Support static assets saved without a leading slash (assets/...)
+    if (img.startsWith('assets/')) {
+        return `/${img}`;
+    }
+
+    // Support explicit storage path values (storage/...)
+    if (img.startsWith('storage/')) {
+        return `/${img}`;
+    }
+
     if (img.startsWith('http') || img.startsWith('/')) return img;
+    // Use shared storage base URL (handles OCI vs local automatically)
+    const storageConfig = usePage().props.storage;
+    if (storageConfig?.baseUrl) {
+        return `${storageConfig.baseUrl}/${img}`;
+    }
     return `/storage/${img}`;
 });
 
-const hasImage = computed(() => !!imageData.value.image);
+const hasImage = computed(() => {
+    const img = imageData.value.image;
+    return img && img !== '' && typeof img === 'string' && !imageLoadFailed.value;
+});
+
+const handleImageError = () => {
+    imageLoadFailed.value = true;
+};
+
+const handleImageLoad = () => {
+    imageLoadFailed.value = false;
+};
 
 // Emit changes
 const emitUpdate = () => {
@@ -106,16 +141,7 @@ const handleFileSelect = async (event) => {
         formData.append('section_type', props.sectionType);
         formData.append('size', props.size);
 
-        const response = await fetch(route('media.upload.image'), {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-                'Accept': 'application/json',
-            },
-        });
-
-        const data = await response.json();
+        const { data } = await window.axios.post(route('media.upload.image'), formData);
 
         if (data.success) {
             imageData.value.image = data.path;
@@ -124,7 +150,7 @@ const handleFileSelect = async (event) => {
             uploadError.value = data.message || 'Upload failed';
         }
     } catch (error) {
-        uploadError.value = 'Upload failed. Please try again.';
+        uploadError.value = error.response?.data?.message || 'Upload failed. Please try again.';
         console.error('Upload error:', error);
     } finally {
         uploading.value = false;
@@ -136,6 +162,7 @@ const handleFileSelect = async (event) => {
 // Remove image
 const removeImage = () => {
     imageData.value.image = '';
+    imageLoadFailed.value = false;
     emitUpdate();
 };
 
@@ -165,12 +192,26 @@ const currentAltValue = computed(() => {
         <div class="image-upload-area">
             <!-- Preview -->
             <div v-if="hasImage" class="image-preview">
-                <img :src="imageUrl" :alt="currentAltValue" />
-                <button type="button" class="remove-btn" @click="removeImage" title="Remove image">
-                    <svg viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                    </svg>
-                </button>
+                <img :src="imageUrl" :alt="currentAltValue" @error="handleImageError" @load="handleImageLoad" />
+                <div class="preview-actions">
+                    <label class="change-btn" title="Change image">
+                        <input
+                            type="file"
+                            accept="image/*"
+                            @change="handleFileSelect"
+                            :disabled="uploading"
+                            class="hidden-input"
+                        />
+                        <svg viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                        </svg>
+                    </label>
+                    <button type="button" class="remove-btn" @click="removeImage" title="Remove image">
+                        <svg viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
             </div>
 
             <!-- Upload Area -->
@@ -200,6 +241,9 @@ const currentAltValue = computed(() => {
                 </div>
             </label>
         </div>
+
+        <!-- Size Hint -->
+        <p v-if="hint" class="image-size-hint">Recommended: {{ hint }}</p>
 
         <!-- Upload Error -->
         <p v-if="uploadError" class="error-message">{{ uploadError }}</p>
@@ -239,12 +283,27 @@ const currentAltValue = computed(() => {
     margin-bottom: 0.5rem;
 }
 
+.image-size-hint {
+    font-size: 11px;
+    color: #9ca3af;
+    margin-top: 4px;
+    margin-bottom: 0;
+}
+
 .image-preview {
     position: relative;
     display: inline-block;
     border-radius: 8px;
     overflow: hidden;
     border: 1px solid #e5e7eb;
+}
+
+.preview-actions {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    display: flex;
+    gap: 0.5rem;
 }
 
 .image-preview img {
@@ -255,27 +314,51 @@ const currentAltValue = computed(() => {
 }
 
 .remove-btn {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    width: 1.75rem;
-    height: 1.75rem;
+    width: 2rem;
+    height: 2rem;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: rgba(239, 68, 68, 0.9);
     color: #ffffff;
     border: none;
-    border-radius: 50%;
+    border-radius: 6px;
     cursor: pointer;
-    transition: background-color 0.15s;
+    transition: all 0.15s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .remove-btn:hover {
     background-color: #dc2626;
+    transform: scale(1.05);
 }
 
 .remove-btn svg {
+    width: 1rem;
+    height: 1rem;
+}
+
+.change-btn {
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(59, 130, 246, 0.9);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.change-btn:hover {
+    background-color: rgb(37, 99, 235);
+    transform: scale(1.05);
+}
+
+.change-btn svg {
     width: 1rem;
     height: 1rem;
 }

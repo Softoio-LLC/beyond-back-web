@@ -19,7 +19,7 @@ const props = defineProps({
     page: {
         type: Object,
         default: () => ({
-            title: 'Beyond',
+            title: '',
             description: '',
             og_title: '',
             og_description: '',
@@ -51,6 +51,28 @@ const direction = computed(() => isRtl.value ? 'rtl' : 'ltr');
 
 onMounted(() => {
     isMounted.value = true;
+    
+    // Preload critical static assets for better LCP
+    const preloadCriticalAssets = () => {
+        const assetsToPreload = [
+            { href: '/assets/img/logo.png', as: 'image', type: 'image/png' },
+            { href: '/assets/img/logo-black.png', as: 'image', type: 'image/png' }
+        ];
+        
+        assetsToPreload.forEach(asset => {
+            const existingLink = document.querySelector(`link[href="${asset.href}"]`);
+            if (!existingLink) {
+                const link = document.createElement('link');
+                link.rel = 'preload';
+                link.href = asset.href;
+                link.as = asset.as;
+                if (asset.type) link.type = asset.type;
+                document.head.appendChild(link);
+            }
+        });
+    };
+    
+    preloadCriticalAssets();
 });
 
 // Inject critical CSS to prevent FOUC
@@ -162,7 +184,7 @@ onUnmounted(() => {
 <template>
     <GlobalLoader v-if="isMounted" :loading="isLoading" />
     <Head>
-        <title>{{ page.title }}</title>
+        <title>{{ page.title || $page.props.siteName || 'Beyond' }}</title>
         <meta name="description" :content="page.description" />
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -187,7 +209,7 @@ onUnmounted(() => {
 
         <!-- Open Graph / Facebook -->
         <meta property="og:type" content="website" />
-        <meta property="og:site_name" content="Beyond" />
+        <meta property="og:site_name" :content="$page.props.siteName || 'Beyond'" />
         <meta property="og:title" :content="page.og_title || page.title" />
         <meta property="og:description" :content="page.og_description || page.description" />
         <meta v-if="seo.canonical_url" property="og:url" :content="seo.canonical_url" />

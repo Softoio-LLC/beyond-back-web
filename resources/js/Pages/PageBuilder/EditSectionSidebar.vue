@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, watch, computed, onMounted } from 'vue';
+import { ref, reactive, watch, computed, nextTick } from 'vue';
 import TextInput from '@/Components/UI/TextInput.vue';
 import UrlAutocomplete from '@/Components/UI/UrlAutocomplete.vue';
 import RichTextEditor from '@/Components/UI/RichTextEditor.vue';
@@ -9,8 +9,10 @@ import RepeaterField from '@/Components/UI/RepeaterField.vue';
 import NestedMenuEditor from '@/Components/UI/NestedMenuEditor.vue';
 import FooterMenuEditor from '@/Components/UI/FooterMenuEditor.vue';
 import ConceptBlockEditor from '@/Components/UI/ConceptBlockEditor.vue';
-import saFlag from '@/../assets/sa-flag.svg';
-import usFlag from '@/../assets/us-flag.svg';
+
+// Use absolute paths for SSR compatibility
+const saFlag = '/assets/img/sa-flag.svg';
+const usFlag = '/assets/img/us-flag.svg';
 
 const props = defineProps({
     section: {
@@ -53,15 +55,22 @@ const deepMerge = (target, source) => {
 };
 
 const formData = reactive(initFormData());
+const isResetting = ref(false);
 
-// Watch for section changes
-watch(() => props.section, () => {
-    Object.assign(formData, initFormData());
-}, { deep: true });
+// Watch for section changes (only react to section ID change, not deep content changes)
+watch(() => props.section?.id, (newId, oldId) => {
+    if (newId !== oldId) {
+        isResetting.value = true;
+        Object.assign(formData, initFormData());
+        nextTick(() => { isResetting.value = false; });
+    }
+});
 
-// Watch for changes
+// Watch for changes and emit current content for live preview
 watch(formData, () => {
-    emit('change');
+    if (!isResetting.value) {
+        emit('change', props.section.id, { ...formData });
+    }
 }, { deep: true });
 
 // Language toggle
@@ -130,18 +139,18 @@ const getSectionFields = computed(() => {
                     { key: 'secondary_button_url', label: 'Secondary Button URL' }
                 ],
                 imageFields: [
-                    { key: 'background_image', showAlt: true },
-                    { key: 'shape_image', showAlt: false },
-                    { key: 'icon', showAlt: false },
-                    { key: 'hero_image', showAlt: false },
-                    { key: 'hero_bg_image', showAlt: false }
+                    { key: 'background_image', showAlt: true, hint: '1920 × 1080 px' },
+                    { key: 'shape_image', showAlt: false, hint: '1576 × 625 px (SVG preferred)' },
+                    { key: 'icon', showAlt: false, hint: '100 × 100 px (SVG preferred)' },
+                    { key: 'hero_image', showAlt: false, hint: '744 × 526 px' },
+                    { key: 'hero_bg_image', showAlt: false, hint: '780 × 534 px' }
                 ],
                 repeaterFields: [{
                     key: 'slides',
                     label: 'Slider Images (for Slider variant)',
                     itemLabel: 'Slide',
                     fields: [
-                        { key: 'image', label: 'Image', type: 'image', showAlt: true, simpleAlt: true }
+                        { key: 'image', label: 'Image', type: 'image', showAlt: true, simpleAlt: true, hint: '833 × 592 px' }
                     ],
                     defaultItem: { image: '', alt: '' }
                 }],
@@ -165,7 +174,7 @@ const getSectionFields = computed(() => {
                     label: 'Partner Logos',
                     itemLabel: 'Logo',
                     fields: [
-                        { key: 'image', label: 'Logo Image', type: 'image', showAlt: true, simpleAlt: true },
+                        { key: 'image', label: 'Logo Image', type: 'image', showAlt: true, simpleAlt: true, hint: '200 × 100 px (SVG preferred)' },
                         { key: 'url', label: 'Website URL', type: 'url' }
                     ],
                     defaultItem: { image: '', url: '#', alt: '' }
@@ -177,9 +186,9 @@ const getSectionFields = computed(() => {
                 basicFields: [],
                 buttonFields: [],
                 imageFields: [
-                    { key: 'shape_image', showAlt: false },
-                    { key: 'bottom_shape_image', showAlt: false },
-                    { key: 'counter_bg_image', showAlt: false }
+                    { key: 'shape_image', showAlt: false, hint: '2490 × 2034 px (SVG preferred)' },
+                    { key: 'bottom_shape_image', showAlt: false, hint: '5556 × 774 px (SVG preferred)' },
+                    { key: 'counter_bg_image', showAlt: false, hint: '1544 × 390 px' }
                 ],
                 repeaterFields: [],
                 conceptEditor: true  // Use dedicated ConceptBlockEditor
@@ -189,13 +198,13 @@ const getSectionFields = computed(() => {
             return {
                 basicFields: [{ key: 'title', type: 'text' }],
                 buttonFields: [],
-                imageFields: [{ key: 'shape_image', showAlt: false }],
+                imageFields: [{ key: 'shape_image', showAlt: false, hint: '1812 × 1684 px (SVG preferred)' }],
                 repeaterFields: [{
                     key: 'services',
                     label: 'Services',
                     itemLabel: 'Service',
                     fields: [
-                        { key: 'image', label: 'Image', type: 'image', showAlt: false },
+                        { key: 'image', label: 'Image', type: 'image', showAlt: false, hint: '588 × 504 px' },
                         { key: 'title', label: 'Title', type: 'text', bilingual: true },
                         { key: 'description', label: 'Description', type: 'richtext', bilingual: true }
                     ],
@@ -210,14 +219,28 @@ const getSectionFields = computed(() => {
                     { key: 'description', type: 'richtext' }
                 ],
                 buttonFields: ['button_text', 'button_url'],
-                imageFields: [{ key: 'shape_image', showAlt: false }],
+                imageFields: [{ key: 'shape_image', showAlt: false, hint: '931 × 164 px (SVG preferred)' }],
                 repeaterFields: [{
                     key: 'contact_cards',
                     label: 'Contact Cards',
                     itemLabel: 'Card',
                     fields: [
-                        { key: 'icon', label: 'Icon', type: 'image', showAlt: false },
-                        { key: 'title', label: 'Title', type: 'text', bilingual: true }
+                        { key: 'icon', label: 'Icon', type: 'image', showAlt: false, hint: '120 × 120 px (SVG preferred)' },
+                        { key: 'title', label: 'Title', type: 'text', bilingual: true },
+                        {
+                            key: 'links',
+                            label: 'Links',
+                            type: 'repeater',
+                            itemLabel: 'Link',
+                            sortable: true,
+                            fields: [
+                                { key: 'text', label: 'Text', type: 'text' },
+                                { key: 'url', label: 'URL', type: 'url' }
+                            ],
+                            defaultItem: { text: '', url: '#' },
+                            minItems: 0,
+                            maxItems: 10
+                        }
                     ],
                     defaultItem: { icon: '', title_en: '', title_ar: '', links: [] }
                 }]
@@ -228,15 +251,15 @@ const getSectionFields = computed(() => {
                 basicFields: [{ key: 'title', type: 'text' }],
                 buttonFields: [],
                 imageFields: [
-                    { key: 'shape_image', showAlt: false },
-                    { key: 'work_shape_image', showAlt: false }
+                    { key: 'shape_image', showAlt: false, hint: '1209 × 522 px (SVG preferred)' },
+                    { key: 'work_shape_image', showAlt: false, hint: '1278 × 522 px (SVG preferred)' }
                 ],
                 repeaterFields: [{
                     key: 'projects',
                     label: 'Projects',
                     itemLabel: 'Project',
                     fields: [
-                        { key: 'image', label: 'Image', type: 'image', showAlt: false },
+                        { key: 'image', label: 'Image', type: 'image', showAlt: false, hint: '520 × 1049 px' },
                         { key: 'title', label: 'Title', type: 'text', bilingual: true },
                         { key: 'description', label: 'Description', type: 'richtext', bilingual: true },
                         { key: 'learn_more_text', label: 'Learn More Text', type: 'text', bilingual: true },
@@ -258,13 +281,13 @@ const getSectionFields = computed(() => {
             return {
                 basicFields: [{ key: 'title', type: 'text' }],
                 buttonFields: [],
-                imageFields: [{ key: 'shape_image', showAlt: false }],
+                imageFields: [{ key: 'shape_image', showAlt: false, hint: '586 × 362 px (SVG preferred)' }],
                 repeaterFields: [{
                     key: 'members',
                     label: 'Team Members',
                     itemLabel: 'Member',
                     fields: [
-                        { key: 'image', label: 'Photo', type: 'image', showAlt: false },
+                        { key: 'image', label: 'Photo', type: 'image', showAlt: false, hint: '1200 × 858 px' },
                         { key: 'title', label: 'Role', type: 'text', bilingual: true },
                         { key: 'description', label: 'Description', type: 'richtext', bilingual: true }
                     ],
@@ -277,15 +300,15 @@ const getSectionFields = computed(() => {
                 basicFields: [],
                 buttonFields: ['button_text', 'button_url'],
                 imageFields: [
-                    { key: 'background_image', showAlt: true },
-                    { key: 'contact_logo', showAlt: false }
+                    { key: 'background_image', showAlt: true, hint: '1920 × 1080 px' },
+                    { key: 'contact_logo', showAlt: false, hint: '200 × 80 px (SVG preferred)' }
                 ],
                 repeaterFields: [{
                     key: 'cards',
                     label: 'Feature Cards',
                     itemLabel: 'Card',
                     fields: [
-                        { key: 'icon', label: 'Icon', type: 'image', showAlt: false },
+                        { key: 'icon', label: 'Icon', type: 'image', showAlt: false, hint: '120 × 120 px (SVG preferred)' },
                         { key: 'title', label: 'Title', type: 'text', bilingual: true },
                         { key: 'description', label: 'Description', type: 'richtext', bilingual: true }
                     ],
@@ -300,13 +323,13 @@ const getSectionFields = computed(() => {
                     { key: 'subtitle', type: 'text' }
                 ],
                 buttonFields: ['button_text', 'button_url'],
-                imageFields: [{ key: 'shape_image', showAlt: false }],
+                imageFields: [{ key: 'shape_image', showAlt: false, hint: '1576 × 625 px (SVG preferred)' }],
                 repeaterFields: [{
                     key: 'images',
                     label: 'Gallery Images',
                     itemLabel: 'Image',
                     fields: [
-                        { key: 'image', label: 'Image', type: 'image', showAlt: false },
+                        { key: 'image', label: 'Image', type: 'image', showAlt: false, hint: '1628 × 1054 px' },
                         { key: 'title', label: 'Title/Caption', type: 'text' }
                     ],
                     defaultItem: { image: '', title: '' }
@@ -346,21 +369,24 @@ const getSectionFields = computed(() => {
                     { key: 'secondary_button_url', label: 'Secondary Button URL' }
                 ],
                 imageFields: [
-                    { key: 'shape_image', showAlt: false },
-                    { key: 'image', showAlt: false }
+                    { key: 'shape_image', showAlt: false, hint: '1576 × 625 px (SVG preferred)' },
+                    { key: 'image', showAlt: false, hint: '1080 × 810 px' }
                 ],
                 repeaterFields: []
             };
             
         case 'header':
             return {
-                basicFields: [],
+                basicFields: [
+                    { key: 'lang_label_ar', type: 'text' },
+                    { key: 'lang_label_en', type: 'text' }
+                ],
                 buttonFields: ['contact_button_text', 'contact_button_url'],
                 imageFields: [
-                    { key: 'logo', showAlt: false },
-                    { key: 'flag_ar', showAlt: false },
-                    { key: 'flag_en', showAlt: false },
-                    { key: 'check_icon', showAlt: false }
+                    { key: 'logo', showAlt: false, hint: '208 × 36 px (SVG preferred)' },
+                    { key: 'flag_ar', showAlt: false, hint: '20 × 20 px (SVG preferred)' },
+                    { key: 'flag_en', showAlt: false, hint: '20 × 20 px (SVG preferred)' },
+                    { key: 'check_icon', showAlt: false, hint: '16 × 16 px (SVG preferred)' }
                 ],
                 repeaterFields: [],
                 nestedMenuField: {
@@ -381,8 +407,8 @@ const getSectionFields = computed(() => {
                 basicFields: ['tagline', 'copyright_text'],
                 buttonFields: [],
                 imageFields: [
-                    { key: 'logo', showAlt: false },
-                    { key: 'shape_image', showAlt: false }
+                    { key: 'logo', showAlt: false, hint: '208 × 36 px (SVG preferred)' },
+                    { key: 'shape_image', showAlt: false, hint: '1576 × 625 px (SVG preferred)' }
                 ],
                 repeaterFields: [],
                 footerFields: {
@@ -400,17 +426,27 @@ const getSectionFields = computed(() => {
                     { key: 'general_info_title', type: 'text' },
                     { key: 'general_info_description', type: 'richtext' },
                     { key: 'form_title', type: 'text' },
-                    { key: 'form_description', type: 'richtext' }
+                    { key: 'form_description', type: 'richtext' },
+                    { key: 'country_code', type: 'text' },
+                    { key: 'placeholder_name', type: 'text' },
+                    { key: 'placeholder_email', type: 'text' },
+                    { key: 'placeholder_phone', type: 'text' },
+                    { key: 'placeholder_subject', type: 'text' },
+                    { key: 'placeholder_message', type: 'text' },
+                    { key: 'submit_text', type: 'text' },
+                    { key: 'submitting_text', type: 'text' },
+                    { key: 'success_message', type: 'text' },
+                    { key: 'default_subject', type: 'text' }
                 ],
                 buttonFields: [],
-                imageFields: [{ key: 'overlay_image', showAlt: false }],
+                imageFields: [{ key: 'overlay_image', showAlt: false, hint: '636 × 451 px' }],
                 repeaterFields: [
                     {
                         key: 'info_cards',
                         label: 'Contact Info Cards',
                         itemLabel: 'Card',
                         fields: [
-                            { key: 'icon', label: 'Icon', type: 'image', showAlt: false },
+                            { key: 'icon', label: 'Icon', type: 'image', showAlt: false, hint: '24 × 24 px (SVG preferred)' },
                             { key: 'title', label: 'Title', type: 'text', bilingual: true },
                             { key: 'content', label: 'Content', type: 'richtext', bilingual: true }
                         ],
@@ -423,9 +459,28 @@ const getSectionFields = computed(() => {
                         fields: [
                             { key: 'label', label: 'Label', type: 'text', bilingual: true },
                             { key: 'value', label: 'Value', type: 'text', bilingual: true },
-                            { key: 'type', label: 'Type', type: 'text' }
+                            { key: 'type', label: 'Type', type: 'text' },
+                            {
+                                key: 'links',
+                                label: 'Social Links',
+                                type: 'repeater',
+                                itemLabel: 'Social Link',
+                                sortable: true,
+                                showWhen: {
+                                    key: 'type',
+                                    equals: 'social'
+                                },
+                                fields: [
+                                    { key: 'icon', label: 'Icon URL/Path', type: 'text' },
+                                    { key: 'url', label: 'Profile URL', type: 'url' },
+                                    { key: 'name', label: 'Name', type: 'text' }
+                                ],
+                                defaultItem: { icon: '', url: '#', name: '' },
+                                minItems: 0,
+                                maxItems: 10
+                            }
                         ],
-                        defaultItem: { label_en: '', label_ar: '', value_en: '', value_ar: '', type: 'text' }
+                        defaultItem: { label_en: '', label_ar: '', value_en: '', value_ar: '', type: 'text', links: [] }
                     }
                 ]
             };
@@ -439,10 +494,10 @@ const getSectionFields = computed(() => {
                 ],
                 buttonFields: [],
                 imageFields: [
-                    { key: 'background_image', showAlt: true },
-                    { key: 'icon', showAlt: false },
-                    { key: 'shape_image', showAlt: false },
-                    { key: 'side_image', showAlt: false }
+                    { key: 'background_image', showAlt: true, hint: '1852 × 499 px' },
+                    { key: 'icon', showAlt: false, hint: '100 × 100 px (SVG preferred)' },
+                    { key: 'shape_image', showAlt: false, hint: '1576 × 625 px (SVG preferred)' },
+                    { key: 'side_image', showAlt: false, hint: '539 × 520 px' }
                 ],
                 repeaterFields: [],
                 variantField: {
@@ -459,13 +514,14 @@ const getSectionFields = computed(() => {
             return {
                 basicFields: [
                     { key: 'title', type: 'text' },
-                    { key: 'breadcrumb', type: 'text' }
+                    { key: 'breadcrumb', type: 'text' },
+                    { key: 'home_label', type: 'text' }
                 ],
                 buttonFields: [],
                 imageFields: [
-                    { key: 'background_image', showAlt: true },
-                    { key: 'icon', showAlt: false },
-                    { key: 'side_image', showAlt: false }
+                    { key: 'background_image', showAlt: true, hint: '1852 × 499 px' },
+                    { key: 'icon', showAlt: false, hint: '100 × 100 px (SVG preferred)' },
+                    { key: 'side_image', showAlt: false, hint: '539 × 520 px' }
                 ],
                 repeaterFields: []
             };
@@ -475,20 +531,20 @@ const getSectionFields = computed(() => {
                 basicFields: [],
                 buttonFields: [],
                 imageFields: [
-                    { key: 'shape_image', showAlt: false },
-                    { key: 'left_shape_image', showAlt: false },
-                    { key: 'right_shape_image', showAlt: false }
+                    { key: 'shape_image', showAlt: false, hint: '1576 × 625 px (SVG preferred)' },
+                    { key: 'left_shape_image', showAlt: false, hint: '309 × 300 px (SVG preferred)' },
+                    { key: 'right_shape_image', showAlt: false, hint: '421 × 300 px (SVG preferred)' }
                 ],
                 repeaterFields: [{
                     key: 'blocks',
                     label: 'About Blocks',
                     itemLabel: 'Block',
                     fields: [
-                        { key: 'icon', label: 'Icon', type: 'image', showAlt: false },
+                        { key: 'icon', label: 'Icon', type: 'image', showAlt: false, hint: '70 × 70 px (SVG preferred)' },
                         { key: 'title', label: 'Title', type: 'text', bilingual: true },
                         { key: 'content', label: 'Content', type: 'richtext', bilingual: true },
-                        { key: 'image', label: 'Image', type: 'image', showAlt: false },
-                        { key: 'image_bg', label: 'Image Background', type: 'image', showAlt: false },
+                        { key: 'image', label: 'Image', type: 'image', showAlt: false, hint: '539 × 520 px' },
+                        { key: 'image_bg', label: 'Image Background', type: 'image', showAlt: false, hint: '780 × 534 px' },
                         { key: 'layout', label: 'Layout', type: 'text' }
                     ],
                     defaultItem: { 
@@ -513,14 +569,14 @@ const getSectionFields = computed(() => {
                 ],
                 buttonFields: ['button_text', 'button_url'],
                 imageFields: [
-                    { key: 'background_image', showAlt: true }
+                    { key: 'background_image', showAlt: true, hint: '1920 × 1080 px' }
                 ],
                 repeaterFields: [{
                     key: 'slides',
                     label: 'Slider Images',
                     itemLabel: 'Slide',
                     fields: [
-                        { key: 'image', label: 'Image', type: 'image', showAlt: true, simpleAlt: true }
+                        { key: 'image', label: 'Image', type: 'image', showAlt: true, simpleAlt: true, hint: '833 × 592 px' }
                     ],
                     defaultItem: { image: '', alt: '' }
                 }]
@@ -539,11 +595,11 @@ const getSectionFields = computed(() => {
                     { key: 'secondary_button_url', label: 'Secondary Button URL' }
                 ],
                 imageFields: [
-                    { key: 'background_image', showAlt: false },
-                    { key: 'shape_image', showAlt: false },
-                    { key: 'icon', showAlt: false },
-                    { key: 'hero_image', showAlt: false },
-                    { key: 'hero_bg_image', showAlt: false }
+                    { key: 'background_image', showAlt: false, hint: '780 × 534 px' },
+                    { key: 'shape_image', showAlt: false, hint: '1576 × 625 px (SVG preferred)' },
+                    { key: 'icon', showAlt: false, hint: '100 × 100 px (SVG preferred)' },
+                    { key: 'hero_image', showAlt: false, hint: '744 × 526 px' },
+                    { key: 'hero_bg_image', showAlt: false, hint: '780 × 534 px' }
                 ],
                 repeaterFields: []
             };
@@ -558,8 +614,8 @@ const getSectionFields = computed(() => {
                 ],
                 buttonFields: [],
                 imageFields: [
-                    { key: 'background_image', showAlt: false },
-                    { key: 'icon', showAlt: false }
+                    { key: 'background_image', showAlt: false, hint: '1660 × 296 px' },
+                    { key: 'icon', showAlt: false, hint: '102 × 102 px (SVG preferred)' }
                 ],
                 repeaterFields: []
             };
@@ -569,7 +625,9 @@ const getSectionFields = computed(() => {
                 basicFields: [
                     { key: 'title', type: 'text' },
                     { key: 'subtitle', type: 'text' },
+                    { key: 'map_title', type: 'text' },
                     { key: 'address', type: 'text' },
+                    { key: 'default_location', type: 'text' },
                     { key: 'business_name', type: 'text' },
                     { key: 'latitude', type: 'text' },
                     { key: 'longitude', type: 'text' },
@@ -662,10 +720,26 @@ const getSectionFields = computed(() => {
                     { key: 'secondary_button_url', label: 'Secondary Button URL' }
                 ],
                 imageFields: [
-                    { key: 'shape_image', showAlt: false },
-                    { key: 'icon', showAlt: false },
-                    { key: 'hero_image', showAlt: false },
-                    { key: 'hero_bg_image', showAlt: false }
+                    { key: 'shape_image', showAlt: false, hint: '1576 × 625 px (SVG preferred)' },
+                    { key: 'icon', showAlt: false, hint: '100 × 100 px (SVG preferred)' },
+                    { key: 'hero_image', showAlt: false, hint: '744 × 526 px' },
+                    { key: 'hero_bg_image', showAlt: false, hint: '780 × 534 px' }
+                ],
+                repeaterFields: []
+            };
+
+        case 'product':
+            return {
+                basicFields: [
+                    { key: 'title', type: 'text' },
+                    { key: 'description', type: 'richtext' }
+                ],
+                buttonFields: [],
+                imageFields: [
+                    { key: 'icon', showAlt: false, hint: '70 × 70 px (SVG preferred)' },
+                    { key: 'image', showAlt: false, hint: '539 × 520 px' },
+                    { key: 'left_shape', showAlt: false, hint: '309 × 300 px (SVG preferred)' },
+                    { key: 'top_right_shape', showAlt: false, hint: '421 × 300 px (SVG preferred)' }
                 ],
                 repeaterFields: []
             };
@@ -709,11 +783,8 @@ const updateImage = (field, value) => {
 };
 
 // Get image data for ImageWithAlt - always return a valid object
+// IMPORTANT: Do NOT mutate formData here - this is called during render
 const getImageData = (field) => {
-    // Ensure the field exists in formData for reactivity
-    if (!(field in formData)) {
-        formData[field] = '';
-    }
     return {
         image: formData[field] || '',
         alt_en: formData[`${field}_alt_en`] || '',
@@ -847,6 +918,7 @@ const updateRepeater = (key, value) => {
                                 :section-type="sectionKey"
                                 :current-lang="currentLang"
                                 :show-alt-fields="imgField.showAlt"
+                                :hint="imgField.hint || ''"
                                 @update:model-value="updateImage(imgField.key, $event)"
                             />
                         </template>

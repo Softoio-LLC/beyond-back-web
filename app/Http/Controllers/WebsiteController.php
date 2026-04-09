@@ -5,21 +5,30 @@ namespace App\Http\Controllers;
 use App\Models\Page;
 use App\Models\SectionType;
 use App\Services\GlobalSectionService;
+use App\Services\StorageService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class WebsiteController extends Controller
 {
-    public function __construct(protected GlobalSectionService $globalSectionService) {}
+    public function __construct(
+        protected GlobalSectionService $globalSectionService,
+        protected StorageService $storage
+    ) {}
 
     /**
      * Display the homepage.
      */
-    public function home(Request $request): Response
+    public function home(Request $request): Response|RedirectResponse
     {
+        // Only redirect bare root `/` to `/ar` (Arabic is default)
+        // Do NOT redirect `/en` or `/ar` as those are explicit language choices
+        if (($request->path() === '' || $request->path() === '/') && ! str_starts_with($request->getRequestUri(), '/en')) {
+            return redirect('/ar', 301);
+        }
+
         // Get the homepage (page marked as homepage)
         $page = Page::getHomepage();
 
@@ -41,6 +50,11 @@ class WebsiteController extends Controller
     {
         $lang = $this->detectLanguage($request);
 
+        // Redirect non-prefixed slugs (/{slug}) to /en/{slug} for consistent language URLs
+        if (! str_starts_with($request->path(), 'en/') && ! str_starts_with($request->path(), 'ar/')) {
+            return redirect("/en/{$slug}", 301);
+        }
+
         // URL decode the slug (handles Arabic characters)
         $slug = urldecode($slug);
 
@@ -50,11 +64,9 @@ class WebsiteController extends Controller
             abort(404);
         }
 
-        // If this is the homepage, redirect to / for SEO
+        // If this is the homepage, redirect to canonical language home for SEO
         if ($page->is_homepage) {
-            $redirectUrl = $lang === 'ar' ? '/ar' : '/';
-
-            return redirect($redirectUrl, 301);
+            return redirect($lang === 'ar' ? '/ar' : '/en', 301);
         }
 
         return $this->renderPage($page, $lang, false);
@@ -121,8 +133,8 @@ class WebsiteController extends Controller
                 'og_title' => $lang === 'ar' ? ($page->og_title_ar ?: $page->meta_title_ar) : ($page->og_title_en ?: $page->meta_title_en),
                 'og_description' => $lang === 'ar' ? ($page->og_description_ar ?: $page->meta_description_ar) : ($page->og_description_en ?: $page->meta_description_en),
                 'og_image' => $lang === 'ar'
-                    ? ($page->og_image_ar ? Storage::url($page->og_image_ar) : null)
-                    : ($page->og_image_en ? Storage::url($page->og_image_en) : null),
+                    ? ($page->og_image_ar ? $this->storage->url($page->og_image_ar) : null)
+                    : ($page->og_image_en ? $this->storage->url($page->og_image_en) : null),
                 'canonical_url' => $seoData['canonical_url'],
                 'hreflang' => $seoData['hreflang'],
             ],
@@ -142,14 +154,14 @@ class WebsiteController extends Controller
 
         // Determine canonical URL
         if ($isHomepage) {
-            $canonicalUrl = $lang === 'ar' ? "{$baseUrl}/ar" : $baseUrl;
-            $alternateEn = $baseUrl;
+            $canonicalUrl = $lang === 'ar' ? "{$baseUrl}/ar" : "{$baseUrl}/en";
+            $alternateEn = "{$baseUrl}/en";
             $alternateAr = "{$baseUrl}/ar";
         } else {
             $slugEn = $page->url_slug_en;
             $slugAr = $page->url_slug_ar;
-            $canonicalUrl = $lang === 'ar' ? "{$baseUrl}/ar/{$slugAr}" : "{$baseUrl}/{$slugEn}";
-            $alternateEn = $slugEn ? "{$baseUrl}/{$slugEn}" : null;
+            $canonicalUrl = $lang === 'ar' ? "{$baseUrl}/ar/{$slugAr}" : "{$baseUrl}/en/{$slugEn}";
+            $alternateEn = $slugEn ? "{$baseUrl}/en/{$slugEn}" : null;
             $alternateAr = $slugAr ? "{$baseUrl}/ar/{$slugAr}" : null;
         }
 
@@ -478,6 +490,11 @@ class WebsiteController extends Controller
      */
     private function detectLanguage(Request $request): string
     {
+        // Check for explicit /en/ or /en route
+        if (str_starts_with($request->path(), 'en/') || $request->path() === 'en') {
+            return 'en';
+        }
+
         // Check if URL starts with /ar/
         if (str_starts_with($request->path(), 'ar/') || $request->path() === 'ar') {
             return 'ar';

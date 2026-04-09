@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('section_type_id')->constrained()->cascadeOnDelete();
             $table->integer('order')->default(0);
             $table->boolean('is_active')->default(true);
-            
+
             // Content stored as JSON - bilingual structure
             // Structure: {
             //   "title_en": "...", "title_ar": "...",
@@ -28,12 +28,12 @@ return new class extends Migration
             //   ... additional fields based on section_type
             // }
             $table->json('content');
-            
+
             // Custom CSS classes or inline styles if needed
             $table->text('custom_css')->nullable();
-            
+
             $table->timestamps();
-            
+
             // Index for faster queries
             $table->index(['page_id', 'order']);
         });

@@ -41,11 +41,14 @@ const infoCards = computed(() => {
     }));
 });
 
+// Country code from CMS content
+const countryCode = computed(() => props.content.country_code || '+966');
+
 // Form handling
 const form = useForm({
     name: '',
     email: '',
-    country_code: '+966',
+    country_code: countryCode.value,
     phone: '',
     subject: '',
     message: ''
@@ -63,7 +66,7 @@ const submitForm = () => {
     form.transform((data) => ({
         ...data,
         phone: data.country_code + data.phone,
-        subject: data.subject || (props.lang === 'ar' ? 'رسالة من صفحة التواصل' : 'Message from Contact Page')
+        subject: data.subject || (props.lang === 'ar' ? (props.content.default_subject_ar || 'رسالة من صفحة التواصل') : (props.content.default_subject_en || 'Message from Contact Page'))
     })).post('/contact', {
         preserveScroll: true,
         onSuccess: () => {
@@ -79,16 +82,16 @@ const submitForm = () => {
     });
 };
 
-// Placeholders
+// Placeholders from CMS content with fallbacks
 const placeholders = computed(() => ({
-    name: props.lang === 'ar' ? 'الاسم الكامل' : 'Full Name',
-    email: props.lang === 'ar' ? 'البريد الالكتروني' : 'Email Address',
-    phone: props.lang === 'ar' ? 'مثال xxxxxxxx5' : 'Example 5xxxxxxxx',
-    subject: props.lang === 'ar' ? 'الموضوع' : 'Subject',
-    message: props.lang === 'ar' ? 'اكتب رسالتك هنا...' : 'Write your message here...',
-    submit: props.lang === 'ar' ? 'إرسال' : 'Send',
-    submitting: props.lang === 'ar' ? 'جاري الإرسال...' : 'Sending...',
-    success: props.lang === 'ar' ? 'تم إرسال رسالتك بنجاح!' : 'Your message was sent successfully!'
+    name: props.lang === 'ar' ? (props.content.placeholder_name_ar || 'الاسم الكامل') : (props.content.placeholder_name_en || 'Full Name'),
+    email: props.lang === 'ar' ? (props.content.placeholder_email_ar || 'البريد الالكتروني') : (props.content.placeholder_email_en || 'Email Address'),
+    phone: props.lang === 'ar' ? (props.content.placeholder_phone_ar || 'مثال xxxxxxxx5') : (props.content.placeholder_phone_en || 'Example 5xxxxxxxx'),
+    subject: props.lang === 'ar' ? (props.content.placeholder_subject_ar || 'الموضوع') : (props.content.placeholder_subject_en || 'Subject'),
+    message: props.lang === 'ar' ? (props.content.placeholder_message_ar || 'اكتب رسالتك هنا...') : (props.content.placeholder_message_en || 'Write your message here...'),
+    submit: props.lang === 'ar' ? (props.content.submit_text_ar || 'إرسال') : (props.content.submit_text_en || 'Send'),
+    submitting: props.lang === 'ar' ? (props.content.submitting_text_ar || 'جاري الإرسال...') : (props.content.submitting_text_en || 'Sending...'),
+    success: props.lang === 'ar' ? (props.content.success_message_ar || 'تم إرسال رسالتك بنجاح!') : (props.content.success_message_en || 'Your message was sent successfully!')
 }));
 
 // Info items getter
@@ -107,12 +110,23 @@ const getInfoItemValue = (item) => props.lang === 'ar' ? item.value_ar : item.va
             
         />
         <div class="container">
+            <!-- Section Header -->
+            <div
+                v-if="sectionTitle || sectionDescription"
+                class="row mb-5"
+            >
+                <div class="col-12 text-center" data-aos="fade-up">
+                    <h2 v-if="sectionTitle" class="fw-bold mb-3" v-html="sectionTitle"></h2>
+                    <p v-if="sectionDescription" class="mb-0" v-html="sectionDescription"></p>
+                </div>
+            </div>
+
             <!-- Contact Info Cards -->
             <div class="row gy-4 mb-5 pb-0 pb-md-5">
                 <div 
                     v-for="(card, index) in infoCards" 
                     :key="index"
-                    class="col-md-6 col-lg-4"
+                    class="col-sm-12 col-md-6 col-lg-4"
                     data-aos="fade-up"
                     :data-aos-delay="index * 100"
                 >
@@ -122,7 +136,8 @@ const getInfoItemValue = (item) => props.lang === 'ar' ? item.value_ar : item.va
                                 :src="card.iconUrl" 
                                 :alt="lang === 'ar' ? card.title_ar : card.title_en"
                                 loading="lazy"
-                                
+                                :width="64"
+                                :height="64"
                             />
                         </i>
                         <h3 v-html="lang === 'ar' ? card.title_ar : card.title_en"></h3>
@@ -202,12 +217,12 @@ const getInfoItemValue = (item) => props.lang === 'ar' ? item.value_ar : item.va
                                 {{ form.errors.email }}
                             </div>
 
-                            <div class="d-flex gap-3">
+                            <div class="phone-input-group d-flex gap-3">
                                 <input 
-                                    v-model="form.country_code"
                                     type="text" 
-                                    style="max-width: 100px"
+                                    class="country-code-input"
                                     readonly
+                                    :value="countryCode"
                                 />
                                 <input 
                                     v-model="form.phone"
@@ -288,5 +303,20 @@ const getInfoItemValue = (item) => props.lang === 'ar' ? item.value_ar : item.va
     background-color: #f8d7da;
     color: #842029;
     border: 1px solid #f5c2c7;
+}
+
+.country-code-input {
+    max-width: 6.25rem;
+    min-width: 4rem;
+}
+
+@media (max-width: 576px) {
+    .phone-input-group {
+        flex-direction: column;
+    }
+
+    .country-code-input {
+        max-width: 100%;
+    }
 }
 </style>

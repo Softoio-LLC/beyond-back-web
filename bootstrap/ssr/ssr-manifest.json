@@ -1,9 +1,5 @@
 {
-  "\u0000plugin-vue:export-helper": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
+  "\u0000plugin-vue:export-helper": [],
   "node_modules/@inertiajs/vue3/dist/index.esm.js": [
     "/build/assets/vendor-vue-DwnaQXi7.js",
     "/build/assets/vendor-vue-C86WLP6Y.css"
@@ -16,529 +12,107 @@
     "/build/assets/vendor-vue-DwnaQXi7.js",
     "/build/assets/vendor-vue-C86WLP6Y.css"
   ],
-  "resources/assets/logo.svg": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/assets/sa-flag.svg": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/assets/us-flag.svg": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/AppImage.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/AppImage.vue?vue&type=style&index=0&scoped=66496830&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Dashboard/ContactsPreviewWidget.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Dashboard/ContactsPreviewWidget.vue?vue&type=style&index=0&scoped=67e0125f&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Dashboard/VisitorChartWidget.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Dashboard/VisitorChartWidget.vue?vue&type=style&index=0&scoped=86d00331&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/GlobalLoader.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/GlobalLoader.vue?vue&type=style&index=0&scoped=d65ca35c&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/AboutSection.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/AboutSection.vue?vue&type=style&index=0&scoped=62d8d385&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/CTASection.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/CommonServiceSection.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/CommonServiceSection.vue?vue&type=style&index=0&scoped=0fffb1cf&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/ConceptSection.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/ContactBannerSection.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/ContactInfoSection.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/ContactInfoSection.vue?vue&type=style&index=0&scoped=166e32db&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/ContactSection.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/CounterAreaSection.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/FAQSection.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/FooterSection.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/GalleryPageSection.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/GallerySection.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/HeaderSection.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/HeaderSection.vue?vue&type=style&index=0&scoped=89d2e64e&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/HeroBeyondERPSection.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/HeroBeyondPaySection.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/HeroCommonSection.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/HeroCommonSection.vue?vue&type=style&index=0&scoped=589dd1e7&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/HeroJiyadSection.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/HeroRiyaSection.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/HeroSection.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/HeroShopsZSection.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/HeroSliderSection.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/InquirySection.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/MapSection.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/MapSection.vue?vue&type=style&index=0&scoped=7a34ed1f&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/PartnersSection.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/ProductSection.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/ProductSection.vue?vue&type=style&index=0&scoped=494c5f3a&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/ServicesSection.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/TeamSection.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/Sections/WorkSection.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/UI/Button.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/UI/Button.vue?vue&type=style&index=0&scoped=41acdf71&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/UI/ConceptBlockEditor.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/UI/ConceptBlockEditor.vue?vue&type=style&index=0&scoped=cdeddd04&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/UI/FooterMenuEditor.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/UI/FooterMenuEditor.vue?vue&type=style&index=0&scoped=82cb8801&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/UI/ImageWithAlt.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/UI/ImageWithAlt.vue?vue&type=style&index=0&scoped=5a4bb2ba&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/UI/Modal.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/UI/Modal.vue?vue&type=style&index=0&scoped=9b447ad5&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/UI/NestedMenuEditor.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/UI/NestedMenuEditor.vue?vue&type=style&index=0&scoped=888d7aab&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/UI/RepeaterField.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/UI/RepeaterField.vue?vue&type=style&index=0&scoped=9a5d6fbd&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/UI/RichTextEditor.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/UI/RichTextEditor.vue?vue&type=style&index=0&scoped=4f27bac9&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/UI/TextInput.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/UI/TextInput.vue?vue&type=style&index=0&scoped=0cdb4751&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/UI/Toast.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/UI/Toast.vue?vue&type=style&index=0&scoped=662109b7&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/UI/UrlAutocomplete.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Components/UI/UrlAutocomplete.vue?vue&type=style&index=0&scoped=062a9a7b&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Layouts/AuthLayout.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Layouts/DashboardLayout.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Layouts/DashboardLayout.vue?vue&type=style&index=0&scoped=0451e41a&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Layouts/WebsiteLayout.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Pages/Auth/ForgotPassword.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Pages/Auth/Login.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Pages/Auth/ResetPassword.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Pages/Auth/ResetPassword.vue?vue&type=style&index=0&scoped=db7ff772&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Pages/Contacts/Index.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Pages/Contacts/Index.vue?vue&type=style&index=0&scoped=878922c8&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Pages/Contacts/Show.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Pages/Contacts/Show.vue?vue&type=style&index=0&scoped=97591e38&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Pages/Dashboard.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Pages/Dashboard/Index.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Pages/Dashboard/Index.vue?vue&type=style&index=0&scoped=f7f7cdc4&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Pages/PageBuilder/AddSectionModal.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Pages/PageBuilder/AddSectionModal.vue?vue&type=style&index=0&scoped=edbdac87&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Pages/PageBuilder/EditSectionSidebar.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Pages/PageBuilder/EditSectionSidebar.vue?vue&type=style&index=0&scoped=1e82804e&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Pages/PageBuilder/Index.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Pages/PageBuilder/Index.vue?vue&type=style&index=0&scoped=d91afbf1&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Pages/Pages/Create.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Pages/Pages/Create.vue?vue&type=style&index=0&scoped=3122d08e&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Pages/Pages/Edit.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Pages/Pages/Edit.vue?vue&type=style&index=0&scoped=8facbc12&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Pages/Pages/Index.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Pages/Pages/Index.vue?vue&type=style&index=0&scoped=b58840d1&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Pages/Profile/Edit.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Pages/Profile/Edit.vue?vue&type=style&index=0&scoped=388636fb&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Pages/Settings/CustomCode.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Pages/Settings/CustomCode.vue?vue&type=style&index=0&scoped=31d73606&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Pages/Settings/Email.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Pages/Settings/Email.vue?vue&type=style&index=0&scoped=7ddb5a05&lang.css": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/Pages/Website/Index.vue": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/composables/useSlugify.js": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "resources/js/ssr.js": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ],
-  "vendor/tightenco/ziggy/dist/index.js": [
-    "/build/assets/sa-flag-D4E_9N_f.svg",
-    "/build/assets/us-flag-yPINlvk7.svg",
-    "/build/assets/logo-DNzhe_vR.svg"
-  ]
+  "resources/js/Components/AppImage.vue": [],
+  "resources/js/Components/AppImage.vue?vue&type=style&index=0&scoped=e612c649&lang.css": [],
+  "resources/js/Components/Dashboard/ContactsPreviewWidget.vue": [],
+  "resources/js/Components/Dashboard/ContactsPreviewWidget.vue?vue&type=style&index=0&scoped=67e0125f&lang.css": [],
+  "resources/js/Components/Dashboard/VisitorChartWidget.vue": [],
+  "resources/js/Components/Dashboard/VisitorChartWidget.vue?vue&type=style&index=0&scoped=86d00331&lang.css": [],
+  "resources/js/Components/GlobalLoader.vue": [],
+  "resources/js/Components/GlobalLoader.vue?vue&type=style&index=0&scoped=14d9cade&lang.css": [],
+  "resources/js/Components/Sections/AboutSection.vue": [],
+  "resources/js/Components/Sections/AboutSection.vue?vue&type=style&index=0&scoped=62d8d385&lang.css": [],
+  "resources/js/Components/Sections/CTASection.vue": [],
+  "resources/js/Components/Sections/CommonServiceSection.vue": [],
+  "resources/js/Components/Sections/CommonServiceSection.vue?vue&type=style&index=0&scoped=70805a8e&lang.css": [],
+  "resources/js/Components/Sections/ConceptSection.vue": [],
+  "resources/js/Components/Sections/ContactBannerSection.vue": [],
+  "resources/js/Components/Sections/ContactInfoSection.vue": [],
+  "resources/js/Components/Sections/ContactInfoSection.vue?vue&type=style&index=0&scoped=c0998f17&lang.css": [],
+  "resources/js/Components/Sections/ContactSection.vue": [],
+  "resources/js/Components/Sections/CounterAreaSection.vue": [],
+  "resources/js/Components/Sections/FAQSection.vue": [],
+  "resources/js/Components/Sections/FooterSection.vue": [],
+  "resources/js/Components/Sections/GalleryPageSection.vue": [],
+  "resources/js/Components/Sections/GalleryPageSection.vue?vue&type=style&index=0&scoped=d9dfcf6d&lang.css": [],
+  "resources/js/Components/Sections/GallerySection.vue": [],
+  "resources/js/Components/Sections/HeaderSection.vue": [],
+  "resources/js/Components/Sections/HeaderSection.vue?vue&type=style&index=0&scoped=7f356eae&lang.css": [],
+  "resources/js/Components/Sections/HeroBeyondERPSection.vue": [],
+  "resources/js/Components/Sections/HeroBeyondPaySection.vue": [],
+  "resources/js/Components/Sections/HeroCommonSection.vue": [],
+  "resources/js/Components/Sections/HeroCommonSection.vue?vue&type=style&index=0&scoped=589dd1e7&lang.css": [],
+  "resources/js/Components/Sections/HeroJiyadSection.vue": [],
+  "resources/js/Components/Sections/HeroRiyaSection.vue": [],
+  "resources/js/Components/Sections/HeroSection.vue": [],
+  "resources/js/Components/Sections/HeroShopsZSection.vue": [],
+  "resources/js/Components/Sections/HeroSliderSection.vue": [],
+  "resources/js/Components/Sections/InquirySection.vue": [],
+  "resources/js/Components/Sections/MapSection.vue": [],
+  "resources/js/Components/Sections/MapSection.vue?vue&type=style&index=0&scoped=7a34ed1f&lang.css": [],
+  "resources/js/Components/Sections/PartnersSection.vue": [],
+  "resources/js/Components/Sections/ProductSection.vue": [],
+  "resources/js/Components/Sections/ProductSection.vue?vue&type=style&index=0&scoped=65a6238d&lang.css": [],
+  "resources/js/Components/Sections/ServicesSection.vue": [],
+  "resources/js/Components/Sections/TeamSection.vue": [],
+  "resources/js/Components/Sections/WorkSection.vue": [],
+  "resources/js/Components/UI/Button.vue": [],
+  "resources/js/Components/UI/Button.vue?vue&type=style&index=0&scoped=41acdf71&lang.css": [],
+  "resources/js/Components/UI/ConceptBlockEditor.vue": [],
+  "resources/js/Components/UI/ConceptBlockEditor.vue?vue&type=style&index=0&scoped=8a85f6f1&lang.css": [],
+  "resources/js/Components/UI/FooterMenuEditor.vue": [],
+  "resources/js/Components/UI/FooterMenuEditor.vue?vue&type=style&index=0&scoped=82cb8801&lang.css": [],
+  "resources/js/Components/UI/ImageWithAlt.vue": [],
+  "resources/js/Components/UI/ImageWithAlt.vue?vue&type=style&index=0&scoped=dab0d0b0&lang.css": [],
+  "resources/js/Components/UI/Modal.vue": [],
+  "resources/js/Components/UI/Modal.vue?vue&type=style&index=0&scoped=9b447ad5&lang.css": [],
+  "resources/js/Components/UI/NestedMenuEditor.vue": [],
+  "resources/js/Components/UI/NestedMenuEditor.vue?vue&type=style&index=0&scoped=888d7aab&lang.css": [],
+  "resources/js/Components/UI/RepeaterField.vue": [],
+  "resources/js/Components/UI/RepeaterField.vue?vue&type=style&index=0&scoped=82b4dd05&lang.css": [],
+  "resources/js/Components/UI/RichTextEditor.vue": [],
+  "resources/js/Components/UI/RichTextEditor.vue?vue&type=style&index=0&scoped=4f27bac9&lang.css": [],
+  "resources/js/Components/UI/TextInput.vue": [],
+  "resources/js/Components/UI/TextInput.vue?vue&type=style&index=0&scoped=0cdb4751&lang.css": [],
+  "resources/js/Components/UI/Toast.vue": [],
+  "resources/js/Components/UI/Toast.vue?vue&type=style&index=0&scoped=662109b7&lang.css": [],
+  "resources/js/Components/UI/UrlAutocomplete.vue": [],
+  "resources/js/Components/UI/UrlAutocomplete.vue?vue&type=style&index=0&scoped=062a9a7b&lang.css": [],
+  "resources/js/Layouts/AuthLayout.vue": [],
+  "resources/js/Layouts/DashboardLayout.vue": [],
+  "resources/js/Layouts/DashboardLayout.vue?vue&type=style&index=0&scoped=0451e41a&lang.css": [],
+  "resources/js/Layouts/WebsiteLayout.vue": [],
+  "resources/js/Pages/Auth/ForgotPassword.vue": [],
+  "resources/js/Pages/Auth/Login.vue": [],
+  "resources/js/Pages/Auth/ResetPassword.vue": [],
+  "resources/js/Pages/Auth/ResetPassword.vue?vue&type=style&index=0&scoped=db7ff772&lang.css": [],
+  "resources/js/Pages/Contacts/Index.vue": [],
+  "resources/js/Pages/Contacts/Index.vue?vue&type=style&index=0&scoped=878922c8&lang.css": [],
+  "resources/js/Pages/Contacts/Show.vue": [],
+  "resources/js/Pages/Contacts/Show.vue?vue&type=style&index=0&scoped=97591e38&lang.css": [],
+  "resources/js/Pages/Dashboard.vue": [],
+  "resources/js/Pages/Dashboard/Index.vue": [],
+  "resources/js/Pages/Dashboard/Index.vue?vue&type=style&index=0&scoped=f7f7cdc4&lang.css": [],
+  "resources/js/Pages/PageBuilder/AddSectionModal.vue": [],
+  "resources/js/Pages/PageBuilder/AddSectionModal.vue?vue&type=style&index=0&scoped=edbdac87&lang.css": [],
+  "resources/js/Pages/PageBuilder/EditSectionSidebar.vue": [],
+  "resources/js/Pages/PageBuilder/EditSectionSidebar.vue?vue&type=style&index=0&scoped=b53fddeb&lang.css": [],
+  "resources/js/Pages/PageBuilder/Index.vue": [],
+  "resources/js/Pages/PageBuilder/Index.vue?vue&type=style&index=0&scoped=d91afbf1&lang.css": [],
+  "resources/js/Pages/Pages/Create.vue": [],
+  "resources/js/Pages/Pages/Create.vue?vue&type=style&index=0&scoped=16586248&lang.css": [],
+  "resources/js/Pages/Pages/Edit.vue": [],
+  "resources/js/Pages/Pages/Edit.vue?vue&type=style&index=0&scoped=9376df5a&lang.css": [],
+  "resources/js/Pages/Pages/Index.vue": [],
+  "resources/js/Pages/Pages/Index.vue?vue&type=style&index=0&scoped=62d17c1b&lang.css": [],
+  "resources/js/Pages/Profile/Edit.vue": [],
+  "resources/js/Pages/Profile/Edit.vue?vue&type=style&index=0&scoped=388636fb&lang.css": [],
+  "resources/js/Pages/Settings/CustomCode.vue": [],
+  "resources/js/Pages/Settings/CustomCode.vue?vue&type=style&index=0&scoped=31d73606&lang.css": [],
+  "resources/js/Pages/Settings/Email.vue": [],
+  "resources/js/Pages/Settings/Email.vue?vue&type=style&index=0&scoped=7ddb5a05&lang.css": [],
+  "resources/js/Pages/Website/Index.vue": [],
+  "resources/js/composables/useSlugify.js": [],
+  "resources/js/ssr.js": [],
+  "vendor/tightenco/ziggy/dist/index.js": []
 }

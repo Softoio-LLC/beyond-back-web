@@ -27,7 +27,7 @@ class PageFactory extends Factory
             'meta_description_en' => fake()->paragraph(),
             'og_description_en' => fake()->paragraph(),
             'og_image_en' => null,
-            
+
             // Arabic fields
             'name_ar' => fake()->words(3, true),
             'url_slug_ar' => fake()->slug(),

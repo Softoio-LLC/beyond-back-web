@@ -92,16 +92,19 @@ export async function initSwipers() {
         }));
     }
 
-    // Concept Slider
-    const conceptThumb = document.querySelector('.concept-thumbnails');
-    if (conceptThumb) {
-        swiperInstances.push(new Swiper('.concept-thumbnails', {
-            modules: [],
+    // Concept Sliders (multiple)
+    document.querySelectorAll('.concept-thumbnails').forEach((slider) => {
+        swiperInstances.push(new Swiper(slider, {
+            modules: [Autoplay],
             loop: true,
             centeredSlides: true,
             spaceBetween: 15,
             speed: 1000,
             slidesPerView: 1,
+            autoplay: {
+                delay: 2500,
+                disableOnInteraction: false,
+            },
             breakpoints: {
                 0: { slidesOffsetBefore: 0, slidesOffsetAfter: 0 },
                 320: { slidesOffsetBefore: 0, slidesOffsetAfter: 0 },
@@ -111,53 +114,32 @@ export async function initSwipers() {
                 1200: { spaceBetween: 24, slidesOffsetBefore: 0, slidesOffsetAfter: 0 },
             },
         }));
-    }
+    });
 
     // Outer Work Swiper
     const outerWork = document.querySelector('.outer-work-swiper');
     if (outerWork) {
         swiperInstances.push(new Swiper('.outer-work-swiper', {
-            modules: [],
-            slidesPerView: 2,
+            modules: [Pagination],
+            slidesPerView: 1,
             spaceBetween: 20,
-            rtl: false,
+            rtl: document.dir === 'rtl',
             loop: true,
             speed: 800,
+            pagination: {
+                el: '.outer-work-pagination',
+                clickable: true,
+            },
+            navigation: {
+                nextEl: '.outer-work-next',
+                prevEl: '.outer-work-prev',
+            },
             breakpoints: {
-                0: { slidesPerView: 1, slidesOffsetBefore: 0, slidesOffsetAfter: 0 },
-                992: { slidesPerView: 2, slidesOffsetBefore: 0, slidesOffsetAfter: 0 },
-                1200: { slidesOffsetBefore: 0, slidesOffsetAfter: 0 },
-                1450: { slidesOffsetBefore: 0, slidesOffsetAfter: 70 },
+                0: { slidesPerView: 1 },
+                992: { slidesPerView: 1 },
             },
         }));
     }
-
-    // Work Single Sliders (multiple)
-    document.querySelectorAll('.work-single-wrap').forEach((slider, index) => {
-        const pagination = slider.parentElement?.querySelector('.swiper-pagination');
-        if (pagination) {
-            const uniquePaginationClass = `inner-pagination-${index}`;
-            pagination.classList.add(uniquePaginationClass);
-
-            swiperInstances.push(new Swiper(slider, {
-                modules: [Pagination, Mousewheel],
-                loop: true,
-                centeredSlides: true,
-                spaceBetween: 20,
-                rtl: document.dir === 'rtl',
-                speed: 1000,
-                slidesPerView: 1,
-                mousewheel: {
-                    forceToAxis: true,
-                    sensitivity: 1,
-                },
-                pagination: {
-                    el: `.${uniquePaginationClass}`,
-                    clickable: true,
-                },
-            }));
-        }
-    });
 
     // Team Card Swiper
     const teamCards = document.querySelector('.team-card-wrap');
@@ -192,13 +174,17 @@ export async function initSwipers() {
     const brandLogos = document.querySelector('.brand-logos-slide');
     if (brandLogos) {
         swiperInstances.push(new Swiper('.brand-logos-slide', {
-            modules: [],
+            modules: [Autoplay],
             loop: true,
             centeredSlides: true,
             rtl: document.dir === 'rtl',
             spaceBetween: 10,
             speed: 1000,
             slidesPerView: 7,
+            autoplay: {
+                delay: 2000,
+                disableOnInteraction: false,
+            },
             breakpoints: {
                 0: { slidesPerView: 2, slidesOffsetBefore: 0, slidesOffsetAfter: 0 },
                 320: { slidesPerView: 2, slidesOffsetBefore: 20, slidesOffsetAfter: 20 },

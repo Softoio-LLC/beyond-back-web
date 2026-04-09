@@ -3,14 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Page;
+use App\Services\StorageService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class PageController extends Controller
 {
+    public function __construct(protected StorageService $storage) {}
+
     /**
      * Display a listing of pages.
      */
@@ -122,11 +124,11 @@ class PageController extends Controller
 
         // Handle file uploads
         if ($request->hasFile('og_image_en')) {
-            $validated['og_image_en'] = $request->file('og_image_en')->store('pages/og-images', 'public');
+            $validated['og_image_en'] = $this->storage->store($request->file('og_image_en'), 'pages/og-images');
         }
 
         if ($request->hasFile('og_image_ar')) {
-            $validated['og_image_ar'] = $request->file('og_image_ar')->store('pages/og-images', 'public');
+            $validated['og_image_ar'] = $this->storage->store($request->file('og_image_ar'), 'pages/og-images');
         }
 
         // If this page is set as homepage, unset other homepages
@@ -162,7 +164,7 @@ class PageController extends Controller
                 'hreflang_en' => $page->hreflang_en,
                 'meta_description_en' => $page->meta_description_en,
                 'og_description_en' => $page->og_description_en,
-                'og_image_en' => $page->og_image_en ? Storage::url($page->og_image_en) : null,
+                'og_image_en' => $page->og_image_en ? $this->storage->url($page->og_image_en) : null,
                 // Arabic fields
                 'name_ar' => $page->name_ar,
                 'url_slug_ar' => $page->url_slug_ar,
@@ -172,7 +174,7 @@ class PageController extends Controller
                 'hreflang_ar' => $page->hreflang_ar,
                 'meta_description_ar' => $page->meta_description_ar,
                 'og_description_ar' => $page->og_description_ar,
-                'og_image_ar' => $page->og_image_ar ? Storage::url($page->og_image_ar) : null,
+                'og_image_ar' => $page->og_image_ar ? $this->storage->url($page->og_image_ar) : null,
                 // Status fields
                 'is_homepage' => $page->is_homepage,
                 'is_published' => $page->is_published,
@@ -230,17 +232,17 @@ class PageController extends Controller
         if ($request->hasFile('og_image_en')) {
             // Delete old image if exists
             if ($page->og_image_en) {
-                Storage::disk('public')->delete($page->og_image_en);
+                $this->storage->delete($page->og_image_en);
             }
-            $validated['og_image_en'] = $request->file('og_image_en')->store('pages/og-images', 'public');
+            $validated['og_image_en'] = $this->storage->store($request->file('og_image_en'), 'pages/og-images');
         }
 
         if ($request->hasFile('og_image_ar')) {
             // Delete old image if exists
             if ($page->og_image_ar) {
-                Storage::disk('public')->delete($page->og_image_ar);
+                $this->storage->delete($page->og_image_ar);
             }
-            $validated['og_image_ar'] = $request->file('og_image_ar')->store('pages/og-images', 'public');
+            $validated['og_image_ar'] = $this->storage->store($request->file('og_image_ar'), 'pages/og-images');
         }
 
         // If this page is set as homepage, unset other homepages
@@ -260,10 +262,10 @@ class PageController extends Controller
     {
         // Delete associated images
         if ($page->og_image_en) {
-            Storage::disk('public')->delete($page->og_image_en);
+            $this->storage->delete($page->og_image_en);
         }
         if ($page->og_image_ar) {
-            Storage::disk('public')->delete($page->og_image_ar);
+            $this->storage->delete($page->og_image_ar);
         }
 
         $page->delete();
@@ -295,14 +297,14 @@ class PageController extends Controller
         if ($page->og_image_en) {
             $extension = pathinfo($page->og_image_en, PATHINFO_EXTENSION);
             $newPath = 'pages/og-images/'.uniqid().'.'.$extension;
-            Storage::disk('public')->copy($page->og_image_en, $newPath);
+            $this->storage->copy($page->og_image_en, $newPath);
             $newPage->og_image_en = $newPath;
         }
 
         if ($page->og_image_ar) {
             $extension = pathinfo($page->og_image_ar, PATHINFO_EXTENSION);
             $newPath = 'pages/og-images/'.uniqid().'.'.$extension;
-            Storage::disk('public')->copy($page->og_image_ar, $newPath);
+            $this->storage->copy($page->og_image_ar, $newPath);
             $newPage->og_image_ar = $newPath;
         }
 

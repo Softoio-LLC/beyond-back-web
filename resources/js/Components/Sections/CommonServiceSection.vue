@@ -41,9 +41,9 @@ const services = computed(() => {
         <div class="container text-center">
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="mb-3">
-                        <i v-if="sectionIcon">
-                            <AppImage :src="sectionIcon" alt="" loading="lazy"  />
+                    <div class="mb-3 section-header">
+                        <i v-if="sectionIcon" class="section-icon">
+                            <AppImage :src="sectionIcon" alt="" loading="lazy" :width="80" :height="80" />
                         </i>
                         <h1 v-if="title" v-html="title" :style="{ color: titleColor }"></h1>
                         <p v-if="subtitle" class="fs-18" style="color: #768495" v-html="subtitle"></p>
@@ -52,7 +52,7 @@ const services = computed(() => {
                 <div 
                     v-for="(service, index) in services" 
                     :key="index"
-                    class="col-xl-3 col-lg-4 col-md-6"
+                    class="col-sm-12 col-md-6 col-lg-4 col-xl-3"
                 >
                     <div class="service__block">
                         <i v-if="service.icon">
@@ -69,12 +69,24 @@ const services = computed(() => {
 </template>
 
 <style scoped>
+.comService-area .section-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.comService-area .section-icon {
+    display: block;
+    margin-bottom: 0.75rem;
+}
+
 .comService-area .row {
     display: flex;
     flex-wrap: wrap;
 }
 
-.comService-area .row > [class*="col-"] {
+.comService-area .row > [class*="col-"]:not(.col-lg-12) {
     display: flex;
 }
 
@@ -82,13 +94,21 @@ const services = computed(() => {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: flex-start;
+    text-align: center;
     width: 100%;
     height: 100%;
-    min-height: 280px;
+    min-height: min(280px, 40vh);
+}
+
+.comService-area .service__block i {
+    order: -1;
+    margin-bottom: 0.75rem;
 }
 
 .comService-area .service__block h5 {
     flex-shrink: 0;
+    margin-bottom: 0.5rem;
 }
 
 .comService-area .service__block p {

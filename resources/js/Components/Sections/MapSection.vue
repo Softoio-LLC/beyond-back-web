@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, ref, onMounted, onUnmounted } from 'vue';
 
 const props = defineProps({
     content: {
@@ -10,6 +10,20 @@ const props = defineProps({
         type: String,
         required: true
     }
+});
+
+const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1024);
+
+const onResize = () => {
+    windowWidth.value = window.innerWidth;
+};
+
+onMounted(() => {
+    window.addEventListener('resize', onResize);
+});
+
+onUnmounted(() => {
+    window.removeEventListener('resize', onResize);
 });
 
 // Build Google Maps embed URL from coordinates or address
@@ -35,9 +49,8 @@ const mapSrc = computed(() => {
         params.set('q', `${props.content.latitude},${props.content.longitude}`);
     } else if (props.content.address) {
         params.set('q', props.content.address);
-    } else {
-        // Default location
-        params.set('q', 'Riyadh, Saudi Arabia');
+    } else if (props.content.default_location) {
+        params.set('q', props.content.default_location);
     }
 
     // Add business name if provided
@@ -49,7 +62,12 @@ const mapSrc = computed(() => {
     return `${baseUrl}?${params.toString()}`;
 });
 
-const mapHeight = computed(() => props.content.height || 500);
+const mapHeight = computed(() => {
+    const base = props.content.height || 500;
+    if (windowWidth.value < 576) return Math.min(base, 250);
+    if (windowWidth.value < 768) return Math.min(base, 350);
+    return base;
+});
 </script>
 
 <template>
@@ -83,7 +101,7 @@ const mapHeight = computed(() => props.content.height || 500);
                             marginheight="0" 
                             marginwidth="0" 
                             :src="mapSrc"
-                            :title="lang === 'ar' ? 'خريطة الموقع' : 'Location Map'"
+                            :title="lang === 'ar' ? (content.map_title_ar || 'خريطة الموقع') : (content.map_title_en || 'Location Map')"
                             loading="lazy"
                             referrerpolicy="no-referrer-when-downgrade"
                         ></iframe>

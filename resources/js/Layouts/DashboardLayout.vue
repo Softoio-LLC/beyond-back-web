@@ -50,6 +50,11 @@ const settingsItems = [
         route: 'settings.email',
         description: 'SMTP & notifications',
     },
+    {
+        name: 'Storage',
+        route: 'settings.storage',
+        description: 'OCI bucket & migration',
+    },
 ];
 
 const isActive = (routeName) => {
@@ -131,7 +136,7 @@ onUnmounted(() => {
         <header class="navbar">
             <div class="navbar-container">
                 <!-- Logo -->
-                <Link href="/" class="logo-link">
+                <Link href="/dashboard" class="logo-link">
                     <div class="logo">
                         <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect width="40" height="40" rx="8" fill="#004F4C"/>

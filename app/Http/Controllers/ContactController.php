@@ -78,8 +78,8 @@ class ContactController extends Controller
     public function toggleRead(Contact $contact)
     {
         $contact->update([
-            'is_read' => !$contact->is_read,
-            'read_at' => !$contact->is_read ? now() : null,
+            'is_read' => ! $contact->is_read,
+            'read_at' => ! $contact->is_read ? now() : null,
         ]);
 
         return back()->with('success', 'Contact status updated.');
@@ -97,7 +97,7 @@ class ContactController extends Controller
 
         Contact::whereIn('id', $request->ids)->delete();
 
-        return back()->with('success', count($request->ids) . ' contacts deleted successfully.');
+        return back()->with('success', count($request->ids).' contacts deleted successfully.');
     }
 
     /**

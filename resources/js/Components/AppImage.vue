@@ -52,6 +52,11 @@ const props = defineProps({
     }
 });
 
+// Check if image is a static asset (bypass optimization for static assets)
+const isStaticAsset = computed(() => {
+    return props.src.startsWith('/assets/') || props.src.startsWith('assets/');
+});
+
 // Clean the path (remove /storage/ prefix or domain if present)
 const cleanPath = computed(() => {
     let path = props.src;
@@ -87,13 +92,22 @@ const getOptimizedUrl = (width = null, height = null) => {
     return `/img?${params.toString()}`;
 };
 
-// Main optimized source
+// Main optimized source - use direct URL for static assets
 const optimizedSrc = computed(() => {
+    // Static assets should load directly without optimization
+    if (isStaticAsset.value) {
+        return props.src;
+    }
     return getOptimizedUrl(props.width, props.height);
 });
 
 // Generate srcset for responsive images
 const srcset = computed(() => {
+    // Static assets don't need srcset optimization
+    if (isStaticAsset.value) {
+        return undefined;
+    }
+    
     if (!props.width) {
         // If no width specified, generate common breakpoints
         const widths = [320, 640, 768, 1024, 1280, 1536, 1920];
@@ -125,19 +139,18 @@ const aspectRatio = computed(() => {
     return 'auto';
 });
 
-// Image loaded state for fade-in effect
-const imageLoaded = ref(false);
+// Image loaded state - always true to ensure visibility
+// Removing fade-in effect to ensure SSR compatibility
+const imageLoaded = ref(true);
 
 const onImageLoad = () => {
     imageLoaded.value = true;
 };
 
-// Inline styles
+// Inline styles - always visible for SSR compatibility
 const imageStyles = computed(() => ({
     aspectRatio: aspectRatio.value,
-    objectFit: props.objectFit,
-    opacity: imageLoaded.value ? 1 : 0,
-    transition: 'opacity 0.3s ease-in-out'
+    objectFit: props.objectFit
 }));
 </script>
 

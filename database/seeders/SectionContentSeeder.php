@@ -35,14 +35,14 @@ class SectionContentSeeder extends Seeder
                             'label_en' => 'Home',
                             'url_en' => '/',
                             'url_ar' => '/ar',
-                            'children' => []
+                            'children' => [],
                         ],
                         [
                             'label_ar' => 'من نحن',
                             'label_en' => 'About',
                             'url_en' => '/about',
                             'url_ar' => '/ar/about',
-                            'children' => []
+                            'children' => [],
                         ],
                         [
                             'label_ar' => 'خدماتنا',
@@ -55,14 +55,14 @@ class SectionContentSeeder extends Seeder
                                 ['label_ar' => 'منصة Shops Z', 'label_en' => 'Shops Z Platform', 'url_en' => '#', 'url_ar' => '#'],
                                 ['label_ar' => 'Beyond ERP', 'label_en' => 'Beyond ERP', 'url_en' => '#', 'url_ar' => '#'],
                                 ['label_ar' => 'Beyond Pay', 'label_en' => 'Beyond Pay', 'url_en' => '#', 'url_ar' => '#'],
-                            ]
+                            ],
                         ],
                         [
                             'label_ar' => 'المعرض',
                             'label_en' => 'Gallery',
                             'url_en' => '/gallery',
                             'url_ar' => '/ar/gallery',
-                            'children' => []
+                            'children' => [],
                         ],
                         [
                             'label_ar' => 'أعمالنا',
@@ -75,7 +75,7 @@ class SectionContentSeeder extends Seeder
                                 ['label_ar' => 'البرمجة وتطوير التطبيقات', 'label_en' => 'Programming & App Development', 'url_en' => '#', 'url_ar' => '#'],
                                 ['label_ar' => 'إدارة المشاريع وتنفيذها', 'label_en' => 'Project Management', 'url_en' => '#', 'url_ar' => '#'],
                                 ['label_ar' => 'التسويق الإلكتروني', 'label_en' => 'Digital Marketing', 'url_en' => '#', 'url_ar' => '#'],
-                            ]
+                            ],
                         ],
                     ],
                     'contact_button_text_ar' => 'تواصل معنا',
@@ -84,9 +84,11 @@ class SectionContentSeeder extends Seeder
                     'flag_ar' => '/assets/img/flag-1.png',
                     'flag_en' => '/assets/img/flag-2.png',
                     'check_icon' => '/assets/img/check-radio.svg',
+                    'lang_label_ar' => 'عربي',
+                    'lang_label_en' => 'English',
                 ],
             ],
-            
+
             // ========================================
             // HERO SLIDER SECTION (Homepage)
             // ========================================
@@ -123,7 +125,7 @@ class SectionContentSeeder extends Seeder
                     ],
                 ],
             ],
-            
+
             // ========================================
             // HERO COMMON SECTION (Service Pages - Dark background)
             // ========================================
@@ -155,7 +157,7 @@ class SectionContentSeeder extends Seeder
                     'secondary_button_url' => '#',
                 ],
             ],
-            
+
             // ========================================
             // PARTNERS/BRANDS SECTION
             // ========================================
@@ -188,7 +190,7 @@ class SectionContentSeeder extends Seeder
                     ],
                 ],
             ],
-            
+
             // ========================================
             // CONCEPT SECTION
             // ========================================
@@ -257,7 +259,7 @@ class SectionContentSeeder extends Seeder
                     ],
                 ],
             ],
-            
+
             // ========================================
             // SERVICES SECTION
             // ========================================
@@ -314,7 +316,7 @@ class SectionContentSeeder extends Seeder
                     ],
                 ],
             ],
-            
+
             // ========================================
             // CTA SECTION
             // ========================================
@@ -359,7 +361,7 @@ class SectionContentSeeder extends Seeder
                     ],
                 ],
             ],
-            
+
             // ========================================
             // WORK/PROJECTS SECTION
             // ========================================
@@ -423,7 +425,7 @@ class SectionContentSeeder extends Seeder
                     ],
                 ],
             ],
-            
+
             // ========================================
             // TEAM SECTION
             // ========================================
@@ -473,7 +475,7 @@ class SectionContentSeeder extends Seeder
                     ],
                 ],
             ],
-            
+
             // ========================================
             // CONTACT SECTION
             // ========================================
@@ -518,7 +520,7 @@ class SectionContentSeeder extends Seeder
                     ],
                 ],
             ],
-            
+
             // ========================================
             // GALLERY SECTION
             // ========================================
@@ -547,7 +549,7 @@ class SectionContentSeeder extends Seeder
                     ],
                 ],
             ],
-            
+
             // ========================================
             // FAQ SECTION
             // ========================================
@@ -601,7 +603,7 @@ class SectionContentSeeder extends Seeder
                     ],
                 ],
             ],
-            
+
             // ========================================
             // INQUIRY SECTION
             // ========================================
@@ -649,7 +651,10 @@ class SectionContentSeeder extends Seeder
                     'title_en' => 'Our Location',
                     'subtitle_ar' => 'تفضل بزيارتنا',
                     'subtitle_en' => 'Visit Us',
+                    'map_title_ar' => 'خريطة الموقع',
+                    'map_title_en' => 'Location Map',
                     'address' => 'Riyadh, King Abdulaziz Road, Al-Amal District, Saudi Arabia',
+                    'default_location' => 'Riyadh, Saudi Arabia',
                     'latitude' => '24.7136',
                     'longitude' => '46.6753',
                     'business_name' => 'Beyond Technology',
@@ -732,6 +737,26 @@ class SectionContentSeeder extends Seeder
                     'form_title_en' => 'Contact Us',
                     'form_description_ar' => 'يسعدنا تواصلك معنا! نحن في BEYOND نهتم بتقديم تجربة متكاملة لعملائنا، ونسعد بالإجابة على استفساراتكم، وتقديم الدعم في كل إنشاء المشروعات',
                     'form_description_en' => 'We are happy to hear from you! At BEYOND, we care about providing a complete experience for our customers, and we are happy to answer your inquiries and provide support in all project creation.',
+                    // Form customization fields
+                    'country_code' => '+966',
+                    'placeholder_name_en' => 'Full Name',
+                    'placeholder_name_ar' => 'الاسم الكامل',
+                    'placeholder_email_en' => 'Email Address',
+                    'placeholder_email_ar' => 'البريد الالكتروني',
+                    'placeholder_phone_en' => 'Example 5xxxxxxxx',
+                    'placeholder_phone_ar' => 'مثال xxxxxxxx5',
+                    'placeholder_subject_en' => 'Subject',
+                    'placeholder_subject_ar' => 'الموضوع',
+                    'placeholder_message_en' => 'Write your message here...',
+                    'placeholder_message_ar' => 'اكتب رسالتك هنا...',
+                    'submit_text_en' => 'Send',
+                    'submit_text_ar' => 'إرسال',
+                    'submitting_text_en' => 'Sending...',
+                    'submitting_text_ar' => 'جاري الإرسال...',
+                    'success_message_en' => 'Your message was sent successfully!',
+                    'success_message_ar' => 'تم إرسال رسالتك بنجاح!',
+                    'default_subject_en' => 'Message from Contact Page',
+                    'default_subject_ar' => 'رسالة من صفحة التواصل',
                 ],
             ],
 
@@ -755,6 +780,8 @@ class SectionContentSeeder extends Seeder
                     'title_en' => 'Contact Us',
                     'breadcrumb_ar' => 'تواصل معنا',
                     'breadcrumb_en' => 'Contact Us',
+                    'home_label_ar' => 'الرئيسية',
+                    'home_label_en' => 'Home',
                     'side_image' => '/assets/img/Contact-Info.svg',
                 ],
             ],
@@ -1109,7 +1136,7 @@ class SectionContentSeeder extends Seeder
                     ],
                 ],
             ],
-            
+
             // ========================================
             // PRODUCT/ADDED VALUE SECTION
             // ========================================
@@ -1134,7 +1161,7 @@ class SectionContentSeeder extends Seeder
                     'description_en' => 'This service helps the project achieve sustainable growth by organizing business operations, building strong partnerships with factories, and achieving the highest return from every business investment.',
                 ],
             ],
-            
+
             // ========================================
             // FOOTER SECTION (Fixed)
             // ========================================

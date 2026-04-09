@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue';
-import { router, Link } from '@inertiajs/vue3';
+import { router, Link, usePage } from '@inertiajs/vue3';
 import DashboardLayout from '@/Layouts/DashboardLayout.vue';
 import Button from '@/Components/UI/Button.vue';
 import Toast from '@/Components/UI/Toast.vue';
@@ -54,6 +54,37 @@ const props = defineProps({
         default: () => [],
     },
 });
+
+const pageProps = usePage().props;
+
+const storageBaseUrl = computed(() => {
+    const baseUrl = pageProps.storage?.baseUrl;
+    if (!baseUrl || typeof baseUrl !== 'string') {
+        return null;
+    }
+
+    return baseUrl.replace(/\/+$/, '');
+});
+
+const resolveImageUrl = (img) => {
+    if (!img || typeof img !== 'string') {
+        return '';
+    }
+
+    if (img.startsWith('http') || img.startsWith('/')) {
+        return img;
+    }
+
+    if (img.startsWith('assets/') || img.startsWith('storage/')) {
+        return `/${img}`;
+    }
+
+    if (storageBaseUrl.value) {
+        return `${storageBaseUrl.value}/${img}`;
+    }
+
+    return resolveImageUrl(img);
+};
 
 // Section components mapping
 const sectionComponents = {
@@ -257,30 +288,44 @@ const previewHtml = computed(() => {
                 // Hero slide thumb
                 if (document.querySelector('.hero-slide-thumb')) {
                     new Swiper('.hero-slide-thumb', {
-                        slidesPerView: 4,
-                        spaceBetween: 20,
                         loop: true,
-                        autoplay: { delay: 3000, disableOnInteraction: false },
+                        centeredSlides: true,
+                        spaceBetween: 10,
+                        rtl: document.dir === 'rtl',
+                        speed: 1000,
+                        slidesPerView: 4,
+                        autoplay: { delay: 3500, disableOnInteraction: false },
                         breakpoints: {
-                            0: { slidesPerView: 2 },
-                            768: { slidesPerView: 3 },
-                            1024: { slidesPerView: 4 }
+                            0: { slidesPerView: 1 },
+                            320: { slidesPerView: 1 },
+                            450: { slidesPerView: 1 },
+                            575: { slidesPerView: 2 },
+                            768: { slidesPerView: 2 },
+                            992: { slidesPerView: 3 },
+                            1200: { slidesPerView: 3 }
                         }
                     });
                 }
-                
+
                 // Brand logos
                 if (document.querySelector('.brand-logos-slide')) {
                     new Swiper('.brand-logos-slide', {
-                        slidesPerView: 6,
-                        spaceBetween: 30,
                         loop: true,
+                        centeredSlides: true,
+                        rtl: document.dir === 'rtl',
+                        spaceBetween: 10,
+                        speed: 1000,
+                        slidesPerView: 7,
                         autoplay: { delay: 2000, disableOnInteraction: false },
                         breakpoints: {
-                            0: { slidesPerView: 2 },
-                            576: { slidesPerView: 3 },
+                            0: { slidesPerView: 2, slidesOffsetBefore: 0, slidesOffsetAfter: 0 },
+                            320: { slidesPerView: 2, slidesOffsetBefore: 20, slidesOffsetAfter: 20 },
+                            450: { slidesPerView: 3, slidesOffsetBefore: 40, slidesOffsetAfter: 40 },
+                            575: { slidesPerView: 4, slidesOffsetBefore: 0, slidesOffsetAfter: 0 },
                             768: { slidesPerView: 4 },
-                            1024: { slidesPerView: 6 }
+                            992: { slidesPerView: 5, slidesOffsetBefore: 0, slidesOffsetAfter: 0 },
+                            1450: { slidesPerView: 6, slidesOffsetBefore: 0, slidesOffsetAfter: 0 },
+                            1600: { slidesPerView: 7, slidesOffsetBefore: 0, slidesOffsetAfter: 0 }
                         }
                     });
                 }
@@ -288,38 +333,78 @@ const previewHtml = computed(() => {
                 // Concept thumbnails
                 document.querySelectorAll('.concept-thumbnails').forEach(function(el) {
                     new Swiper(el, {
-                        slidesPerView: 2,
-                        spaceBetween: 20,
                         loop: true,
-                        autoplay: { delay: 2500, disableOnInteraction: false }
+                        centeredSlides: true,
+                        spaceBetween: 15,
+                        speed: 1000,
+                        slidesPerView: 1,
+                        autoplay: { delay: 2500, disableOnInteraction: false },
+                        breakpoints: {
+                            0: { slidesOffsetBefore: 0, slidesOffsetAfter: 0 },
+                            320: { slidesOffsetBefore: 0, slidesOffsetAfter: 0 },
+                            450: { slidesOffsetBefore: 0, slidesOffsetAfter: 0 },
+                            575: { slidesOffsetBefore: 0, slidesOffsetAfter: 0 },
+                            992: { spaceBetween: 15, slidesOffsetBefore: 0, slidesOffsetAfter: 0 },
+                            1200: { spaceBetween: 24, slidesOffsetBefore: 0, slidesOffsetAfter: 0 }
+                        }
                     });
                 });
                 
                 // Work slides
-                if (document.querySelector('.work-single-wrap')) {
-                    new Swiper('.work-single-wrap', {
-                        slidesPerView: 1,
-                        spaceBetween: 30,
+                document.querySelectorAll('.work-single-wrap').forEach((slider, index) => {
+                    const pagination = slider.parentElement?.querySelector('.swiper-pagination');
+                    if (!pagination) {
+                        return;
+                    }
+
+                    const uniquePaginationClass = 'inner-pagination-' + index;
+                    pagination.classList.add(uniquePaginationClass);
+
+                    new Swiper(slider, {
                         loop: true,
-                        pagination: { el: '.swiper-pagination', clickable: true }
+                        centeredSlides: true,
+                        spaceBetween: 20,
+                        rtl: document.dir === 'rtl',
+                        speed: 1000,
+                        slidesPerView: 1,
+                        mousewheel: {
+                            forceToAxis: true,
+                            sensitivity: 1
+                        },
+                        pagination: { el: '.' + uniquePaginationClass, clickable: true }
                     });
-                }
+                });
                 
                 // Team card wrap
-                if (document.querySelector('.team-card-wrap')) {
-                    new Swiper('.team-card-wrap', {
+                document.querySelectorAll('.team-card-wrap').forEach((slider, index) => {
+                    const pagination = slider.parentElement?.querySelector('.team-pagination');
+                    if (!pagination) {
+                        return;
+                    }
+
+                    const uniqueTeamPaginationClass = 'team-pagination-' + index;
+                    pagination.classList.add(uniqueTeamPaginationClass);
+
+                    new Swiper(slider, {
                         slidesPerView: 4,
-                        spaceBetween: 30,
+                        spaceBetween: 24,
                         loop: true,
-                        pagination: { el: '.team-pagination', clickable: true },
+                        speed: 600,
+                        effect: 'slide',
+                        grabCursor: true,
+                        pagination: { el: '.' + uniqueTeamPaginationClass, clickable: true, dynamicBullets: false },
                         breakpoints: {
-                            0: { slidesPerView: 1 },
-                            576: { slidesPerView: 2 },
+                            0: { slidesPerView: 2 },
+                            320: { slidesPerView: 1 },
+                            450: { slidesPerView: 1 },
+                            575: { slidesPerView: 2 },
+                            768: { slidesPerView: 2 },
                             992: { slidesPerView: 3 },
-                            1200: { slidesPerView: 4 }
+                            1450: { slidesPerView: 3 },
+                            1600: { slidesPerView: 4 }
                         }
                     });
-                }
+                });
             }
         }, 100);
     <\/script>
@@ -478,7 +563,7 @@ const generateHeroHtml = (c, lang, t) => {
                         <div class="hero__block" data-aos="fade-up">
                             ${c.icon ? `<i><img src="${c.icon}" alt="" /></i>` : ''}
                             <div>
-                                <h1 class="text-white fs-56">${t(c.title_ar, c.title_en) || 'Hero Title'}</h1>
+                                <h1 class="text-white ">${t(c.title_ar, c.title_en) || 'Hero Title'}</h1>
                                 <p>${t(c.description_ar, c.description_en) || ''}</p>
                                 <a href="${c.button_url || '#'}" class="common-btn d-flex align-items-center w-max">
                                     ${t(c.button_text_ar, c.button_text_en) || 'Get Started'} <span><i class="${angleIcon}"></i></span>
@@ -575,7 +660,7 @@ const generatePartnersHtml = (c, lang, t) => {
     const getImageUrl = (img) => {
         if (!img || typeof img !== 'string') return '';
         if (img.startsWith('http') || img.startsWith('/')) return img;
-        return `/storage/${img}`;
+        return resolveImageUrl(img);
     };
     
     const logos = c.logos || c.partners || [];
@@ -601,7 +686,7 @@ const generateConceptHtml = (c, lang, t) => {
     const getImageUrl = (img) => {
         if (!img || typeof img !== 'string') return '';
         if (img.startsWith('http') || img.startsWith('/')) return img;
-        return `/storage/${img}`;
+        return resolveImageUrl(img);
     };
     
     const blocks = c.blocks || [];
@@ -634,12 +719,14 @@ const generateConceptHtml = (c, lang, t) => {
                     ${c.shape_image ? `<div class="concept-wrapper-shape position-absolute z-n1" style="top: 0; right: 0; opacity: 0.1;"><img src="${getImageUrl(c.shape_image)}" alt="Shape" style="max-width: 300px;" /></div>` : ''}
                     <div class="row align-items-center g-4">
                         <div class="col-lg-6 ${imageOnLeft ? '' : 'order-lg-2'}">
-                            <div class="concept-thumbnails d-flex gap-3 flex-wrap justify-content-center">
-                                ${slides.slice(0, 4).map((slide, slideIdx) => `
-                                    <div class="concept-single-thumb" style="width: calc(50% - 8px); border-radius: ${slideIdx % 2 === 0 ? '0 0 0 24px' : '24px 0 0 0'}; overflow: hidden;">
-                                        <img src="${getImageUrl(slide.image || slide)}" alt="${slide.alt || 'Thumb'}" style="width: 100%; height: 150px; object-fit: cover;" />
-                                    </div>
-                                `).join('')}
+                            <div class="swiper concept-thumbnails ${imageOnLeft ? 'me-0' : ''}">
+                                <div class="swiper-wrapper">
+                                    ${slides.map((slide, slideIdx) => `
+                                        <div class="concept-single-thumb swiper-slide ${slide.radius_class || (slideIdx % 2 === 0 ? 'radious-bottom-left' : 'radious-top-right')}">
+                                            <img class="w-100 h-100 object-fit-cover" src="${getImageUrl(slide.image || slide)}" alt="${slide.alt || 'Thumb'}" style="height: 150px; object-fit: cover;" />
+                                        </div>
+                                    `).join('')}
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-6 ${imageOnLeft ? 'order-lg-2' : ''}">
@@ -677,7 +764,7 @@ const generateServicesHtml = (c, lang, t) => {
     const getImageUrl = (img) => {
         if (!img || typeof img !== 'string') return '';
         if (img.startsWith('http') || img.startsWith('/')) return img;
-        return `/storage/${img}`;
+        return resolveImageUrl(img);
     };
     
     const services = c.services || [];
@@ -715,7 +802,7 @@ const generateCtaHtml = (c, lang, t) => {
     const getImageUrl = (img) => {
         if (!img || typeof img !== 'string') return '';
         if (img.startsWith('http') || img.startsWith('/')) return img;
-        return `/storage/${img}`;
+        return resolveImageUrl(img);
     };
     
     const cards = c.contact_cards || [];
@@ -763,7 +850,7 @@ const generateWorkHtml = (c, lang, t) => {
     const getImageUrl = (img) => {
         if (!img || typeof img !== 'string') return '';
         if (img.startsWith('http') || img.startsWith('/')) return img;
-        return `/storage/${img}`;
+        return resolveImageUrl(img);
     };
     
     const projects = c.projects || [];
@@ -778,13 +865,13 @@ const generateWorkHtml = (c, lang, t) => {
                 <div class="common-title text-center" data-aos="zoom-in">
                     <h3>${t(c.title_ar, c.title_en)}</h3>
                 </div>
-                <div class="work-wrapper">
-                    <div class="work-single-card position-relative z-1">
-                        <div class="swiper work-single-wrap">
-                            <div class="swiper-wrapper">
-                                ${projects.map(project => `
-                                    <div class="swiper-slide">
-                                        <div class="work-slide-single-item" data-aos="fade-right">
+                <div class="outer-work-swiper swiper">
+                    <div class="swiper-wrapper">
+                        ${projects.map(project => `
+                            <div class="swiper-slide">
+                                <div class="work-wrapper">
+                                    <div class="work-single-card position-relative z-1">
+                                        <div class="work-slide-single-item">
                                             <div class="work-card-wrap d-flex align-items-center justify-content-between">
                                                 <div class="work-card-items">
                                                     <div class="contact-card-content work-card-content">
@@ -801,12 +888,16 @@ const generateWorkHtml = (c, lang, t) => {
                                                 </div>
                                             </div>
                                         </div>
+                                        ${c.work_shape_image ? `<div class="work-card-shape position-absolute z-n1"><img src="${getImageUrl(c.work_shape_image)}" alt="Shape" /></div>` : ''}
                                     </div>
-                                `).join('')}
+                                </div>
                             </div>
-                        </div>
-                        ${c.work_shape_image ? `<div class="work-card-shape position-absolute z-n1"><img src="${getImageUrl(c.work_shape_image)}" alt="Shape" /></div>` : ''}
-                        <div class="swiper-pagination"></div>
+                        `).join('')}
+                    </div>
+                    <div class="swiper-pagination-wrap position-relative">
+                        <div class="swiper-button-prev outer-work-prev"><i class="far fa-chevron-right"></i></div>
+                        <div class="swiper-pagination outer-work-pagination"></div>
+                        <div class="swiper-button-next outer-work-next"><i class="far fa-chevron-left"></i></div>
                     </div>
                 </div>
             </div>
@@ -820,7 +911,7 @@ const generateTeamHtml = (c, lang, t) => {
     const getImageUrl = (img) => {
         if (!img || typeof img !== 'string') return '';
         if (img.startsWith('http') || img.startsWith('/')) return img;
-        return `/storage/${img}`;
+        return resolveImageUrl(img);
     };
     
     const members = c.members || [];
@@ -863,7 +954,7 @@ const generateContactHtml = (c, lang, t) => {
     const getImageUrl = (img) => {
         if (!img || typeof img !== 'string') return '';
         if (img.startsWith('http') || img.startsWith('/')) return img;
-        return `/storage/${img}`;
+        return resolveImageUrl(img);
     };
     
     const cards = c.cards || [];
@@ -914,7 +1005,7 @@ const generateGalleryHtml = (c, lang, t) => {
     const getImageUrl = (img) => {
         if (!img || typeof img !== 'string') return '';
         if (img.startsWith('http') || img.startsWith('/')) return img;
-        return `/storage/${img}`;
+        return resolveImageUrl(img);
     };
     
     const images = c.images || [];
@@ -959,7 +1050,7 @@ const generateFaqHtml = (c, lang, t) => {
     const getImageUrl = (img) => {
         if (!img || typeof img !== 'string') return '';
         if (img.startsWith('http') || img.startsWith('/')) return img;
-        return `/storage/${img}`;
+        return resolveImageUrl(img);
     };
     
     const faqs = c.faqs || [];
@@ -1003,7 +1094,7 @@ const generateInquiryHtml = (c, lang, t) => {
     const getImageUrl = (img) => {
         if (!img || typeof img !== 'string') return '';
         if (img.startsWith('http') || img.startsWith('/')) return img;
-        return `/storage/${img}`;
+        return resolveImageUrl(img);
     };
     
     return `
@@ -1123,7 +1214,7 @@ const generateAboutHtml = (c, lang, t) => {
     const getImageUrl = (img) => {
         if (!img || typeof img !== 'string') return '';
         if (img.startsWith('http') || img.startsWith('/')) return img;
-        return `/storage/${img}`;
+        return resolveImageUrl(img);
     };
     
     const blocks = c.blocks || [];
@@ -1194,7 +1285,7 @@ const generateContactBannerHtml = (c, lang, t) => {
     const getImageUrl = (img) => {
         if (!img || typeof img !== 'string') return '';
         if (img.startsWith('http') || img.startsWith('/')) return img;
-        return `/storage/${img}`;
+        return resolveImageUrl(img);
     };
     
     const title = t(c.title_ar, c.title_en) || (lang === 'ar' ? 'تواصل معنا' : 'Contact Us');
@@ -1235,7 +1326,7 @@ const generateContactInfoHtml = (c, lang, t) => {
     const getImageUrl = (img) => {
         if (!img || typeof img !== 'string') return '';
         if (img.startsWith('http') || img.startsWith('/')) return img;
-        return `/storage/${img}`;
+        return resolveImageUrl(img);
     };
     
     const infoCards = c.info_cards || [];
@@ -1306,7 +1397,7 @@ const generateHeroSliderHtml = (c, lang, t) => {
     const getImageUrl = (img) => {
         if (!img || typeof img !== 'string') return '';
         if (img.startsWith('http') || img.startsWith('/')) return img;
-        return `/storage/${img}`;
+        return resolveImageUrl(img);
     };
     
     const slides = c.slides || [];
@@ -1353,7 +1444,7 @@ const generateHeroCommonHtml = (c, lang, t) => {
     const getImageUrl = (img) => {
         if (!img || typeof img !== 'string') return '';
         if (img.startsWith('http') || img.startsWith('/')) return img;
-        return `/storage/${img}`;
+        return resolveImageUrl(img);
     };
     
     const angleIcon = lang === 'ar' ? 'far fa-angle-left' : 'far fa-angle-right';
@@ -1374,7 +1465,7 @@ const generateHeroCommonHtml = (c, lang, t) => {
                     <div class="hero__block" data-aos="fade-up">
                         ${iconUrl ? `<i><img src="${iconUrl}" alt="" /></i>` : ''}
                         <div>
-                            <h1 class="text-white fs-56">${t(c.title_ar, c.title_en) || 'Hero Title'}</h1>
+                            <h1 class="text-white ">${t(c.title_ar, c.title_en) || 'Hero Title'}</h1>
                             <p class="text-white-50">${t(c.description_ar, c.description_en) || ''}</p>
                             <div class="d-flex align-items-center gap-3 mt-4">
                                 ${c.button_text_ar || c.button_text_en ? `
@@ -1406,7 +1497,7 @@ const generateProductHtml = (c, lang, t) => {
     const getImageUrl = (img) => {
         if (!img || typeof img !== 'string') return '';
         if (img.startsWith('http') || img.startsWith('/')) return img;
-        return `/storage/${img}`;
+        return resolveImageUrl(img);
     };
     
     const leftShape = getImageUrl(c.left_shape) || '/assets/img/pd-left.svg';
@@ -1490,7 +1581,7 @@ const generateCommonServiceHtml = (c, lang, t) => {
     const getImageUrl = (img) => {
         if (!img || typeof img !== 'string') return '';
         if (img.startsWith('http') || img.startsWith('/')) return img;
-        return `/storage/${img}`;
+        return resolveImageUrl(img);
     };
     
     const services = c.services || [];
@@ -1526,7 +1617,7 @@ const generateCounterAreaHtml = (c, lang, t) => {
     const getImageUrl = (img) => {
         if (!img || typeof img !== 'string') return '';
         if (img.startsWith('http') || img.startsWith('/')) return img;
-        return `/storage/${img}`;
+        return resolveImageUrl(img);
     };
     
     const counters = c.counters || [];
@@ -1559,7 +1650,7 @@ const generateGalleryPageHtml = (c, lang, t) => {
     const getImageUrl = (img) => {
         if (!img || typeof img !== 'string') return '';
         if (img.startsWith('http') || img.startsWith('/')) return img;
-        return `/storage/${img}`;
+        return resolveImageUrl(img);
     };
     
     const items = c.items || [];
@@ -1608,7 +1699,7 @@ const generateHeroRiyaHtml = (c, lang, t) => {
     const getImageUrl = (img) => {
         if (!img || typeof img !== 'string') return '';
         if (img.startsWith('http') || img.startsWith('/')) return img;
-        return `/storage/${img}`;
+        return resolveImageUrl(img);
     };
     
     const angleIcon = lang === 'ar' ? 'far fa-angle-left' : 'far fa-angle-right';
@@ -1657,7 +1748,7 @@ const generateHeroJiyadHtml = (c, lang, t) => {
     const getImageUrl = (img) => {
         if (!img || typeof img !== 'string') return '';
         if (img.startsWith('http') || img.startsWith('/')) return img;
-        return `/storage/${img}`;
+        return resolveImageUrl(img);
     };
     
     const angleIcon = lang === 'ar' ? 'far fa-angle-left' : 'far fa-angle-right';
@@ -1706,7 +1797,7 @@ const generateHeroShopsZHtml = (c, lang, t) => {
     const getImageUrl = (img) => {
         if (!img || typeof img !== 'string') return '';
         if (img.startsWith('http') || img.startsWith('/')) return img;
-        return `/storage/${img}`;
+        return resolveImageUrl(img);
     };
     
     const angleIcon = lang === 'ar' ? 'far fa-angle-left' : 'far fa-angle-right';
@@ -1755,7 +1846,7 @@ const generateHeroBeyondERPHtml = (c, lang, t) => {
     const getImageUrl = (img) => {
         if (!img || typeof img !== 'string') return '';
         if (img.startsWith('http') || img.startsWith('/')) return img;
-        return `/storage/${img}`;
+        return resolveImageUrl(img);
     };
     
     const angleIcon = lang === 'ar' ? 'far fa-angle-left' : 'far fa-angle-right';
@@ -1803,7 +1894,7 @@ const generateHeroBeyondPayHtml = (c, lang, t) => {
     const getImageUrl = (img) => {
         if (!img || typeof img !== 'string') return '';
         if (img.startsWith('http') || img.startsWith('/')) return img;
-        return `/storage/${img}`;
+        return resolveImageUrl(img);
     };
     
     const angleIcon = lang === 'ar' ? 'far fa-angle-left' : 'far fa-angle-right';
@@ -1859,8 +1950,47 @@ const closeAddModal = () => {
     showAddModal.value = false;
 };
 
+const normalizeId = (value) => {
+    const id = Number(value);
+    return Number.isNaN(id) ? null : id;
+};
+
+const findSectionById = (sectionId) => {
+    const targetId = normalizeId(sectionId);
+
+    return sectionsList.value.find((item) => normalizeId(item.id) === targetId) || null;
+};
+
+const sectionBelongsToCurrentPage = (section) => {
+    const sectionPageId = normalizeId(section?.page_id);
+    const currentPageId = normalizeId(props.page.id);
+
+    // Some payloads may omit page_id; in that case don't hard-block on frontend.
+    if (sectionPageId === null || currentPageId === null) {
+        return true;
+    }
+
+    return sectionPageId === currentPageId;
+};
+
 const editSection = (sectionId) => {
+    console.log('Attempting to edit section with ID:', sectionId);
+    const section = findSectionById(sectionId);
+
+    if (!section) {
+        showToast('Section is not available in this page. Refreshing sections...', 'error');
+        router.reload({ only: ['sections', 'page'] });
+        return;
+    }
+
+    if (!sectionBelongsToCurrentPage(section)) {
+        showToast('Section belongs to another page. Refreshing sections...', 'error');
+        router.reload({ only: ['sections', 'page'] });
+        return;
+    }
+
     editingSectionId.value = sectionId;
+    console.log('Editing section with ID:', sectionId);
 };
 
 const closeEditSidebar = () => {
@@ -1886,8 +2016,19 @@ const addSection = (sectionTypeId) => {
 };
 
 const updateSection = (sectionId, content) => {
-    const section = sectionsList.value.find(s => s.id === sectionId);
-    if (!section) return;
+    const section = findSectionById(sectionId);
+
+    if (!section) {
+        showToast('Section not found in this page. Refreshing sections...', 'error');
+        router.reload({ only: ['sections', 'page'] });
+        return;
+    }
+
+    if (!sectionBelongsToCurrentPage(section)) {
+        showToast('Section belongs to another page. Refreshing sections...', 'error');
+        router.reload({ only: ['sections', 'page'] });
+        return;
+    }
 
     console.log('Saving section:', sectionId, 'with content:', JSON.stringify(content, null, 2));
 
@@ -2000,6 +2141,17 @@ const openPreview = () => {
     window.open(pageUrl, '_blank');
 };
 
+// Handle live content changes from sidebar (updates preview + keeps content in sync)
+const onSectionChange = (sectionId, content) => {
+    hasUnsavedChanges.value = true;
+    if (sectionId && content) {
+        const section = sectionsList.value.find(s => s.id === sectionId);
+        if (section) {
+            section.content = content;
+        }
+    }
+};
+
 // Save all sections (for the Save button)
 const saveAllSections = () => {
     if (isSaving.value) return;
@@ -2069,6 +2221,29 @@ const handleIframeMessage = (event) => {
         editSection(event.data.sectionId);
     }
 };
+
+watch(
+    () => props.page.id,
+    () => {
+        sectionsList.value = [...props.sections];
+        editingSectionId.value = null;
+        hasUnsavedChanges.value = false;
+
+        nextTick(() => {
+            if (sortableInstance.value) {
+                sortableInstance.value.destroy();
+            }
+            initSortable();
+        });
+    }
+);
+
+watch(
+    () => props.sections,
+    (newSections) => {
+        sectionsList.value = [...newSections];
+    }
+);
 
 onMounted(() => {
     nextTick(() => {
@@ -2299,7 +2474,7 @@ onUnmounted(() => {
             :section-type="sectionTypes.find(st => st.id === editingSection.section_type_id)"
             @close="closeEditSidebar"
             @update="updateSection"
-            @change="hasUnsavedChanges = true"
+            @change="onSectionChange"
         />
 
         <!-- Toast Notifications -->
@@ -2667,3 +2842,4 @@ onUnmounted(() => {
     cursor: grabbing;
 }
 </style>
+

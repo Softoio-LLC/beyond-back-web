@@ -150,9 +150,8 @@ const t = (ar, en) => props.lang === 'ar' ? (ar || en || '') : (en || ar || '');
 
 <style scoped>
 .about-section-wrapper {
-    margin-top: 3rem;
-    margin-bottom: 3rem;
-    padding-top: 2rem;
+    margin-block: clamp(1.5rem, 1rem + 2vw, 3rem);
+    padding-top: clamp(1rem, 0.5rem + 1.5vw, 2rem);
 }
 
 .about-area {
@@ -160,11 +159,19 @@ const t = (ar, en) => props.lang === 'ar' ? (ar || en || '') : (en || ar || '');
 }
 
 .about-block-alt {
-    padding: 3rem 0;
+    padding: clamp(1.5rem, 1rem + 2vw, 3rem) 0;
 }
 
 .bg-light-gray {
     background-color: #fcfcfd;
+}
+
+@media (max-width: 767px) {
+    .ab-left,
+    .ab-right,
+    .hero-shape-5 {
+        display: none;
+    }
 }
 
 /* RTL adjustments handled by Bootstrap's order classes */

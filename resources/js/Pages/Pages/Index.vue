@@ -2,8 +2,10 @@
 import { ref, computed, watch } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
 import DashboardLayout from '@/Layouts/DashboardLayout.vue';
-import saFlag from '@/../assets/sa-flag.svg';
-import usFlag from '@/../assets/us-flag.svg';
+
+// Use absolute paths for SSR compatibility
+const saFlag = '/assets/img/sa-flag.svg';
+const usFlag = '/assets/img/us-flag.svg';
 
 defineOptions({ layout: DashboardLayout });
 
@@ -273,7 +275,9 @@ const duplicatePage = (pageId) => {
                     :disabled="currentPage === 1"
                     @click="goToPage(currentPage - 1)"
                 >
-                    Previous
+                    <svg viewBox="0 0 20 20" fill="currentColor" width="20" height="20">
+                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
                 </button>
                 <button 
                     v-for="page in pageNumbers" 
@@ -289,7 +293,9 @@ const duplicatePage = (pageId) => {
                     :disabled="currentPage === lastPage"
                     @click="goToPage(currentPage + 1)"
                 >
-                    Next
+                    <svg viewBox="0 0 20 20" fill="currentColor" width="20" height="20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                    </svg>
                 </button>
             </div>
         </div>
@@ -561,6 +567,46 @@ const duplicatePage = (pageId) => {
     font-weight: 400;
     font-size: 14px;
     color: var(--color-text-muted);
+}
+
+.pagination {
+    display: flex;
+    gap: 4px;
+}
+
+.pagination-btn,
+.pagination-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 8px;
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    color: var(--color-text-dark);
+    background-color: var(--color-bg-white);
+    border: 1px solid var(--color-border-light);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.pagination-btn:hover:not(:disabled),
+.pagination-number:hover:not(.active) {
+    background-color: var(--color-secondary);
+    border-color: var(--color-primary);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pagination-number.active {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
 }
 
 /* Responsive */

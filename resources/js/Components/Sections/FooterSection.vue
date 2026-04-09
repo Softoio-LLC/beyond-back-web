@@ -79,11 +79,11 @@ const socialLinks = computed(() => {
             <div class="footer-inner-block position-relative z-1 overflow-hidden">
                 <div class="footer-top-wrapper">
                     <div class="row">
-                        <div class="col-xl-2" data-aos="fade-in" data-aos-delay="300">
+                        <div class="col-sm-6 col-md-4 col-lg-3 col-xl-2" data-aos="fade-in" data-aos-delay="300">
                             <div class="footer-identity">
                                 <div class="footer-logo">
                                     <Link :href="lang === 'ar' ? '/ar' : '/'">
-                                        <AppImage v-if="logoUrl" :src="logoUrl" alt="Logo" loading="lazy"  />
+                                        <AppImage v-if="logoUrl" :src="logoUrl" alt="Logo" loading="lazy" :width="150" :height="60" />
                                     </Link>
                                 </div>
                                 <div class="footer-content">
@@ -94,7 +94,7 @@ const socialLinks = computed(() => {
                         <div 
                             v-for="(column, index) in content.menu_columns" 
                             :key="index"
-                            class="col-xl-2" 
+                            class="col-sm-6 col-md-4 col-lg-3 col-xl-2" 
                             data-aos="fade-in" 
                             data-aos-delay="300"
                         >
@@ -110,7 +110,7 @@ const socialLinks = computed(() => {
                                 </ul>
                             </div>
                         </div>
-                        <div class="col-xl-2" data-aos="fade-in" data-aos-delay="300">
+                        <div class="col-sm-6 col-md-4 col-lg-3 col-xl-2" data-aos="fade-in" data-aos-delay="300">
                             <div class="footer-menu-list">
                                 <div class="footer-inner-title">
                                     <h4 v-html="contactTitle"></h4>
@@ -127,7 +127,7 @@ const socialLinks = computed(() => {
                                 </ul>
                             </div>
                         </div>
-                        <div class="col-xl-2" data-aos="fade-in" data-aos-delay="300">
+                        <div class="col-sm-6 col-md-4 col-lg-3 col-xl-2" data-aos="fade-in" data-aos-delay="300">
                             <div class="footer-social-block">
                                 <div class="footer-inner-title">
                                     <h4 v-html="socialTitle"></h4>

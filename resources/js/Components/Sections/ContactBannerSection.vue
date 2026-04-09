@@ -22,7 +22,7 @@ const getImageUrl = (img) => {
 
 const title = computed(() => props.lang === 'ar' ? props.content.title_ar : props.content.title_en);
 const breadcrumb = computed(() => {
-    const home = props.lang === 'ar' ? 'الرئيسية' : 'Home';
+    const home = props.lang === 'ar' ? (props.content.home_label_ar || 'الرئيسية') : (props.content.home_label_en || 'Home');
     const current = props.lang === 'ar' ? props.content.breadcrumb_ar : props.content.breadcrumb_en;
     return { home, current };
 });
@@ -55,7 +55,8 @@ const bgStyle = computed(() => ({
                                         :src="iconUrl" 
                                         alt=""
                                         loading="lazy"
-                                        
+                                        :width="80"
+                                        :height="80"
                                     />
                                 </i>
                                 <div>

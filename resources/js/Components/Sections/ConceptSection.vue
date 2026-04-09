@@ -42,7 +42,7 @@ const bottomShapeImageUrl = computed(() => getImageUrl(props.content.bottom_shap
 </script>
 
 <template>
-    <section class="concept-area">
+    <section> <!-- concept-area -->
         <div class="container">
             <div class="concept-inner-block position-relative z-1 overflow-hidden">
                 <!-- First Concept Block -->
@@ -70,12 +70,11 @@ const bottomShapeImageUrl = computed(() => getImageUrl(props.content.bottom_shap
                                         :class="slide.radius_class"
                                     >
                                         <AppImage 
-                                            class="w-100 h-100 object-fit-cover" 
+                                            class="w-100"
+                                            style="height: 100%"
                                             :src="slide.imageUrl" 
                                             :alt="slide.alt || 'Thumb'"
                                             loading="lazy"
-                                            :width="600"
-                                            :height="400"
                                         />
                                     </div>
                                 </div>

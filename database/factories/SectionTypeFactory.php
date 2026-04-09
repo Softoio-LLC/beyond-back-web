@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\SectionType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -19,14 +18,14 @@ class SectionTypeFactory extends Factory
     public function definition(): array
     {
         $name = fake()->unique()->words(2, true);
-        
+
         return [
             'key' => Str::slug($name, '_'),
             'name_en' => ucwords($name),
             'name_ar' => 'قسم تجريبي',
             'icon' => 'far fa-cube',
             'preview_image' => null,
-            'component_name' => Str::studly($name) . 'Section',
+            'component_name' => Str::studly($name).'Section',
             'default_content' => [
                 'title_en' => '',
                 'title_ar' => '',

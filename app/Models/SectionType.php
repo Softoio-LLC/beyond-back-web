@@ -19,6 +19,8 @@ class SectionType extends Model
         'key',
         'name_en',
         'name_ar',
+        'description_en',
+        'description_ar',
         'icon',
         'preview_image',
         'component_name',

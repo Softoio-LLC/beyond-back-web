@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\StorageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
@@ -10,6 +11,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ImageController extends Controller
 {
+    public function __construct(protected StorageService $storage) {}
+
     /**
      * Serve optimized image with resizing, format conversion, and caching.
      *
@@ -42,17 +45,19 @@ class ImageController extends Controller
             return $this->responseWithHeaders($content, $cachedData['mime']);
         }
 
-        // Determine the actual file path
-        $originalPath = $this->resolveImagePath($path);
+        // Determine the actual file path or content
+        $imageSource = $this->resolveImagePath($path);
 
-        if (! $originalPath || ! file_exists($originalPath)) {
+        if (! $imageSource) {
             abort(404, 'Image not found: '.$path);
         }
 
         // Check if it's an SVG - serve directly without processing
-        $extension = strtolower(pathinfo($originalPath, PATHINFO_EXTENSION));
+        $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
         if ($extension === 'svg') {
-            $content = file_get_contents($originalPath);
+            $content = $imageSource['type'] === 'path'
+                ? file_get_contents($imageSource['data'])
+                : $imageSource['data'];
 
             return response($content, 200, [
                 'Content-Type' => 'image/svg+xml',
@@ -62,8 +67,10 @@ class ImageController extends Controller
             ]);
         }
 
-        // Load image with Intervention
-        $image = Image::read($originalPath);
+        // Load image with Intervention - handle both path and content
+        $image = $imageSource['type'] === 'path'
+            ? Image::read($imageSource['data'])
+            : Image::read($imageSource['data']);
 
         // Resize if dimensions provided
         if ($width || $height) {
@@ -96,8 +103,11 @@ class ImageController extends Controller
     /**
      * Resolve the actual file path for an image
      * Handles both storage uploads and public assets
+     * Returns file content for cloud storage or path for local storage
+     *
+     * @return array{type: string, data: string}|null
      */
-    private function resolveImagePath(string $path): ?string
+    private function resolveImagePath(string $path): ?array
     {
         // Remove leading slash if present
         $path = ltrim($path, '/');
@@ -106,19 +116,29 @@ class ImageController extends Controller
         if (str_starts_with($path, 'assets/') || str_starts_with($path, 'public/')) {
             $publicPath = public_path($path);
             if (file_exists($publicPath)) {
-                return $publicPath;
+                return ['type' => 'path', 'data' => $publicPath];
             }
         }
 
-        // Check in storage/app/public (uploaded files)
-        if (Storage::disk('public')->exists($path)) {
-            return Storage::disk('public')->path($path);
+        // Check in storage (cloud or local)
+        if ($this->storage->exists($path)) {
+            // For local storage, return path; for cloud, return content
+            $localPath = $this->storage->path($path);
+            if ($localPath && file_exists($localPath)) {
+                return ['type' => 'path', 'data' => $localPath];
+            }
+
+            // Cloud storage - get content
+            $content = $this->storage->get($path);
+            if ($content) {
+                return ['type' => 'content', 'data' => $content];
+            }
         }
 
         // Try as absolute path from public root
         $publicPath = public_path($path);
         if (file_exists($publicPath)) {
-            return $publicPath;
+            return ['type' => 'path', 'data' => $publicPath];
         }
 
         return null;

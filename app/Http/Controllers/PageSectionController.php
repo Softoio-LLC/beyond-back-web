@@ -103,7 +103,7 @@ class PageSectionController extends Controller
     public function update(UpdatePageSectionRequest $request, Page $page, PageSection $section)
     {
         // Ensure section belongs to page
-        if ($section->page_id !== $page->id) {
+        if ((int) $section->page_id !== (int) $page->id) {
             abort(403, 'Section does not belong to this page.');
         }
 
@@ -217,7 +217,7 @@ class PageSectionController extends Controller
     public function destroy(Page $page, PageSection $section)
     {
         // Ensure section belongs to page
-        if ($section->page_id !== $page->id) {
+        if ((int) $section->page_id !== (int) $page->id) {
             abort(403, 'Section does not belong to this page.');
         }
 
@@ -241,7 +241,7 @@ class PageSectionController extends Controller
     public function duplicate(Page $page, PageSection $section)
     {
         // Ensure section belongs to page
-        if ($section->page_id !== $page->id) {
+        if ((int) $section->page_id !== (int) $page->id) {
             abort(403, 'Section does not belong to this page.');
         }
 
@@ -279,7 +279,7 @@ class PageSectionController extends Controller
     public function toggle(Page $page, PageSection $section)
     {
         // Ensure section belongs to page
-        if ($section->page_id !== $page->id) {
+        if ((int) $section->page_id !== (int) $page->id) {
             abort(403, 'Section does not belong to this page.');
         }
 
@@ -318,7 +318,7 @@ class PageSectionController extends Controller
     public function preview(Request $request, Page $page, PageSection $section)
     {
         // Ensure section belongs to page
-        if ($section->page_id !== $page->id) {
+        if ((int) $section->page_id !== (int) $page->id) {
             abort(403, 'Section does not belong to this page.');
         }
 

@@ -86,15 +86,17 @@ class Page extends Model
                     'ar' => $page->url_slug_ar,
                 ];
             });
-        
+
         return $slugs->toArray();
     }
+
     /**
      * Find a page by its slug based on language.
      */
     public static function findBySlug(string $slug, string $lang = 'en'): ?self
     {
         $field = $lang === 'ar' ? 'url_slug_ar' : 'url_slug_en';
+
         return static::where($field, $slug)->published()->first();
     }
 
@@ -106,8 +108,9 @@ class Page extends Model
         if ($this->is_homepage) {
             return $lang === 'ar' ? '/ar' : '/';
         }
-        
+
         $slug = $lang === 'ar' ? $this->url_slug_ar : $this->url_slug_en;
+
         return $lang === 'ar' ? "/ar/{$slug}" : "/{$slug}";
     }
 
@@ -133,7 +136,7 @@ class Page extends Model
     public function getHeaderSection(): ?PageSection
     {
         return $this->sections()
-            ->whereHas('sectionType', fn($q) => $q->where('key', 'header'))
+            ->whereHas('sectionType', fn ($q) => $q->where('key', 'header'))
             ->first();
     }
 
@@ -143,7 +146,7 @@ class Page extends Model
     public function getFooterSection(): ?PageSection
     {
         return $this->sections()
-            ->whereHas('sectionType', fn($q) => $q->where('key', 'footer'))
+            ->whereHas('sectionType', fn ($q) => $q->where('key', 'footer'))
             ->first();
     }
 
@@ -153,7 +156,7 @@ class Page extends Model
     public function getContentSections()
     {
         return $this->sections()
-            ->whereHas('sectionType', fn($q) => $q->where('is_fixed', false))
+            ->whereHas('sectionType', fn ($q) => $q->where('is_fixed', false))
             ->get();
     }
 
@@ -166,7 +169,7 @@ class Page extends Model
     {
         // Only create fixed sections (header and footer) for new pages
         $fixedSectionTypes = SectionType::active()->fixed()->ordered()->get();
-        
+
         foreach ($fixedSectionTypes as $index => $type) {
             // Set order: header at 0, footer at high number
             $order = $type->key === 'footer' ? 999 : $index;
@@ -180,7 +183,7 @@ class Page extends Model
     public function initializeAllSections(): void
     {
         $sectionTypes = SectionType::active()->ordered()->get();
-        
+
         foreach ($sectionTypes as $index => $type) {
             $type->createDefaultSection($this->id, $type->default_order ?? $index);
         }

@@ -1,0 +1,870 @@
+/* ===================================================================
+   BEYOND TECHNOLOGY - Custom Fixes for Menu & Animation Issues
+   =================================================================== */
+
+/* ----------------------------- FIX #0: FOUC Prevention ------------------------ */
+/* Prevent Flash of Unstyled Content (FOUC) */
+html.loading {
+    visibility: hidden;
+    opacity: 0;
+}
+
+html.loaded {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 0.2s ease-in;
+}
+
+/* Fallback - auto-show after 100ms if JS fails */
+html {
+    visibility: visible;
+    animation: fouc-fallback 0s 0.1s forwards;
+}
+
+@keyframes fouc-fallback {
+    to {
+        visibility: visible;
+        opacity: 1;
+    }
+}
+
+/* ----------------------------- FIX #1: AOS Animation Performance ------------------------ */
+/* Prevent flash of unstyled content on first load */
+[data-aos] {
+    visibility: hidden;
+}
+
+[data-aos].aos-animate {
+    visibility: visible;
+}
+
+/* Optimize AOS transitions for better first-load performance */
+[data-aos][data-aos-delay] {
+    transition-delay: 0s !important;
+}
+
+[data-aos][data-aos-delay].aos-animate {
+    transition-delay: inherit !important;
+}
+
+
+/* ----------------------------- FIX #2: Mobile Offcanvas Menu ------------------------ */
+/* Ensure offcanvas stays visible when open */
+.offcanvas.show {
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.offcanvas {
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out !important;
+}
+
+/* Fix offcanvas menu items from fading away */
+.offcanvas-menu ul li {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transition: none !important;
+}
+
+.offcanvas-body {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Ensure dropdown items stay visible in offcanvas */
+.offcanvas-menu ul li .dropdown-menu-list {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Fix accordion dropdown in mobile menu */
+.offcanvas-menu .accordion-collapse.show {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+
+/* ----------------------------- FIX #3: RTL Menu Styling ------------------------ */
+/* RTL-specific dropdown menu positioning */
+[dir="rtl"] .dropdown-menu {
+    right: 0;
+    left: auto;
+    text-align: right;
+}
+
+/* RTL dropdown toggle chevron icon */
+[dir="rtl"] .main-menu nav ul li .dropdown-toggle span {
+    order: -1;
+    margin-left: 0;
+    margin-right: 8px;
+}
+
+/* RTL dropdown item chevron positioning */
+[dir="rtl"] .dropdown-menu > li > .dropdown-item span {
+    order: -1;
+    margin-left: 0;
+    margin-right: 8px;
+}
+
+/* RTL dropdown item alignment */
+[dir="rtl"] .dropdown-menu > li > .dropdown-item {
+    text-align: right;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+    padding-right: 16px;
+    padding-left: 16px;
+}
+
+/* RTL dropdown menu padding and spacing */
+[dir="rtl"] .dropdown-menu {
+    padding: 16px;
+    text-align: right;
+}
+
+/* RTL dropdown item icon */
+[dir="rtl"] .dropdown-menu > li > .dropdown-item span i {
+    transform: scaleX(-1);
+}
+
+/* RTL chevron icon rotation for dropdown */
+[dir="rtl"] .dropdown-toggle span i.fa-chevron-down {
+    transform: none;
+}
+
+/* RTL offcanvas menu alignment */
+[dir="rtl"] .offcanvas-menu ul li a {
+    text-align: right !important;
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .offcanvas-menu ul li .dropdown-menu-list li a {
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+}
+
+[dir="rtl"] .offcanvas-menu ul li .dropdown-menu-list li a span {
+    margin-left: 0;
+    margin-right: auto;
+}
+
+/* RTL header button spacing */
+[dir="rtl"] .header-btns {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .header-contact-btn span {
+    order: -1;
+    margin-left: 0;
+    margin-right: 8px;
+}
+
+/* RTL language selector positioning */
+[dir="rtl"] .language-select {
+    direction: ltr;
+}
+
+/* RTL Header Container - Full Layout Fix */
+[dir="rtl"] .header-inner-block {
+    flex-direction: row-reverse;
+}
+
+/* RTL main menu gap fixes */
+[dir="rtl"] .header-left-block {
+    flex-direction: row-reverse;
+    order: 2;
+}
+
+[dir="rtl"] .main-menu nav ul {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .main-menu nav ul li {
+    margin-left: 0;
+    margin-right: 20px;
+}
+
+[dir="rtl"] .main-menu nav ul li:last-child {
+    margin-right: 0;
+}
+
+/* RTL Logo positioning - Move to right side */
+[dir="rtl"] .header-logo {
+    order: 3;
+}
+
+[dir="rtl"] .header-right-block,
+[dir="rtl"] .navbar-right {
+    order: 1;
+}
+
+/* Ensure RTL dropdown alignment is proper */
+[dir="rtl"] .dropdown-menu {
+    transform-origin: top right;
+}
+
+[dir="ltr"] .dropdown-menu {
+    transform-origin: top left;
+}
+
+
+/* ----------------------------- Additional Improvements ------------------------ */
+/* Smooth header transitions */
+.header-area {
+    transition: all 0.3s ease-in-out;
+}
+
+/* Prevent layout shift during load */
+.main-area {
+    min-height: 100vh;
+}
+
+/* Optimize dropdown animation */
+.dropdown-menu {
+    animation-duration: 0.2s !important;
+}
+
+/* Fix dropdown visibility issues */
+.dropdown-menu.show {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+
+/* ----------------------------- FIX #4: FAQ Accordion Arrow Positioning ------------------------ */
+/* LTR-specific FAQ accordion arrow positioning */
+[dir="ltr"] .faq-accordion .accordion-button {
+    padding-inline-end: 60px !important;
+}
+
+[dir="ltr"] .faq-accordion .accordion-button::after {
+    position: absolute;
+    right: 12px;
+    flex-shrink: 0;
+}
+
+/* RTL-specific FAQ accordion arrow positioning */
+[dir="rtl"] .faq-accordion .accordion-button {
+    padding-inline-start: 60px !important;
+}
+
+[dir="rtl"] .faq-accordion .accordion-button::after {
+    position: absolute;
+    left: 12px;
+    right: auto;
+    flex-shrink: 0;
+}
+
+/* Ensure accordion body text alignment matches direction */
+[dir="ltr"] .faq-accordion .accordion-body {
+    padding-left: 12px;
+    padding-right: 42px;
+    text-align: left;
+}
+
+[dir="rtl"] .faq-accordion .accordion-body {
+    padding-right: 12px;
+    padding-left: 42px;
+    text-align: right;
+}
+
+
+/* ----------------------------- FIX #5: Team Swiper Pagination ------------------------ */
+/* Improve pagination bullets clickability and smoothness */
+.team-pagination {
+    gap: 8px;
+}
+
+.team-pagination .swiper-pagination-bullet {
+    width: 10px;
+    height: 10px;
+    cursor: pointer;
+    opacity: 1;
+    transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.team-pagination .swiper-pagination-bullet:hover {
+    transform: scale(1.2);
+    background-color: #3a9e9a;
+}
+
+.team-pagination .swiper-pagination-bullet-active {
+    width: 28px;
+    height: 10px;
+    cursor: pointer;
+}
+
+/* Ensure smooth slide transitions for team swiper */
+.team-card-wrap .swiper-wrapper {
+    transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1) !important;
+}
+
+.team-card-wrap .swiper-slide {
+    transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+
+/* ----------------------------- FIX #6: Global Swiper Smooth Animations ------------------------ */
+/* Smooth slide transitions for all swipers */
+.swiper-wrapper {
+    transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1) !important;
+}
+
+/* Hero slider smooth transitions */
+.hero-slide-thumb .swiper-slide {
+    transition: transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1), 
+                opacity 0.5s ease,
+                height 0.4s ease;
+}
+
+.hero-slide-thumb .swiper-slide-active {
+    transform: scale(1);
+}
+
+.hero-slide-thumb .swiper-slide:not(.swiper-slide-active) {
+    opacity: 0.85;
+}
+
+/* Work slider smooth transitions */
+.work-single-wrap .swiper-slide,
+.outer-work-swiper .swiper-slide {
+    transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1), 
+                opacity 0.4s ease;
+}
+
+.work-single-wrap .swiper-slide-active,
+.outer-work-swiper .swiper-slide-active {
+    opacity: 1;
+}
+
+/* Brand logos slider smooth transitions */
+.brand-logos-slide .swiper-slide {
+    transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1), 
+                opacity 0.4s ease,
+                filter 0.3s ease;
+}
+
+.brand-logos-slide .swiper-slide-active {
+    transform: scale(1.05);
+}
+
+/* Concept slider smooth transitions */
+.concept-thumbnails .swiper-slide {
+    transition: transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1), 
+                opacity 0.5s ease;
+}
+
+/* Team card hover and slide effects */
+.team-card-wrap .swiper-slide {
+    transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1), 
+                opacity 0.4s ease,
+                box-shadow 0.3s ease;
+}
+
+.team-card-wrap .swiper-slide:hover .team-card {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.team-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Swiper pagination bullets global smooth animation */
+.swiper-pagination-bullet {
+    transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1) !important;
+    cursor: pointer;
+}
+
+.swiper-pagination-bullet:hover {
+    transform: scale(1.15);
+}
+
+/* Smooth opacity for slides entering/leaving */
+.swiper-slide-prev,
+.swiper-slide-next {
+    opacity: 0.9;
+}
+
+/* Ensure images inside slides transition smoothly */
+.swiper-slide img {
+    transition: transform 0.4s ease, opacity 0.3s ease;
+}
+
+.swiper-slide:hover img {
+    transform: scale(1.02);
+}
+
+
+/* ----------------------------- FIX #7: About Section Layout ------------------------ */
+/* About section spacing and layout fixes */
+.about-area {
+    position: relative;
+}
+
+/* Hero shape positioning within about section */
+.about-area img.hero-shape-5 {
+    position: absolute;
+    top: 0;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* About content wrapper margin for visual separation */
+.about-area .container:first-of-type {
+    padding-top: 2rem;
+}
+
+/* Alternative block spacing */
+.about-block-alt {
+    padding: 3rem 0;
+}
+
+/* Background for alternating blocks */
+.about-area .bg-light-gray {
+    background-color: #fcfcfd;
+}
+
+/* Fix RTL layout for about section */
+[dir="rtl"] .about-area .about__content {
+    text-align: right;
+}
+
+[dir="ltr"] .about-area .about__content {
+    text-align: left;
+}
+
+/* Ensure proper spacing on about section container */
+.about-area .container.md {
+    max-width: 1000px;
+}
+
+/* About image container - proper positioning for background shape */
+.about-area .about__img {
+    position: relative;
+    max-width: 530px;
+    margin-inline: auto;
+}
+
+/* Main about image - full display without cropping */
+.about-area .about__img .about-main-img {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    object-fit: contain;
+    position: relative;
+    z-index: 1;
+}
+
+/* Background shape behind the main image */
+.about-area .about__img img.hero-icon-bg {
+    position: absolute;
+    max-width: unset;
+    width: 120%;
+    z-index: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+[dir="rtl"] .about-area .about__img img.hero-icon-bg {
+    right: -13%;
+    left: auto;
+}
+
+[dir="ltr"] .about-area .about__img img.hero-icon-bg {
+    left: -13%;
+    right: auto;
+}
+
+
+/* ----------------------------- FIX #8: Hero Title Font Size ------------------------ */
+/* Reduce hero title font size on homepage to prevent it from being too big */
+.hero-title h1 {
+    font-size: 48px !important;
+    line-height: 68px !important;
+}
+
+@media screen and (max-width: 991px) {
+    .hero-title h1 {
+        font-size: 40px !important;
+        line-height: 54px !important;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .hero-title h1 {
+        font-size: 32px !important;
+        line-height: 46px !important;
+    }
+}
+
+
+/* ----------------------------- FIX #9: Concept Area Margin and Padding Consistency ------------------------ */
+/* Make concept-area margin and padding consistent with other sections */
+.concept-area {
+    margin-bottom: 80px !important;
+}
+
+.concept-inner-block {
+    padding: 40px 60px !important;
+}
+
+.concept-wrapper {
+    padding: 40px 60px !important;
+    margin-bottom: 40px !important;
+}
+
+@media screen and (max-width: 1199px) {
+    .concept-inner-block {
+        padding: 35px 50px !important;
+    }
+    
+    .concept-wrapper {
+        padding: 35px 50px !important;
+    }
+}
+
+@media screen and (max-width: 991px) {
+    .concept-area {
+        margin-bottom: 60px !important;
+    }
+    
+    .concept-inner-block {
+        padding: 30px 40px !important;
+    }
+    
+    .concept-wrapper {
+        padding: 30px 40px !important;
+        margin-bottom: 30px !important;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .concept-inner-block {
+        padding: 25px 30px !important;
+    }
+    
+    .concept-wrapper {
+        padding: 25px 30px !important;
+    }
+}
+
+
+/* ----------------------------- FIX #9a: Concept Section - Force Side-by-Side Layout ------------------------ */
+/* Force image and text to always sit side by side, never stack */
+.concept-wrapper .row {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 0 !important;
+}
+
+/* Force both columns to always be 50% wide, overriding Bootstrap stacking */
+.concept-wrapper .row > [class*="col-"] {
+    flex: 0 0 50% !important;
+    max-width: 50% !important;
+    width: 50% !important;
+}
+
+/* Constrain image/swiper to its column — no overflow */
+.swiper.concept-thumbnails {
+    padding-right: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    overflow: hidden !important;
+}
+
+.concept-single-thumb {
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.concept-single-thumb img {
+    max-width: 100%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Ensure text content wraps within its column */
+.concept-content {
+    max-width: 100% !important;
+    padding-right: 1.5rem;
+    box-sizing: border-box;
+}
+
+.concept-content h3 {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+}
+
+.concept-content p {
+    max-width: 100% !important;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Second concept wrapper — text is on right */
+.second-concept-wrapper .concept-content {
+    margin-right: 0;
+    padding-left: 1.5rem;
+    padding-right: 0;
+}
+
+/* Only stack on very small screens */
+@media screen and (max-width: 575px) {
+    .concept-wrapper .row {
+        flex-wrap: wrap !important;
+    }
+
+    .concept-wrapper .row > [class*="col-"] {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+
+    .concept-content {
+        padding-right: 0;
+        padding-left: 0;
+    }
+
+    .second-concept-wrapper .concept-content {
+        padding-left: 0;
+    }
+}
+
+
+/* ----------------------------- FIX #10: Service Card Thumb Boundaries ------------------------ */
+/* Fix service-card boundaries so text doesn't overlap with image */
+.service-single-card {
+    gap: 24px;
+}
+
+.service-card-thumb {
+    flex-shrink: 0;
+    max-width: 292px;
+    min-width: 292px;
+    height: 252px;
+    overflow: hidden;
+    border-radius: 20px;
+}
+
+.service-card-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.service-card-content {
+    flex: 1;
+    min-width: 0;
+}
+
+@media screen and (max-width: 991px) {
+    .service-single-card {
+        flex-direction: column;
+    }
+    
+    .service-card-thumb {
+        max-width: 100%;
+        min-width: 100%;
+    }
+}
+
+
+/* ----------------------------- FIX #11: Work Area - One Card Visible ------------------------ */
+/* Make work slider show only one card at a time and reduce white space */
+.outer-work-swiper {
+    overflow: hidden !important;
+    padding-left: 0 !important;
+}
+
+.outer-work-swiper .swiper-wrapper {
+    display: flex !important;
+}
+
+.outer-work-swiper .swiper-slide {
+    width: 100% !important;
+    flex-shrink: 0 !important;
+    display: flex !important;
+    justify-content: center !important;
+}
+
+.work-wrapper {
+    width: 100%;
+    max-width: 100%;
+}
+
+.work-single-card {
+    margin: 0 auto;
+    max-width: 1200px;
+    width: 100%;
+    padding: 40px !important;
+}
+
+.work-card-wrap {
+    justify-content: space-around !important;
+    gap: 40px !important;
+    align-items: center;
+}
+
+.work-card-items {
+    width: auto !important;
+    flex: 1 !important;
+    max-width: 550px !important;
+}
+
+.work-card-thumb {
+    flex-shrink: 0 !important;
+    width: 172px !important;
+    height: 349px !important;
+}
+
+@media screen and (max-width: 991px) {
+    .work-single-card {
+        padding: 30px !important;
+    }
+    
+    .work-card-wrap {
+        flex-direction: column-reverse !important;
+        gap: 30px !important;
+    }
+    
+    .work-card-items {
+        max-width: 100% !important;
+        text-align: center;
+    }
+    
+    .work-card-thumb {
+        margin: 0 auto;
+    }
+}
+
+
+
+/* ----------------------------- FIX #12: Team Card Consistent Height ------------------------ */
+/* Make all team cards have consistent height */
+.team-card-wrap .swiper-slide {
+    height: auto;
+    display: flex;
+}
+
+.team-card {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 420px;
+}
+
+.team-thumb {
+    flex-shrink: 0;
+}
+
+.team-card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 20px;
+    min-height: 120px;
+}
+
+.team-card-content h4 {
+    margin-bottom: 8px;
+}
+
+.team-card-content p {
+    flex: 1;
+    margin: 0;
+}
+
+
+/* ----------------------------- FIX #13: Hero Block Overlap and Boundaries ------------------------ */
+/* Fix hero__block overlap with image and add proper boundaries */
+.hero__block {
+    max-width: 600px;
+    padding: 0;
+}
+
+.hero__block h1.fs-56 {
+    font-size: 46px !important;
+    line-height: 62px !important;
+    max-width: 100%;
+    word-wrap: break-word;
+}
+
+.hero__img {
+    max-width: 600px;
+    flex-shrink: 0;
+}
+
+.common-hero-area .row {
+    gap: 2rem;
+}
+
+@media screen and (max-width: 1199px) {
+    .hero__block h1.fs-56 {
+        font-size: 38px !important;
+        line-height: 52px !important;
+    }
+}
+
+@media screen and (max-width: 991px) {
+    .hero__block h1.fs-56 {
+        font-size: 32px !important;
+        line-height: 46px !important;
+    }
+    
+    .hero__block {
+        max-width: 100%;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .hero__block h1.fs-56 {
+        font-size: 28px !important;
+        line-height: 40px !important;
+    }
+}
+
+
+/* ----------------------------- FIX #14: ComService Area Margin at 1680w ------------------------ */
+/* Fix comService-area margin and edge-to-edge issue at 1680w screen size */
+@media screen and (min-width: 1680px) and (max-width: 1920px) {
+    .comService-area .container {
+        max-width: 1500px !important;
+        padding-inline: 60px !important;
+        margin-inline: auto !important;
+    }
+    
+    .comService-area {
+        padding-inline: 40px !important;
+    }
+    
+    .comService-area .row {
+        margin-inline: 0 !important;
+        padding-inline: 20px !important;
+    }
+}
+
+@media screen and (min-width: 1400px) and (max-width: 1679px) {
+    .comService-area .container {
+        max-width: 1320px !important;
+        padding-inline: 40px !important;
+        margin-inline: auto !important;
+    }
+    
+    .comService-area {
+        padding-inline: 30px !important;
+    }
+}
+
+@media screen and (max-width: 1399px) {
+    .comService-area .container {
+        padding-inline: 20px !important;
+    }
+}
+
+

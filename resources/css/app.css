@@ -59,3 +59,38 @@ h6 p {
     margin: 0 !important;
     padding: 0 !important;
 }
+
+/* ===== Global Responsive Safeguards ===== */
+html {
+    overflow-x: hidden;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+img,
+video,
+canvas,
+svg,
+iframe {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ===== Responsive Font Size Utilities ===== */
+.fs-56 {
+    font-size: clamp(1.75rem, 1.2rem + 2.5vw, 3.5rem) !important;
+}
+
+@media (max-width: 576px) {
+    .fs-18 {
+        font-size: 1rem !important;
+    }
+
+    .fs-16 {
+        font-size: 0.875rem !important;
+    }
+}

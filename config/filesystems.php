@@ -28,6 +28,19 @@ return [
     |
     */
 
+    /*
+    |--------------------------------------------------------------------------
+    | Active Storage Disk
+    |--------------------------------------------------------------------------
+    |
+    | This determines which disk is used for file uploads (images, media, etc.)
+    | Set to 'oci' in production to use Oracle Cloud Object Storage,
+    | or 'public' for local storage during development.
+    |
+    */
+
+    'uploads' => env('STORAGE_DISK', 'public'),
+
     'disks' => [
 
         'local' => [
@@ -56,6 +69,30 @@ return [
             'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+            'throw' => false,
+            'report' => false,
+        ],
+
+        /*
+        |--------------------------------------------------------------------------
+        | Oracle Cloud Infrastructure Object Storage
+        |--------------------------------------------------------------------------
+        |
+        | OCI Object Storage with S3-compatible API.
+        | Endpoint format: https://{namespace}.compat.objectstorage.{region}.oraclecloud.com
+        |
+        */
+
+        'oci' => [
+            'driver' => 's3',
+            'key' => env('OCI_ACCESS_KEY_ID'),
+            'secret' => env('OCI_SECRET_ACCESS_KEY'),
+            'region' => env('OCI_REGION', 'me-jeddah-1'),
+            'bucket' => env('OCI_BUCKET', 'bucket-beyond-website'),
+            'endpoint' => env('OCI_ENDPOINT', 'https://axirnwmffdrl.compat.objectstorage.me-jeddah-1.oraclecloud.com'),
+            'url' => env('OCI_URL'), // Optional CDN URL
+            'visibility' => 'public',
+            'use_path_style_endpoint' => true,
             'throw' => false,
             'report' => false,
         ],

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('pages', function (Blueprint $table) {
             $table->id();
-            
+
             // English fields
             $table->string('name_en')->nullable();
             $table->string('url_slug_en')->nullable();
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->text('meta_description_en')->nullable();
             $table->text('og_description_en')->nullable();
             $table->string('og_image_en')->nullable();
-            
+
             // Arabic fields
             $table->string('name_ar')->nullable();
             $table->string('url_slug_ar')->nullable();
@@ -35,7 +35,7 @@ return new class extends Migration
             $table->text('meta_description_ar')->nullable();
             $table->text('og_description_ar')->nullable();
             $table->string('og_image_ar')->nullable();
-            
+
             $table->timestamps();
         });
     }

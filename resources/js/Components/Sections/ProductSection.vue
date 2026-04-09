@@ -65,7 +65,8 @@ const description = computed(() => props.lang === 'ar' ? props.content.descripti
                                 :src="icon" 
                                 alt="" 
                                 loading="lazy" 
-                                
+                                :width="80"
+                                :height="80"
                             />
                         </i>
                         <div>
@@ -97,7 +98,7 @@ const description = computed(() => props.lang === 'ar' ? props.content.descripti
 /* Product Area Styles */
 .product-area {
     position: relative;
-    padding: 80px 0;
+    padding: clamp(2.5rem, 2rem + 3vw, 5rem) 0;
     overflow: hidden;
 }
 
@@ -106,7 +107,7 @@ const description = computed(() => props.lang === 'ar' ? props.content.descripti
     left: 0;
     top: 50%;
     transform: translateY(-50%);
-    max-width: 200px;
+    max-width: min(200px, 15vw);
     z-index: 1;
 }
 
@@ -114,7 +115,7 @@ const description = computed(() => props.lang === 'ar' ? props.content.descripti
     position: absolute;
     right: 0;
     top: 0;
-    max-width: 250px;
+    max-width: min(250px, 18vw);
     z-index: 1;
 }
 
@@ -142,25 +143,26 @@ const description = computed(() => props.lang === 'ar' ? props.content.descripti
 
 .product__content i {
     display: inline-block;
-    margin-bottom: 20px;
+    margin-bottom: 1.25rem;
 }
 
 .product__content i img {
-    width: 60px;
-    height: 60px;
+    width: clamp(2.5rem, 2rem + 1vw, 3.75rem);
+    height: auto;
+    aspect-ratio: 1;
     object-fit: contain;
 }
 
 .product__content h1 {
-    font-size: 48px;
+    font-size: clamp(1.5rem, 1.2rem + 2vw, 3rem);
     font-weight: 700;
-    margin-bottom: 20px;
+    margin-bottom: 1.25rem;
     line-height: 1.2;
     color: #1a1a1a;
 }
 
 .product__content p {
-    font-size: 18px;
+    font-size: clamp(0.875rem, 0.8rem + 0.5vw, 1.125rem);
     line-height: 1.8;
     color: #666;
     margin: 0;
@@ -179,43 +181,10 @@ const description = computed(() => props.lang === 'ar' ? props.content.descripti
 }
 
 /* Responsive styles */
-@media (max-width: 991px) {
-    .product-area {
-        padding: 60px 0;
-    }
-    
-    .product__content h1 {
-        font-size: 36px;
-    }
-    
-    .product__content p {
-        font-size: 16px;
-    }
-    
-    .product-left,
-    .product-top-right {
-        max-width: 150px;
-    }
-}
-
 @media (max-width: 767px) {
-    .product-area {
-        padding: 40px 0;
-    }
-    
-    .product__content h1 {
-        font-size: 28px;
-    }
-    
-    .product__content i img {
-        width: 40px;
-        height: 40px;
-    }
-    
     .product-left,
     .product-top-right {
-        max-width: 100px;
-        opacity: 0.3;
+        display: none;
     }
 }
 </style>

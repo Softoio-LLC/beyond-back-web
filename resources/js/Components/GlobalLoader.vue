@@ -1,6 +1,9 @@
 <script setup>
 import { ref, watch, onMounted } from 'vue';
-import logoUrl from '../../assets/logo.svg';
+import { usePage } from '@inertiajs/vue3';
+
+// Use absolute path for SSR compatibility
+const logoUrl = '/assets/img/logo.svg';
 
 const props = defineProps({
     loading: {
@@ -10,6 +13,7 @@ const props = defineProps({
 });
 
 const isVisible = ref(props.loading);
+const isMounted = ref(false);
 
 // Helper to check if URL is a preview/builder URL
 const isPreviewUrl = (url) => {
@@ -31,6 +35,7 @@ watch(() => props.loading, (newVal) => {
 }, { immediate: true });
 
 onMounted(() => {
+    isMounted.value = true;
     // Double check on mount (only runs in browser)
     if (typeof window !== 'undefined' && isPreviewUrl(window.location.href)) {
         isVisible.value = false;
@@ -43,7 +48,13 @@ onMounted(() => {
         <div v-if="isVisible" class="loader-container">
             <div class="loader-content">
                 <div class="bouncing-ball"></div>
-                <img :src="logoUrl" alt="Beyond Technology" class="loader-logo" />
+                <img 
+                    :src="logoUrl" 
+                    :alt="usePage().props.siteName || 'Beyond Technology'" 
+                    class="loader-logo"
+                    loading="eager"
+                    fetchpriority="high"
+                />
             </div>
         </div>
     </Transition>

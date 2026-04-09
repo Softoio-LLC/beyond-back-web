@@ -39,13 +39,7 @@ const gaConfig = computed(() => page.props.ga || {});
 
         <div class="widgets-grid">
             <!-- Visitor Chart Widget -->
-            <div class="widget widget-chart">
-                <VisitorChartWidget 
-                    :analytics="analytics"
-                    :ga-enabled="gaConfig.enabled"
-                    :ga-measurement-id="gaConfig.measurementId"
-                />
-            </div>
+
 
             <!-- Contacts Preview Widget -->
             <div class="widget widget-contacts">
@@ -86,7 +80,7 @@ const gaConfig = computed(() => page.props.ga || {});
 
 .widgets-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
     gap: 24px;
 }
 
@@ -95,20 +89,7 @@ const gaConfig = computed(() => page.props.ga || {});
     border-radius: 12px;
     border: 1px solid var(--color-border-light);
     overflow: hidden;
-}
-
-.widget-chart {
     min-height: 400px;
-}
-
-.widget-contacts {
-    min-height: 400px;
-}
-
-@media (max-width: 1200px) {
-    .widgets-grid {
-        grid-template-columns: 1fr;
-    }
 }
 
 @media (max-width: 640px) {

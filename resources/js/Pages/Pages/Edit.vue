@@ -3,8 +3,10 @@ import { ref, onMounted } from 'vue';
 import { Link, router, useForm } from '@inertiajs/vue3';
 import DashboardLayout from '@/Layouts/DashboardLayout.vue';
 import { useSlugify } from '@/composables/useSlugify';
-import saFlag from '@/../assets/sa-flag.svg';
-import usFlag from '@/../assets/us-flag.svg';
+
+// Use absolute paths for SSR compatibility
+const saFlag = '/assets/img/sa-flag.svg';
+const usFlag = '/assets/img/us-flag.svg';
 
 defineOptions({ layout: DashboardLayout });
 

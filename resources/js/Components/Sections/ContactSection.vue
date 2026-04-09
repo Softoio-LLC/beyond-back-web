@@ -77,7 +77,7 @@ const bgStyle = computed(() => {
                         <div class="contact-left d-flex align-items-center justify-content-start flex-column">
                             <div v-if="contactLogoUrl" class="contact-logo">
                                 <a href="#">
-                                    <AppImage :src="contactLogoUrl" alt="Logo" loading="lazy" />
+                                    <AppImage :src="contactLogoUrl" alt="Logo" loading="lazy" :width="150" :height="60" />
                                 </a>
                             </div>
                             <div class="contact-btn">

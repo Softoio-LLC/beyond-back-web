@@ -112,6 +112,7 @@ const getPreviewImageUrl = (path) => {
                     
                     <!-- Section Name -->
                     <div class="card-name">{{ sectionType.name_en }}</div>
+                    <div v-if="sectionType.description_en" class="card-description">{{ sectionType.description_en }}</div>
                     
                     <!-- Info Button (Preview on hover) -->
                     <button
@@ -283,6 +284,14 @@ const getPreviewImageUrl = (path) => {
     font-weight: 500;
     color: #004F4C;
     text-align: center;
+}
+
+.card-description {
+    font-size: 0.7rem;
+    color: #6b7280;
+    text-align: center;
+    line-height: 1.3;
+    margin-top: 0.25rem;
 }
 
 .info-btn {

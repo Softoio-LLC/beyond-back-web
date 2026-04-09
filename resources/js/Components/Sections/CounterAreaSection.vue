@@ -42,11 +42,11 @@ const extraClasses = computed(() => props.content.no_margin_top ? 'mt-0' : '');
                     <div 
                         v-for="(counter, index) in counters" 
                         :key="index"
-                        class="col-md-6"
+                        class="col-sm-6 col-md-6 col-lg-3"
                     >
                         <div class="counter__block">
                             <i v-if="counter.icon">
-                                <AppImage :src="counter.icon" alt="" loading="lazy"  />
+                                <AppImage :src="counter.icon" alt="" loading="lazy" :width="64" :height="64" />
                             </i>
                             <h1>
                                 {{ counter.value }}

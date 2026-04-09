@@ -28,6 +28,10 @@ const props = defineProps({
         type: String,
         default: 'image/*',
     },
+    hint: {
+        type: String,
+        default: '',
+    },
 });
 
 const emit = defineEmits(['update:modelValue']);
@@ -59,17 +63,7 @@ const handleFileChange = async (event) => {
     formData.append('image', file);
 
     try {
-        const response = await fetch(route('media.upload.image'), {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-            },
-            body: formData,
-        });
-
-        if (!response.ok) throw new Error('Upload failed');
-
-        const data = await response.json();
+        const { data } = await window.axios.post(route('media.upload.image'), formData);
         emit('update:modelValue', data.path);
     } catch (error) {
         console.error('Upload error:', error);
@@ -134,6 +128,7 @@ const removeImage = () => {
             </button>
         </div>
 
+        <p v-if="hint" class="image-size-hint">Recommended: {{ hint }}</p>
         <span v-if="error" class="form-error">{{ error }}</span>
     </div>
 </template>
@@ -261,5 +256,12 @@ const removeImage = () => {
     margin-top: 0.375rem;
     font-size: 0.75rem;
     color: #dc2626;
+}
+
+.image-size-hint {
+    font-size: 11px;
+    color: #9ca3af;
+    margin-top: 4px;
+    margin-bottom: 0;
 }
 </style>

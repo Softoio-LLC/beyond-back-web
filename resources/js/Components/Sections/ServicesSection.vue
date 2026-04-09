@@ -37,7 +37,7 @@ const shapeImageUrl = computed(() => getImageUrl(props.content.shape_image));
 </script>
 
 <template>
-    <section class="service-area position-relative overflow-hidden pb-80 z-1">
+    <section class="service-area position-relative overflow-hidden pt-5 pb-80 z-1">
         <div class="container">
             <div class="service-inner-block">
                 <div class="common-title text-center" data-aos="fade-up">
@@ -47,7 +47,7 @@ const shapeImageUrl = computed(() => getImageUrl(props.content.shape_image));
                     <div 
                         v-for="(service, index) in services" 
                         :key="index"
-                        class="col-md-6" 
+                        class="col-sm-12 col-md-6 col-lg-4" 
                         data-aos="fade-up"
                     >
                         <div class="service-single-card d-flex align-items-center">

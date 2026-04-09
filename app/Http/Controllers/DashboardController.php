@@ -26,7 +26,7 @@ class DashboardController extends Controller
         $analyticsData = [
             'enabled' => $gaEnabled,
             'measurement_id' => $gaMeasurementId,
-            'placeholder' => !$gaEnabled,
+            'placeholder' => ! $gaEnabled,
             // Placeholder data for chart visualization
             'chart_data' => [
                 'labels' => ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],

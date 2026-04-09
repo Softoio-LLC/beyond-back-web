@@ -1,5 +1,6 @@
 <script setup>
 import { ref, watch } from 'vue';
+import { usePage } from '@inertiajs/vue3';
 import TextInput from './TextInput.vue';
 import RichTextEditor from './RichTextEditor.vue';
 
@@ -16,6 +17,16 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['update:modelValue']);
+
+const resolveImageUrl = (path) => {
+    if (!path || typeof path !== 'string') return '';
+    if (path.startsWith('assets/')) return `/${path}`;
+    if (path.startsWith('storage/')) return `/${path}`;
+    if (path.startsWith('http') || path.startsWith('/')) return path;
+    const storageConfig = usePage().props.storage;
+    if (storageConfig?.baseUrl) return `${storageConfig.baseUrl}/${path}`;
+    return `/storage/${path}`;
+};
 
 // Internal state
 const data = ref(JSON.parse(JSON.stringify(props.modelValue)));
@@ -126,16 +137,7 @@ const handleSlideUpload = async (event, blockIndex, slideIndex) => {
         formData.append('section_type', 'concept');
         formData.append('size', 'medium');
 
-        const response = await fetch(route('media.upload.image'), {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-                'Accept': 'application/json',
-            },
-        });
-
-        const result = await response.json();
+        const { data: result } = await window.axios.post(route('media.upload.image'), formData);
 
         if (result.success) {
             updateSlide(blockIndex, slideIndex, 'image', result.path);
@@ -144,7 +146,7 @@ const handleSlideUpload = async (event, blockIndex, slideIndex) => {
         }
     } catch (error) {
         console.error('Upload error:', error);
-        alert('Upload failed. Please try again.');
+        alert(error.response?.data?.message || 'Upload failed. Please try again.');
     }
     
     event.target.value = '';
@@ -272,7 +274,7 @@ const radiusOptions = [
                                     class="slide-item"
                                 >
                                     <div class="slide-preview">
-                                        <img v-if="slide.image" :src="slide.image" :alt="slide.alt" />
+                                        <img v-if="slide.image" :src="resolveImageUrl(slide.image)" :alt="slide.alt" />
                                         <label v-else class="slide-upload">
                                             <input
                                                 type="file"
@@ -285,16 +287,27 @@ const radiusOptions = [
                                             </svg>
                                             <span>Upload</span>
                                         </label>
-                                        <button
-                                            v-if="slide.image"
-                                            type="button"
-                                            class="slide-remove"
-                                            @click="removeSlide(blockIndex, slideIndex)"
-                                        >
-                                            <svg viewBox="0 0 20 20" fill="currentColor">
-                                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                            </svg>
-                                        </button>
+                                        <div v-if="slide.image" class="slide-actions">
+                                            <label class="slide-change" title="Replace image">
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    @change="handleSlideUpload($event, blockIndex, slideIndex)"
+                                                    class="hidden-input"
+                                                />
+                                                Change
+                                            </label>
+                                            <button
+                                                type="button"
+                                                class="slide-remove"
+                                                @click="removeSlide(blockIndex, slideIndex)"
+                                                title="Remove image"
+                                            >
+                                                <svg viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                                </svg>
+                                            </button>
+                                        </div>
                                     </div>
                                     <div class="slide-fields">
                                         <TextInput
@@ -710,10 +723,34 @@ const radiusOptions = [
     color: #9ca3af;
 }
 
-.slide-remove {
+.slide-actions {
     position: absolute;
     top: 0.25rem;
     right: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.slide-change {
+    height: 1.25rem;
+    padding: 0 0.4rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    font-size: 0.625rem;
+    font-weight: 600;
+    color: #ffffff;
+    background: rgba(0, 79, 76, 0.9);
+    cursor: pointer;
+}
+
+.slide-change:hover {
+    background: rgba(0, 79, 76, 1);
+}
+
+.slide-remove {
     width: 1.25rem;
     height: 1.25rem;
     display: flex;

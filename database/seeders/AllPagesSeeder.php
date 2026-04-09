@@ -47,7 +47,7 @@ class AllPagesSeeder extends Seeder
 
         $this->command->info('✅ All pages seeded successfully!');
         $this->command->newLine();
-        
+
         // Summary
         $this->command->table(
             ['Page Type', 'Status'],
@@ -66,7 +66,7 @@ class AllPagesSeeder extends Seeder
                 ['Gallery', '✓ Created'],
             ]
         );
-        
+
         $this->command->newLine();
         $this->command->info('🎉 Total: 12 pages created with full bilingual content (EN/AR)');
         $this->command->info('🔧 All pages are editable through the Page Builder');

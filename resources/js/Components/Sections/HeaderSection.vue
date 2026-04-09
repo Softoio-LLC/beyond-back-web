@@ -43,8 +43,23 @@ onUnmounted(() => {
     }
 });
 
+
 // Menu items from section content only (Page Builder is the single source)
 const menuItems = computed(() => props.content.menu_items || []);
+
+// Check if RTL
+const isRtl = computed(() => props.lang === 'ar');
+
+// Reverse menu items for RTL display
+const displayMenuItems = computed(() => {
+    if (isRtl.value) {
+        return [...menuItems.value].reverse();
+    }
+    return menuItems.value;
+});
+
+
+
 
 // Strip HTML tags from text
 const stripHtml = (html) => {
@@ -103,9 +118,22 @@ const logo = computed(() => {
     return getImageUrl(props.content.logo);
 });
 
+// Check if logo is a static asset (should load immediately)
+const isStaticLogo = computed(() => {
+    const logoPath = logo.value;
+    return logoPath.startsWith('/assets/') || logoPath.startsWith('assets/');
+});
+
 const getLabel = (item) => {
     return props.lang === 'ar' ? item.label_ar : item.label_en;
 };
+
+// Home URL based on current language
+const homeUrl = computed(() => props.lang === 'ar' ? '/ar' : '/en');
+
+// Language labels from CMS content
+const langLabelAr = computed(() => props.content.lang_label_ar || 'عربي');
+const langLabelEn = computed(() => props.content.lang_label_en || 'English');
 
 const contactButtonText = computed(() => {
     const text = props.lang === 'ar' ? props.content.contact_button_text_ar : props.content.contact_button_text_en;
@@ -137,7 +165,9 @@ const switchLanguage = (newLang) => {
     
     if (newLang === 'ar') {
         // Switch to Arabic
-        if (!currentPath.startsWith('/ar')) {
+        if (currentPath.startsWith('/en')) {
+            newPath = currentPath === '/en' ? '/ar' : currentPath.replace('/en', '/ar');
+        } else if (!currentPath.startsWith('/ar')) {
             newPath = currentPath === '/' ? '/ar' : `/ar${currentPath}`;
         } else {
             return; // Already on Arabic
@@ -145,7 +175,9 @@ const switchLanguage = (newLang) => {
     } else {
         // Switch to English
         if (currentPath.startsWith('/ar')) {
-            newPath = currentPath === '/ar' ? '/' : currentPath.replace('/ar', '');
+            newPath = currentPath === '/ar' ? '/en' : currentPath.replace('/ar', '/en');
+        } else if (!currentPath.startsWith('/en')) {
+            newPath = currentPath === '/' ? '/en' : `/en${currentPath}`;
         } else {
             return; // Already on English
         }
@@ -164,7 +196,8 @@ const switchLanguage = (newLang) => {
         <div class="offcanvas-body">
             <div class="offcanvas-menu accordion">
                 <ul>
-                    <template v-for="(item, index) in menuItems" :key="index">
+                   
+                    <template v-for="(item, index) in displayMenuItems" :key="index">
                         <li v-if="!item.children || item.children.length === 0">
                             <Link v-if="isInternalUrl(getUrl(item))" :href="getUrl(item)">{{ getLabel(item) }}</Link>
                             <a v-else :href="getUrl(item)">{{ getLabel(item) }}</a>
@@ -195,7 +228,7 @@ const switchLanguage = (newLang) => {
                                             :href="getUrl(child)"
                                         >
                                             {{ getLabel(child) }}
-                                            <span><i class="far fa-chevron-left"></i></span>
+                                            <span><i class="far fa-chevron-right"></i></span>
                                         </Link>
                                         <a 
                                             v-else
@@ -204,7 +237,7 @@ const switchLanguage = (newLang) => {
                                             :href="getUrl(child)"
                                         >
                                             {{ getLabel(child) }}
-                                            <span><i class="far fa-chevron-left"></i></span>
+                                            <span><i class="far fa-chevron-right"></i></span>
                                         </a>
                                     </li>
                                 </ul>
@@ -238,14 +271,14 @@ const switchLanguage = (newLang) => {
             <div class="header-inner-block d-flex align-items-center justify-content-between">
                 <div class="header-left-block d-flex align-items-center">
                     <div class="header-logo">
-                        <Link :href="lang === 'ar' ? '/ar' : '/'">
-                            <AppImage :src="logo" alt="Logo" loading="lazy"  />
+                        <Link :href="homeUrl">
+                            <AppImage :src="logo" alt="Logo" loading="lazy" :width="150" :height="60" />
                         </Link>
                     </div>
                     <div class="main-menu d-none d-lg-block">
                         <nav>
                             <ul class="d-flex align-items-center">
-                                <template v-for="(item, index) in menuItems" :key="index">
+                                <template v-for="(item, index) in displayMenuItems" :key="index">
                                     <li v-if="!item.children || item.children.length === 0">
                                         <Link v-if="isInternalUrl(getUrl(item))" :href="getUrl(item)">{{ getLabel(item) }}</Link>
                                         <a v-else :href="getUrl(item)">{{ getLabel(item) }}</a>
@@ -257,8 +290,8 @@ const switchLanguage = (newLang) => {
                                             data-bs-toggle="dropdown" 
                                             aria-expanded="false"
                                         >
-                                            <span><i class="far fa-chevron-down"></i></span>
                                             {{ getLabel(item) }}
+                                            <span><i class="far fa-chevron-down"></i></span>
                                         </a>
                                         <ul class="dropdown-menu">
                                             <li v-for="(child, childIndex) in item.children" :key="childIndex">
@@ -269,7 +302,7 @@ const switchLanguage = (newLang) => {
                                                     :href="getUrl(child)"
                                                 >
                                                     {{ getLabel(child) }}
-                                                    <span><i class="far fa-chevron-left"></i></span>
+                                                    <span><i class="far fa-chevron-right"></i></span>
                                                 </Link>
                                                 <a 
                                                     v-else
@@ -278,7 +311,7 @@ const switchLanguage = (newLang) => {
                                                     :href="getUrl(child)"
                                                 >
                                                     {{ getLabel(child) }}
-                                                    <span><i class="far fa-chevron-left"></i></span>
+                                                    <span><i class="far fa-chevron-right"></i></span>
                                                 </a>
                                             </li>
                                         </ul>
@@ -320,7 +353,7 @@ const switchLanguage = (newLang) => {
                                             @change="switchLanguage('ar')"
                                         />
                                         <p class="select-box__input-text">
-                                            <AppImage :src="flagAr" alt="" loading="lazy"  /> عربي
+                                            <AppImage :src="flagAr" alt="" loading="lazy"  /> {{ langLabelAr }}
                                         </p>
                                     </div>
                                     <div class="select-box__value">
@@ -334,25 +367,25 @@ const switchLanguage = (newLang) => {
                                             @change="switchLanguage('en')"
                                         />
                                         <p class="select-box__input-text">
-                                            <AppImage :src="flagEn" alt="" loading="lazy"  />English
+                                            <AppImage :src="flagEn" alt="" loading="lazy"  />{{ langLabelEn }}
                                         </p>
                                     </div>
                                 </div>
                                 <ul class="select-box__list">
                                     <li :class="{ active: lang === 'ar' }" @click="switchLanguage('ar')">
                                         <label class="select-box__option" for="lang-ar" aria-hidden="true">
-                                            <AppImage :src="flagAr" alt="" loading="lazy"  /> عربي
+                                            <AppImage :src="flagAr" alt="" loading="lazy"  /> {{ langLabelAr }}
                                         </label>
-                                        <span class="check-image">
-                                            <AppImage :src="checkRadio" alt="check-radio" loading="lazy" />
+                                        <span v-if="lang === 'ar'" class="active-check-shape">
+                                            <i class="fas fa-check-circle"></i>
                                         </span>
                                     </li>
                                     <li :class="{ active: lang === 'en' }" @click="switchLanguage('en')">
                                         <label class="select-box__option" for="lang-en" aria-hidden="true">
-                                            <AppImage :src="flagEn" alt="" loading="lazy"  />English
+                                            <AppImage :src="flagEn" alt="" loading="lazy"  />{{ langLabelEn }}
                                         </label>
-                                        <span class="check-image">
-                                            <AppImage :src="checkRadio" alt="check-radio" loading="lazy" />
+                                        <span v-if="lang === 'en'" class="active-check-shape">
+                                            <i class="fas fa-check-circle"></i>
                                         </span>
                                     </li>
                                 </ul>
@@ -392,6 +425,215 @@ const switchLanguage = (newLang) => {
 .check-image {
     right: 5px !important;
     left: auto !important;
+}
+
+/* RTL arrow positioning - automatically reverses flex items in RTL */
+[dir="rtl"] .header-contact-btn {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .dropdown-toggle {
+    flex-direction: row-reverse;
+    display: flex;
+    align-items: center;
+}
+
+[dir="ltr"] .dropdown-toggle {
+    display: flex;
+    align-items: center;
+}
+
+[dir="rtl"] .dropdown-item {
+    flex-direction: row-reverse;
+    display: flex;
+    align-items: center;
+}
+
+/* Ensure LTR dropdown items also flex */
+[dir="ltr"] .dropdown-item {
+    display: flex;
+    align-items: center;
+}
+
+/* Enhanced Language Switcher UI */
+.language-select {
+    position: relative;
+}
+
+.select-box {
+    position: relative;
+    min-width: 6.25rem;
+}
+
+.select-box__current {
+    cursor: pointer;
+    position: relative;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.select-box__current:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+.select-box__current::after {
+    content: '\f078';
+    font-family: 'Font Awesome 6 Pro';
+    font-weight: 400;
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: transform 0.3s ease;
+    font-size: 10px;
+    opacity: 0.7;
+}
+
+[dir="rtl"] .select-box__current::after {
+    right: auto;
+    left: 12px;
+}
+
+.select-box__current:focus::after,
+.select-box__current:hover::after {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+.select-box__value {
+    display: none;
+}
+
+.select-box__value:has(input:checked) {
+    display: block;
+}
+
+.select-box__input {
+    display: none;
+}
+
+.select-box__input-text {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #fff;
+}
+
+.select-box__input-text img {
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.select-box__list {
+    position: absolute;
+    top: calc(100% + 12px);
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    padding: 0.5rem;
+    list-style: none;
+    margin: 0;
+    min-width: 8.75rem;
+    overflow: visible;
+    max-height: none;
+}
+
+[dir="rtl"] .select-box__list {
+    left: auto;
+    right: 0;
+}
+
+.select-box__current:focus + .select-box__list,
+.select-box__current:hover + .select-box__list,
+.select-box__list:hover {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.select-box__list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: 0.75rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    gap: 0.5rem;
+}
+
+.select-box__list li:hover {
+    background: rgba(59, 130, 246, 0.08);
+}
+
+.select-box__list li.active {
+    background: rgba(59, 130, 246, 0.12);
+}
+
+.active-check-shape {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #0d5d56;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.select-box__option {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    cursor: pointer;
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #1f2937;
+}
+
+.select-box__option img {
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Light header variant language switcher */
+.header-light .select-box__current {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+.header-light .select-box__current:hover {
+    background: rgba(0, 0, 0, 0.08);
+    border-color: rgba(0, 0, 0, 0.15);
+}
+
+.header-light .select-box__input-text {
+    color: #1f2937;
+}
+
+@media (max-width: 576px) {
+    .header-btns {
+        gap: 0.25rem;
+    }
 }
 
 </style>

@@ -70,7 +70,7 @@ const shapeImageUrl = computed(() => getImageUrl(props.content.shape_image));
                         <div 
                             v-for="(item, index) in images" 
                             :key="index"
-                            class="col-md-6" 
+                            class="col-sm-12 col-md-6 col-lg-4" 
                             data-aos="zoom-in"
                         >
                             <div class="gallery-thumb position-relative">

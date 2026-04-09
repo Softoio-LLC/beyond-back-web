@@ -51,7 +51,7 @@
 .page-title {
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
-    font-size: 20px;
+    font-size: 1.25rem;
     line-height: 100%;
     letter-spacing: 0px;
     color: var(--color-text-dark);
@@ -62,7 +62,7 @@
 .subtitle-text {
     font-family: 'Poppins', sans-serif;
     font-weight: 500;
-    font-size: 16px;
+    font-size: 1rem;
     line-height: 100%;
     letter-spacing: 0px;
     color: var(--color-text-dark);
@@ -72,7 +72,7 @@
 .body-text {
     font-family: 'Poppins', sans-serif;
     font-weight: 400;
-    font-size: 14px;
+    font-size: 0.875rem;
     line-height: 140%;
     color: var(--color-text-dark);
 }
@@ -81,7 +81,7 @@
 .small-text {
     font-family: 'Poppins', sans-serif;
     font-weight: 400;
-    font-size: 12px;
+    font-size: 0.75rem;
     line-height: 140%;
     color: var(--color-text-muted);
 }
@@ -92,15 +92,15 @@
     color: var(--color-text-light);
     font-family: 'Poppins', sans-serif;
     font-weight: 500;
-    font-size: 14px;
-    padding: 10px 20px;
+    font-size: 0.875rem;
+    padding: 0.625rem 1.25rem;
     border-radius: 6px;
     border: none;
     cursor: pointer;
     transition: background-color var(--transition-fast);
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 0.5rem;
 }
 
 .btn-primary:hover {
@@ -113,8 +113,8 @@
     color: var(--color-primary);
     font-family: 'Poppins', sans-serif;
     font-weight: 500;
-    font-size: 14px;
-    padding: 10px 20px;
+    font-size: 0.875rem;
+    padding: 0.625rem 1.25rem;
     border-radius: 6px;
     border: none;
     cursor: pointer;
@@ -252,13 +252,23 @@
     font-family: 'Poppins', sans-serif;
     font-weight: 500;
     font-size: 14px;
-    padding: 8px 16px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 6px;
     border: 1px solid var(--color-border);
     background-color: var(--color-bg-white);
     color: var(--color-text-muted);
     cursor: pointer;
     transition: all var(--transition-fast);
+    padding: 0;
+}
+
+.arrow-icon {
+    width: 20px;
+    height: 20px;
 }
 
 .pagination-btn:hover:not(:disabled) {
@@ -313,6 +323,9 @@
     text-decoration: none;
     transition: all var(--transition-fast);
     cursor: pointer;
+    width: 100%;
+    background: none;
+    border: none;
 }
 
 .sidebar-menu-item:hover {

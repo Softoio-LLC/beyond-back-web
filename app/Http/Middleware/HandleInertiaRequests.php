@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Models\Contact;
 use App\Models\Page;
 use App\Models\Setting;
+use App\Services\StorageService;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -38,6 +39,8 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $storageService = app(StorageService::class);
+
         return [
             ...parent::share($request),
             'ziggy' => fn () => [
@@ -59,6 +62,13 @@ class HandleInertiaRequests extends Middleware
             ],
             // Unread contacts count for navbar badge
             'unreadContactsCount' => fn () => $request->user() ? Contact::getUnreadCount() : 0,
+            // Storage configuration for frontend
+            'storage' => [
+                'baseUrl' => $storageService->getBaseUrl(),
+                'isCloud' => $storageService->isUsingCloudStorage(),
+            ],
+            // Site name from settings
+            'siteName' => fn () => Setting::get('site_name', config('app.name', 'Beyond')),
         ];
     }
 
@@ -69,7 +79,7 @@ class HandleInertiaRequests extends Middleware
     {
         // Pass custom code to the blade view
         $this->shareCustomCode();
-        
+
         return $this->rootView;
     }
 

@@ -27,10 +27,20 @@ Route::get('/img', [ImageController::class, 'show'])->name('image.show');
 Route::post('/img/clear-cache', [ImageController::class, 'clearCache'])->name('image.clear-cache')->middleware('auth');
 
 // ============================================
+// TEST ROUTES (Development Only)
+// ============================================
+Route::middleware('auth')->prefix('test')->group(function () {
+    Route::get('/storage', function () {
+        return \Inertia\Inertia::render('Test/StorageTest');
+    })->name('test.storage');
+});
+
+// ============================================
 // PUBLIC WEBSITE ROUTES
 // ============================================
 Route::get('/', [WebsiteController::class, 'home'])->name('website.home');
 Route::get('/ar', [WebsiteController::class, 'home'])->name('website.home.ar');
+Route::get('/en', [WebsiteController::class, 'home'])->name('website.home.en');
 
 // ============================================
 // DASHBOARD ROUTES (Auth Required)
@@ -81,6 +91,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/email', [SettingsController::class, 'email'])->name('email');
         Route::put('/email', [SettingsController::class, 'updateEmail'])->name('email.update');
         Route::post('/email/test', [SettingsController::class, 'testEmail'])->name('email.test');
+        Route::get('/storage', [SettingsController::class, 'storage'])->name('storage');
+        Route::put('/storage/disk', [SettingsController::class, 'updateStorageDisk'])->name('storage.disk.update');
+        Route::post('/storage/test-connection', [SettingsController::class, 'testStorageConnection'])->name('storage.test-connection');
+        Route::post('/storage/dry-run', [SettingsController::class, 'storageDryRun'])->name('storage.dry-run');
+        Route::post('/storage/migrate', [SettingsController::class, 'storageMigrate'])->name('storage.migrate');
+        Route::delete('/storage/logs', [SettingsController::class, 'clearStorageLogs'])->name('storage.logs.clear');
     });
 
     // Pages CRUD routes
@@ -125,4 +141,7 @@ Route::post('/contact', [PublicContactController::class, 'store'])->name('contac
 // ============================================
 // Arabic routes need to accept URL-encoded Arabic characters
 Route::get('/ar/{slug}', [WebsiteController::class, 'showBySlug'])->name('website.page.ar')->where('slug', '.*');
+// English routes with /en prefix
+Route::get('/en/{slug}', [WebsiteController::class, 'showBySlug'])->name('website.page.en')->where('slug', '[a-zA-Z0-9\-_]+');
+// Default English routes (no prefix)
 Route::get('/{slug}', [WebsiteController::class, 'showBySlug'])->name('website.page')->where('slug', '[a-zA-Z0-9\-_]+');

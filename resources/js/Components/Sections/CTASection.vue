@@ -71,7 +71,7 @@ const shapeImageUrl = computed(() => getImageUrl(props.content.shape_image));
                                 >
                                     <div class="cta-card d-flex align-items-center flex-column">
                                         <span v-if="card.iconUrl" class="d-flex align-items-center justify-content-center">
-                                            <AppImage :src="card.iconUrl" alt="Icon" loading="lazy" />
+                                            <AppImage :src="card.iconUrl" alt="Icon" loading="lazy" :width="64" :height="64" />
                                         </span>
                                         <h5 v-html="getCardTitle(card)"></h5>
                                         <a 

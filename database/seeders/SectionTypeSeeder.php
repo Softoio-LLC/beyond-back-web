@@ -18,6 +18,8 @@ class SectionTypeSeeder extends Seeder
                 'key' => 'header',
                 'name_en' => 'Header',
                 'name_ar' => 'الهيدر',
+                'description_en' => 'Site navigation bar with logo, menus and language switcher',
+                'description_ar' => 'شريط التنقل الرئيسي مع الشعار والقوائم ومحوّل اللغة',
                 'icon' => 'far fa-window-maximize',
                 'preview_image' => null,
                 'component_name' => 'HeaderSection',
@@ -33,12 +35,14 @@ class SectionTypeSeeder extends Seeder
                     'variant' => 'dark',
                 ],
             ],
-            
+
             // Hero/Slider section (Homepage)
             [
                 'key' => 'hero_slider',
                 'name_en' => 'Hero Slider',
                 'name_ar' => 'السلايدر الرئيسي',
+                'description_en' => 'Homepage hero banner with image slider and call-to-action',
+                'description_ar' => 'بنر الصفحة الرئيسية مع عرض صور وزر دعوة للتواصل',
                 'icon' => 'far fa-images',
                 'preview_image' => null,
                 'component_name' => 'HeroSliderSection',
@@ -59,12 +63,14 @@ class SectionTypeSeeder extends Seeder
                     'button_url' => '#',
                 ],
             ],
-            
+
             // Hero Common section (Service Pages - Dark background)
             [
                 'key' => 'hero_common',
                 'name_en' => 'Hero Common',
                 'name_ar' => 'الهيرو العام',
+                'description_en' => 'Service page hero with dark background, icon and side image',
+                'description_ar' => 'هيرو صفحة الخدمات بخلفية داكنة وأيقونة وصورة جانبية',
                 'icon' => 'far fa-window-alt',
                 'preview_image' => null,
                 'component_name' => 'HeroCommonSection',
@@ -84,12 +90,14 @@ class SectionTypeSeeder extends Seeder
                     'button_url' => '#',
                 ],
             ],
-            
+
             // Partners/Brands section
             [
                 'key' => 'partners',
                 'name_en' => 'Partners',
                 'name_ar' => 'الشركاء',
+                'description_en' => 'Scrolling partner/client logo carousel',
+                'description_ar' => 'شريط شعارات الشركاء والعملاء المتحرك',
                 'icon' => 'far fa-handshake',
                 'preview_image' => null,
                 'component_name' => 'PartnersSection',
@@ -100,12 +108,14 @@ class SectionTypeSeeder extends Seeder
                     'logos' => [],
                 ],
             ],
-            
+
             // Concept section (includes two content blocks + counters)
             [
                 'key' => 'concept',
                 'name_en' => 'Concept',
                 'name_ar' => 'المفهوم',
+                'description_en' => 'Content blocks with images, text and animated counters',
+                'description_ar' => 'كتل محتوى بالصور والنصوص وعدادات متحركة',
                 'icon' => 'far fa-lightbulb',
                 'preview_image' => null,
                 'component_name' => 'ConceptSection',
@@ -160,12 +170,14 @@ class SectionTypeSeeder extends Seeder
                     ],
                 ],
             ],
-            
+
             // Services section
             [
                 'key' => 'services',
                 'name_en' => 'Our Services',
                 'name_ar' => 'خدماتنا',
+                'description_en' => 'Grid of service cards with images and descriptions',
+                'description_ar' => 'شبكة بطاقات الخدمات بالصور والوصف',
                 'icon' => 'far fa-cogs',
                 'preview_image' => null,
                 'component_name' => 'ServicesSection',
@@ -180,12 +192,14 @@ class SectionTypeSeeder extends Seeder
                     'items' => [],
                 ],
             ],
-            
+
             // Call to Action section
             [
                 'key' => 'cta',
                 'name_en' => 'Call to Action',
                 'name_ar' => 'دعوة للتواصل',
+                'description_en' => 'Contact prompt with email and phone cards',
+                'description_ar' => 'قسم دعوة للتواصل مع بطاقات البريد والهاتف',
                 'icon' => 'far fa-phone-alt',
                 'preview_image' => null,
                 'component_name' => 'CtaSection',
@@ -217,12 +231,14 @@ class SectionTypeSeeder extends Seeder
                     ],
                 ],
             ],
-            
+
             // Projects/Work section
             [
                 'key' => 'projects',
                 'name_en' => 'Our Work',
                 'name_ar' => 'أعمالنا',
+                'description_en' => 'Project showcase slider with details and links',
+                'description_ar' => 'عرض المشاريع بالتفاصيل والروابط',
                 'icon' => 'far fa-briefcase',
                 'preview_image' => null,
                 'component_name' => 'WorkSection',
@@ -237,12 +253,14 @@ class SectionTypeSeeder extends Seeder
                     'items' => [],
                 ],
             ],
-            
+
             // Team section
             [
                 'key' => 'team',
                 'name_en' => 'Team',
                 'name_ar' => 'فريق العمل',
+                'description_en' => 'Team member cards carousel with photos and roles',
+                'description_ar' => 'عرض بطاقات فريق العمل مع الصور والمناصب',
                 'icon' => 'far fa-users',
                 'preview_image' => null,
                 'component_name' => 'TeamSection',
@@ -257,12 +275,14 @@ class SectionTypeSeeder extends Seeder
                     'items' => [],
                 ],
             ],
-            
+
             // Contact section (with contact info cards)
             [
                 'key' => 'contact',
                 'name_en' => 'Contact',
                 'name_ar' => 'تواصل معنا',
+                'description_en' => 'Contact cards with location, email and phone info',
+                'description_ar' => 'بطاقات التواصل مع الموقع والبريد والهاتف',
                 'icon' => 'far fa-address-card',
                 'preview_image' => null,
                 'component_name' => 'ContactSection',
@@ -297,12 +317,14 @@ class SectionTypeSeeder extends Seeder
                     ],
                 ],
             ],
-            
+
             // Gallery section
             [
                 'key' => 'gallery',
                 'name_en' => 'Gallery',
                 'name_ar' => 'المعرض',
+                'description_en' => 'Image gallery grid with captions and view-all button',
+                'description_ar' => 'شبكة معرض صور مع عناوين وزر عرض الكل',
                 'icon' => 'far fa-images',
                 'preview_image' => null,
                 'component_name' => 'GallerySection',
@@ -324,12 +346,14 @@ class SectionTypeSeeder extends Seeder
                     ],
                 ],
             ],
-            
+
             // FAQ section
             [
                 'key' => 'faq',
                 'name_en' => 'FAQ',
                 'name_ar' => 'الأسئلة الشائعة',
+                'description_en' => 'Expandable frequently asked questions accordion',
+                'description_ar' => 'أكورديون الأسئلة الشائعة القابل للتوسيع',
                 'icon' => 'far fa-question-circle',
                 'preview_image' => null,
                 'component_name' => 'FaqSection',
@@ -344,12 +368,14 @@ class SectionTypeSeeder extends Seeder
                     'items' => [],
                 ],
             ],
-            
+
             // Inquiry section (bottom CTA)
             [
                 'key' => 'inquiry',
                 'name_en' => 'Inquiry',
                 'name_ar' => 'استفسار',
+                'description_en' => 'Bottom call-to-action banner with WhatsApp and contact buttons',
+                'description_ar' => 'بنر دعوة سفلي مع أزرار واتساب والتواصل',
                 'icon' => 'far fa-paper-plane',
                 'preview_image' => null,
                 'component_name' => 'InquirySection',
@@ -364,12 +390,39 @@ class SectionTypeSeeder extends Seeder
                     'items' => [],
                 ],
             ],
-            
+
+            // Product / Added Value section
+            [
+                'key' => 'product',
+                'name_en' => 'Product / Added Value',
+                'name_ar' => 'المنتج / القيمة المضافة',
+                'description_en' => 'Product showcase with icon, title, description and side image',
+                'description_ar' => 'عرض المنتج بأيقونة وعنوان ووصف وصورة جانبية',
+                'icon' => 'far fa-box-open',
+                'preview_image' => null,
+                'component_name' => 'ProductSection',
+                'is_fixed' => false,
+                'default_order' => 12,
+                'is_active' => true,
+                'default_content' => [
+                    'title_en' => 'Added Value',
+                    'title_ar' => 'القيمة المضافة',
+                    'description_en' => '',
+                    'description_ar' => '',
+                    'icon' => '/assets/img/icon/product-icon.svg',
+                    'image' => '/assets/img/product-img.png',
+                    'left_shape' => '/assets/img/pd-left.svg',
+                    'top_right_shape' => '/assets/img/pd-top-right.svg',
+                ],
+            ],
+
             // Footer section (fixed)
             [
                 'key' => 'footer',
                 'name_en' => 'Footer',
                 'name_ar' => 'الفوتر',
+                'description_en' => 'Site footer with menus, contact info and social links',
+                'description_ar' => 'فوتر الموقع مع القوائم ومعلومات التواصل وروابط التواصل الاجتماعي',
                 'icon' => 'far fa-window-minimize',
                 'preview_image' => null,
                 'component_name' => 'FooterSection',
@@ -388,8 +441,8 @@ class SectionTypeSeeder extends Seeder
                         'address_en' => '',
                         'address_ar' => '',
                     ],
-                    'copyright_en' => 'All Rights Reserved Beyond © ' . date('Y'),
-                    'copyright_ar' => 'جميع الحقوق محفوظة Beyond © ' . date('Y'),
+                    'copyright_en' => 'All Rights Reserved Beyond © '.date('Y'),
+                    'copyright_ar' => 'جميع الحقوق محفوظة Beyond © '.date('Y'),
                 ],
             ],
         ];

@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\Page;
-use App\Models\PageSection;
 use App\Models\SectionType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -61,6 +60,7 @@ class PageSectionFactory extends Factory
     {
         return $this->state(function (array $attributes) use ($key) {
             $sectionType = SectionType::where('key', $key)->first();
+
             return [
                 'section_type_id' => $sectionType?->id ?? 1,
                 'content' => $sectionType?->default_content ?? $attributes['content'],

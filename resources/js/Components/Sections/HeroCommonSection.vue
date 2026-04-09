@@ -82,7 +82,7 @@ const bgStyle = computed(() => {
                             />
                         </i>
                         <div class="">
-                            <h1 class="text-white fs-56" v-html="title"></h1>
+                            <h1 class="text-white " v-html="title"></h1> <!-- fs-56 -->
                             <p v-html="description"></p>
                             <div class="d-flex align-items-center gap-3">
                                 <a 
@@ -133,14 +133,7 @@ const bgStyle = computed(() => {
 <style scoped>
 .hero-area.v2 {
     background-color: #012d37;
-    padding-top: 100px;
-    padding-bottom: 100px;
-}
-
-@media (max-width: 991px) {
-    .hero-area.v2 {
-        padding-top: 60px;
-        padding-bottom: 60px;
-    }
+    padding-top: clamp(2.5rem, 2rem + 4vw, 6.25rem);
+    padding-bottom: clamp(2.5rem, 2rem + 4vw, 6.25rem);
 }
 </style>

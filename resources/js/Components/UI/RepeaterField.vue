@@ -5,6 +5,10 @@ import RichTextEditor from './RichTextEditor.vue';
 import ImageWithAlt from './ImageWithAlt.vue';
 import Sortable from 'sortablejs';
 
+defineOptions({
+    name: 'RepeaterField',
+});
+
 const props = defineProps({
     modelValue: {
         type: Array,
@@ -178,6 +182,11 @@ const getFieldKey = (field) => {
 // Get field value
 const getFieldValue = (item, field) => {
     const key = getFieldKey(field);
+
+    if (field.type === 'repeater') {
+        return item[key] ?? item[field.key] ?? [];
+    }
+
     return item[key] ?? item[field.key] ?? '';
 };
 
@@ -188,15 +197,97 @@ const setFieldValue = (itemIndex, field, value) => {
     emitUpdate();
 };
 
+// Field visibility helper for conditional fields (e.g. show links only when type === social)
+const shouldShowField = (item, field) => {
+    if (!field.showWhen) {
+        return true;
+    }
+
+    const conditionValue = item[field.showWhen.key];
+
+    if (Object.prototype.hasOwnProperty.call(field.showWhen, 'equals')) {
+        return conditionValue === field.showWhen.equals;
+    }
+
+    if (Object.prototype.hasOwnProperty.call(field.showWhen, 'notEquals')) {
+        return conditionValue !== field.showWhen.notEquals;
+    }
+
+    return true;
+};
+
 // Emit update
 const emitUpdate = () => {
     emit('update:modelValue', [...items.value]);
 };
 
+// Helper to get image data from item
+const getImageData = (item, field) => {
+    const imageKey = field.key;
+    
+    // For simple alt (non-bilingual), use just 'alt'
+    if (field.simpleAlt) {
+        return {
+            image: item[imageKey] || item.image || '',
+            alt_en: item.alt || '',
+            alt_ar: item.alt || '',
+        };
+    }
+    
+    const altEnKey = field.altKey ? `${field.altKey}_en` : `${field.key}_alt_en`;
+    const altArKey = field.altKey ? `${field.altKey}_ar` : `${field.key}_alt_ar`;
+    
+    // Handle both string and object formats
+    if (typeof item[imageKey] === 'object' && item[imageKey] !== null) {
+        return item[imageKey];
+    }
+    
+    return {
+        image: item[imageKey] || item.image || '',
+        alt_en: item[altEnKey] || item.alt_en || item.alt || '',
+        alt_ar: item[altArKey] || item.alt_ar || '',
+    };
+};
+
+// Helper to set image data
+const setImageData = (index, field, value) => {
+    // Guard against undefined items
+    if (!items.value || !items.value[index]) {
+        console.warn('setImageData: Invalid index or items not initialized', { index, itemsLength: items.value?.length });
+        return;
+    }
+    
+    const imageKey = field.key;
+    
+    // For simple alt (non-bilingual), store as just 'alt'
+    if (field.simpleAlt) {
+        items.value[index][imageKey] = value.image;
+        items.value[index].alt = value.alt_en || value.alt_ar || '';
+        emitUpdate();
+        return;
+    }
+    
+    const altEnKey = field.altKey ? `${field.altKey}_en` : `${field.key}_alt_en`;
+    const altArKey = field.altKey ? `${field.altKey}_ar` : `${field.key}_alt_ar`;
+    
+    // Store in flat format for compatibility
+    items.value[index][imageKey] = value.image;
+    items.value[index][altEnKey] = value.alt_en;
+    items.value[index][altArKey] = value.alt_ar;
+    
+    // Also store alt without lang suffix for backward compatibility
+    items.value[index].alt = value[`alt_${props.currentLang}`];
+    
+    emitUpdate();
+};
+
 // Setup sortable when mounted
-
-
 onMounted(() => {
+    // Auto-expand the first item if items exist
+    if (items.value.length > 0 && expandedItems.value.size === 0) {
+        expandedItems.value.add(items.value.length - 1);
+    }
+    
     nextTick(() => {
         initSortable();
     });
@@ -279,7 +370,7 @@ watch(items, () => {
                     <template v-for="field in fields" :key="field.key">
                         <!-- Text Input -->
                         <TextInput
-                            v-if="field.type === 'text' || field.type === 'url'"
+                            v-if="(field.type === 'text' || field.type === 'url') && shouldShowField(item, field)"
                             :model-value="getFieldValue(item, field)"
                             :label="field.label"
                             :placeholder="field.placeholder || `Enter ${field.label.toLowerCase()}`"
@@ -289,7 +380,7 @@ watch(items, () => {
 
                         <!-- Rich Text Editor -->
                         <RichTextEditor
-                            v-else-if="field.type === 'richtext' || field.type === 'textarea'"
+                            v-else-if="(field.type === 'richtext' || field.type === 'textarea') && shouldShowField(item, field)"
                             :model-value="getFieldValue(item, field)"
                             :label="field.label"
                             :placeholder="field.placeholder || `Enter ${field.label.toLowerCase()}`"
@@ -298,13 +389,30 @@ watch(items, () => {
 
                         <!-- Image with Alt -->
                         <ImageWithAlt
-                            v-else-if="field.type === 'image'"
+                            v-else-if="field.type === 'image' && shouldShowField(item, field)"
                             :model-value="getImageData(item, field)"
                             :label="field.label"
                             :section-type="sectionType"
                             :current-lang="currentLang"
                             :show-alt-fields="field.showAlt !== false"
+                            :hint="field.hint || ''"
                             @update:model-value="setImageData(index, field, $event)"
+                        />
+
+                        <!-- Nested Repeater -->
+                        <RepeaterField
+                            v-else-if="field.type === 'repeater' && shouldShowField(item, field)"
+                            :model-value="getFieldValue(item, field)"
+                            :label="field.label"
+                            :item-label="field.itemLabel || 'Item'"
+                            :fields="field.fields || []"
+                            :default-item="field.defaultItem || {}"
+                            :section-type="sectionType"
+                            :current-lang="currentLang"
+                            :max-items="field.maxItems || 50"
+                            :min-items="field.minItems || 0"
+                            :sortable="field.sortable !== false"
+                            @update:model-value="setFieldValue(index, field, $event)"
                         />
                     </template>
                 </div>
@@ -325,72 +433,6 @@ watch(items, () => {
         </button>
     </div>
 </template>
-
-<script>
-export default {
-    methods: {
-        // Helper to get image data from item
-        getImageData(item, field) {
-            const imageKey = field.key;
-            
-            // For simple alt (non-bilingual), use just 'alt'
-            if (field.simpleAlt) {
-                return {
-                    image: item[imageKey] || item.image || '',
-                    alt_en: item.alt || '',
-                    alt_ar: item.alt || '',
-                };
-            }
-            
-            const altEnKey = field.altKey ? `${field.altKey}_en` : `${field.key}_alt_en`;
-            const altArKey = field.altKey ? `${field.altKey}_ar` : `${field.key}_alt_ar`;
-            
-            // Handle both string and object formats
-            if (typeof item[imageKey] === 'object' && item[imageKey] !== null) {
-                return item[imageKey];
-            }
-            
-            return {
-                image: item[imageKey] || item.image || '',
-                alt_en: item[altEnKey] || item.alt_en || item.alt || '',
-                alt_ar: item[altArKey] || item.alt_ar || '',
-            };
-        },
-        
-        // Helper to set image data
-        setImageData(index, field, value) {
-            // Guard against undefined items
-            if (!this.items || !this.items[index]) {
-                console.warn('setImageData: Invalid index or items not initialized', { index, itemsLength: this.items?.length });
-                return;
-            }
-            
-            const imageKey = field.key;
-            
-            // For simple alt (non-bilingual), store as just 'alt'
-            if (field.simpleAlt) {
-                this.items[index][imageKey] = value.image;
-                this.items[index].alt = value.alt_en || value.alt_ar || '';
-                this.emitUpdate();
-                return;
-            }
-            
-            const altEnKey = field.altKey ? `${field.altKey}_en` : `${field.key}_alt_en`;
-            const altArKey = field.altKey ? `${field.altKey}_ar` : `${field.key}_alt_ar`;
-            
-            // Store in flat format for compatibility
-            this.items[index][imageKey] = value.image;
-            this.items[index][altEnKey] = value.alt_en;
-            this.items[index][altArKey] = value.alt_ar;
-            
-            // Also store alt without lang suffix for backward compatibility
-            this.items[index].alt = value[`alt_${this.currentLang}`];
-            
-            this.emitUpdate();
-        },
-    },
-};
-</script>
 
 <style scoped>
 .repeater-field {

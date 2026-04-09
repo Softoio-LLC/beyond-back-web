@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Page;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class PageSeeder extends Seeder
@@ -232,8 +231,8 @@ class PageSeeder extends Seeder
     private function attachSectionsToHomepage(): void
     {
         $homepage = Page::where('url_slug_en', 'home')->first();
-        
-        if (!$homepage) {
+
+        if (! $homepage) {
             return;
         }
 

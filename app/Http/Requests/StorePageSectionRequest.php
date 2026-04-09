@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Models\SectionType;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StorePageSectionRequest extends FormRequest
@@ -27,13 +26,13 @@ class StorePageSectionRequest extends FormRequest
             'is_active' => 'nullable|boolean',
             'content' => 'nullable|array',
             'custom_css' => 'nullable|string|max:5000',
-            
+
             // Content validation (flexible based on section type)
             'content.title_en' => 'nullable|string|max:500',
             'content.title_ar' => 'nullable|string|max:500',
             'content.description_en' => 'nullable|string|max:10000',
             'content.description_ar' => 'nullable|string|max:10000',
-            
+
             // Images array validation
             'content.images' => 'nullable|array|max:50',
             'content.images.*.path' => 'nullable|string|max:500',
@@ -41,7 +40,7 @@ class StorePageSectionRequest extends FormRequest
             'content.images.*.caption_ar' => 'nullable|string|max:255',
             'content.images.*.size' => 'nullable|string|in:thumbnail,small,medium,large,hero,original',
             'content.images.*.alignment' => 'nullable|string|in:left,center,right',
-            
+
             // Button configuration
             'content.button' => 'nullable|array',
             'content.button.text_en' => 'nullable|string|max:100',
@@ -50,7 +49,7 @@ class StorePageSectionRequest extends FormRequest
             'content.button.icon' => 'nullable|string|max:255',
             'content.button.icon_position' => 'nullable|string|in:before,after',
             'content.button.icon_alignment' => 'nullable|string|in:left,center,right',
-            
+
             // Animation settings (for counter sections)
             'content.animation' => 'nullable|array',
             'content.animation.start_number' => 'nullable|integer|min:0',

@@ -68,7 +68,8 @@ const heroBgImageUrl = computed(() => getImageUrl(props.content.hero_bg_image));
                                 :src="iconUrl" 
                                 alt="" 
                                 loading="lazy"
-                               
+                                :width="80"
+                                :height="80"
                             />
                         </i>
                         <div class="">

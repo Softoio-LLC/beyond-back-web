@@ -32,6 +32,8 @@ class PageSection extends Model
     protected function casts(): array
     {
         return [
+            'page_id' => 'integer',
+            'section_type_id' => 'integer',
             'content' => 'array',
             'is_active' => 'boolean',
             'order' => 'integer',
@@ -79,7 +81,7 @@ class PageSection extends Model
     {
         $content = $this->content ?? [];
         $langKey = "{$key}_{$lang}";
-        
+
         return $content[$langKey] ?? $content[$key] ?? $default;
     }
 
@@ -91,7 +93,7 @@ class PageSection extends Model
         $content = $this->content ?? [];
         $content[$key] = $value;
         $this->content = $content;
-        
+
         return $this;
     }
 
@@ -101,7 +103,7 @@ class PageSection extends Model
     public function mergeContent(array $newContent): self
     {
         $this->content = array_merge($this->content ?? [], $newContent);
-        
+
         return $this;
     }
 

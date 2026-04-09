@@ -73,69 +73,58 @@ const workShapeImageUrl = computed(() => getImageUrl(props.content.work_shape_im
                 <div class="outer-work-swiper swiper">
                     <div class="swiper-wrapper">
                         <div 
-                            v-for="(slideGroup, groupIndex) in [projects, projects.slice().reverse(), projects]" 
-                            :key="groupIndex"
-                            class="swiper-slide" 
-                            data-aos="fade-right" 
-                            :data-aos-delay="300 - (groupIndex * 100)"
+                            v-for="(project, index) in projects" 
+                            :key="index"
+                            class="swiper-slide"
                         >
                             <div class="work-wrapper">
                                 <div class="work-single-card position-relative z-1">
-                                    <div class="swiper work-single-wrap">
-                                        <div class="swiper-wrapper">
-                                            <div 
-                                                v-for="(project, projectIndex) in slideGroup" 
-                                                :key="projectIndex"
-                                                class="swiper-slide"
-                                            >
-                                                <div class="work-slide-single-item" data-aos="fade-right">
-                                                    <div class="work-card-wrap d-flex align-items-center justify-content-between">
-                                                        <div class="work-card-items">
-                                                            <div class="contact-card-content work-card-content">
-                                                                <h4 v-html="getTitle(project)"></h4>
-                                                                <p v-html="getDescription(project)"></p>
-                                                            </div>
-                                                            <div 
-                                                                class="work-card-btns d-flex align-items-center"
-                                                                :class="project.btn_color_class"
-                                                            >
-                                                                <a :href="project.learn_more_url || '#'">
-                                                                    {{ getLearnMoreText(project) }}
-                                                                    <span><i class="far fa-angle-left"></i></span>
-                                                                </a>
-                                                                <a :href="project.visit_url || '#'" class="secondary-btn">
-                                                                    {{ getVisitText(project) }}
-                                                                    <span><i class="fal fa-long-arrow-left"></i></span>
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                        <div class="work-card-thumb">
-                                                            <AppImage
-                                                                :src="project.imageUrl"
-                                                                alt="Thumb"
-                                                                loading="lazy"
-                                                                
-                                                            />
-                                                        </div>
-                                                    </div>
+                                    <div class="work-slide-single-item">
+                                        <div class="work-card-wrap d-flex align-items-center justify-content-between">
+                                            <div class="work-card-items">
+                                                <div class="contact-card-content work-card-content">
+                                                    <h4 v-html="getTitle(project)"></h4>
+                                                    <p v-html="getDescription(project)"></p>
                                                 </div>
+                                                <div 
+                                                    class="work-card-btns d-flex align-items-center"
+                                                    :class="project.btn_color_class"
+                                                >
+                                                    <a :href="project.learn_more_url || '#'">
+                                                        {{ getLearnMoreText(project) }}
+                                                        <span><i class="far fa-angle-left"></i></span>
+                                                    </a>
+                                                    <a :href="project.visit_url || '#'" class="secondary-btn">
+                                                        {{ getVisitText(project) }}
+                                                        <span><i class="fal fa-long-arrow-left"></i></span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="work-card-thumb">
+                                                <AppImage
+                                                    :src="project.imageUrl"
+                                                    alt="Thumb"
+                                                    loading="lazy"
+                                                />
                                             </div>
                                         </div>
                                     </div>
-
                                     <div v-if="workShapeImageUrl" class="work-card-shape position-absolute z-n1">
                                         <AppImage
                                             :src="workShapeImageUrl"
                                             alt="Shape"
                                             loading="lazy"
-                                           
                                         />
                                     </div>
-                                    <!-- Dots Pagination -->
-                                    <div class="swiper-pagination"></div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <!-- Pagination and Navigation -->
+                    <div class="swiper-pagination-wrap position-relative">
+                        
+                        <div class="swiper-pagination outer-work-pagination"></div>
+                        
                     </div>
                 </div>
             </div>
