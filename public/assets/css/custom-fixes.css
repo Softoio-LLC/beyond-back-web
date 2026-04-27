@@ -100,14 +100,14 @@ html {
 }
 
 /* RTL dropdown item chevron positioning */
-[dir="rtl"] .dropdown-menu > li > .dropdown-item span {
+[dir="rtl"] .dropdown-menu>li>.dropdown-item span {
     order: -1;
     margin-left: 0;
     margin-right: 8px;
 }
 
 /* RTL dropdown item alignment */
-[dir="rtl"] .dropdown-menu > li > .dropdown-item {
+[dir="rtl"] .dropdown-menu>li>.dropdown-item {
     text-align: right;
     justify-content: space-between;
     flex-direction: row-reverse;
@@ -122,7 +122,7 @@ html {
 }
 
 /* RTL dropdown item icon */
-[dir="rtl"] .dropdown-menu > li > .dropdown-item span i {
+[dir="rtl"] .dropdown-menu>li>.dropdown-item span i {
     transform: scaleX(-1);
 }
 
@@ -312,9 +312,9 @@ html {
 
 /* Hero slider smooth transitions */
 .hero-slide-thumb .swiper-slide {
-    transition: transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1), 
-                opacity 0.5s ease,
-                height 0.4s ease;
+    transition: transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1),
+        opacity 0.5s ease,
+        height 0.4s ease;
 }
 
 .hero-slide-thumb .swiper-slide-active {
@@ -328,8 +328,8 @@ html {
 /* Work slider smooth transitions */
 .work-single-wrap .swiper-slide,
 .outer-work-swiper .swiper-slide {
-    transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1), 
-                opacity 0.4s ease;
+    transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
+        opacity 0.4s ease;
 }
 
 .work-single-wrap .swiper-slide-active,
@@ -339,9 +339,9 @@ html {
 
 /* Brand logos slider smooth transitions */
 .brand-logos-slide .swiper-slide {
-    transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1), 
-                opacity 0.4s ease,
-                filter 0.3s ease;
+    transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
+        opacity 0.4s ease,
+        filter 0.3s ease;
 }
 
 .brand-logos-slide .swiper-slide-active {
@@ -350,15 +350,15 @@ html {
 
 /* Concept slider smooth transitions */
 .concept-thumbnails .swiper-slide {
-    transition: transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1), 
-                opacity 0.5s ease;
+    transition: transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1),
+        opacity 0.5s ease;
 }
 
 /* Team card hover and slide effects */
 .team-card-wrap .swiper-slide {
-    transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1), 
-                opacity 0.4s ease,
-                box-shadow 0.3s ease;
+    transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
+        opacity 0.4s ease,
+        box-shadow 0.3s ease;
 }
 
 .team-card-wrap .swiper-slide:hover .team-card {
@@ -519,7 +519,7 @@ html {
     .concept-inner-block {
         padding: 35px 50px !important;
     }
-    
+
     .concept-wrapper {
         padding: 35px 50px !important;
     }
@@ -529,11 +529,11 @@ html {
     .concept-area {
         margin-bottom: 60px !important;
     }
-    
+
     .concept-inner-block {
         padding: 30px 40px !important;
     }
-    
+
     .concept-wrapper {
         padding: 30px 40px !important;
         margin-bottom: 30px !important;
@@ -544,7 +544,7 @@ html {
     .concept-inner-block {
         padding: 25px 30px !important;
     }
-    
+
     .concept-wrapper {
         padding: 25px 30px !important;
     }
@@ -561,7 +561,7 @@ html {
 }
 
 /* Force both columns to always be 50% wide, overriding Bootstrap stacking */
-.concept-wrapper .row > [class*="col-"] {
+.concept-wrapper .row>[class*="col-"] {
     flex: 0 0 50% !important;
     max-width: 50% !important;
     width: 50% !important;
@@ -619,7 +619,7 @@ html {
         flex-wrap: wrap !important;
     }
 
-    .concept-wrapper .row > [class*="col-"] {
+    .concept-wrapper .row>[class*="col-"] {
         flex: 0 0 100% !important;
         max-width: 100% !important;
         width: 100% !important;
@@ -666,7 +666,7 @@ html {
     .service-single-card {
         flex-direction: column;
     }
-    
+
     .service-card-thumb {
         max-width: 100%;
         min-width: 100%;
@@ -726,17 +726,17 @@ html {
     .work-single-card {
         padding: 30px !important;
     }
-    
+
     .work-card-wrap {
         flex-direction: column-reverse !important;
         gap: 30px !important;
     }
-    
+
     .work-card-items {
         max-width: 100% !important;
         text-align: center;
     }
-    
+
     .work-card-thumb {
         margin: 0 auto;
     }
@@ -816,7 +816,7 @@ html {
         font-size: 32px !important;
         line-height: 46px !important;
     }
-    
+
     .hero__block {
         max-width: 100%;
     }
@@ -838,11 +838,11 @@ html {
         padding-inline: 60px !important;
         margin-inline: auto !important;
     }
-    
+
     .comService-area {
         padding-inline: 40px !important;
     }
-    
+
     .comService-area .row {
         margin-inline: 0 !important;
         padding-inline: 20px !important;
@@ -855,7 +855,7 @@ html {
         padding-inline: 40px !important;
         margin-inline: auto !important;
     }
-    
+
     .comService-area {
         padding-inline: 30px !important;
     }
@@ -868,3 +868,105 @@ html {
 }
 
 
+/* ----------------------------- FIX: Responsive Side Spacing ------------------------ */
+
+.main-area {
+    padding-inline: 48px;
+}
+
+/* Match header spacing so it aligns with page content */
+.header-area {
+    padding-inline: 48px;
+}
+
+/* Large desktops (1400px-1919px) */
+@media screen and (max-width: 1919px) {
+    .main-area {
+        padding-inline: 70px;
+    }
+
+    .header-area {
+        padding-inline: 70px;
+    }
+}
+
+/* Standard desktops / small laptops (1200px-1399px) */
+@media screen and (max-width: 1399px) {
+    .main-area {
+        padding-inline: 42px;
+    }
+
+    .header-area {
+        padding-inline: 42px;
+    }
+}
+
+/* Tablets landscape (992px-1199px) */
+@media screen and (max-width: 1199px) {
+    .main-area {
+        padding-inline: 34px;
+    }
+
+    .header-area {
+        padding-inline: 34px;
+    }
+}
+
+/* Tablets portrait (768px-991px) */
+@media screen and (max-width: 991px) {
+    .main-area {
+        padding-inline: 30px;
+    }
+
+    .header-area {
+        padding-inline: 30px;
+    }
+}
+
+/* Mobile devices (below 768px) */
+@media screen and (max-width: 767px) {
+    .main-area {
+        padding-inline: 26px;
+    }
+
+    .header-area {
+        padding-inline: 26px;
+    }
+}
+
+
+/* ----------------------------- FIX: Hero Section Full-Width Background ------------------------ */
+
+.hero-area {
+    margin-inline: -48px;
+}
+
+@media screen and (max-width: 1919px) {
+    .hero-area {
+        margin-inline: -70px;
+    }
+}
+
+@media screen and (max-width: 1399px) {
+    .hero-area {
+        margin-inline: -42px;
+    }
+}
+
+@media screen and (max-width: 1199px) {
+    .hero-area {
+        margin-inline: -34px;
+    }
+}
+
+@media screen and (max-width: 991px) {
+    .hero-area {
+        margin-inline: -30px;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .hero-area {
+        margin-inline: -26px;
+    }
+}
